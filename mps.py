@@ -20,6 +20,11 @@ def loadimage(filename, nx, ny):
     array = np.loadtxt(filename)
     return Image(array, nx, ny)
 
+def plot_image(image):
+    fig, axes = plt.subplots(nrows=1, ncols=1)
+    axes.imshow(image)
+    plt.show()
+
 class Image:
     def __init__(self, array, nx, ny):
         if len(array) != nx*ny:
