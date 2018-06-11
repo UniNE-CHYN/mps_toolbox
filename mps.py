@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cc
 
-def loadtxt(filename, nx, ny):
+def loadimage(filename, nx, ny):
     array = np.loadtxt(filename)
     return Image(array, nx, ny)
 
