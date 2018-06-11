@@ -4,6 +4,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cc
 
+def subimage(image, nx, ny):
+    """
+    Returns a random subimage of an image of size nx x ny
+    """
+    x = np.random.randint(image.shape[0]-nx)
+    y = np.random.randint(image.shape[1]-ny)
+    return image[x:x+nx,y:y+ny]
+
+
+
 def loadtxt(filename, nx, ny):
     array = np.loadtxt(filename)
     return Image(array, nx, ny)
