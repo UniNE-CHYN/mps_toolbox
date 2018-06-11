@@ -2,7 +2,7 @@ import mps
 
 nx = 550
 ny = 500
-image = mps.loadtxt("ti_categoricalSoilCracks.txt", nx, ny)
+image = mps.loadimage("ti_categoricalSoilCracks.txt", nx, ny)
 categories = image.categories_list()
 n_lags = 40
 max_lag = 150

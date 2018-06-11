@@ -12,9 +12,7 @@ def subimage(image, nx, ny):
     y = np.random.randint(image.shape[1]-ny)
     return image[x:x+nx,y:y+ny]
 
-
-
-def loadtxt(filename, nx, ny):
+def loadimage(filename, nx, ny):
     array = np.loadtxt(filename)
     return Image(array, nx, ny)
 
