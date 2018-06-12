@@ -25,6 +25,34 @@ def plot_image(image):
     axes.imshow(image)
     plt.show()
 
+def discrete_histogram(image):
+    """
+    Generates histogram of categorical vairables
+    Returns fraction of each category
+    """
+    # Find categories
+    categories = []
+    categories.append(image[0,0])
+    for pixel in image.flatten():
+        if pixel in categories:
+            pass
+        else:
+            categories.append(pixel)
+
+    # Sort categories list
+    categories = np.sort(categories)
+    
+    #histogram = np.zeros(len(categories))
+    histogram = []
+    # Count each category
+    for category in categories:
+        indicator = [image == category]
+        histogram.append(np.sum(indicator)/image.size)
+
+    return histogram
+
+
+
 class Image:
     def __init__(self, array, nx, ny):
         if len(array) != nx*ny:
