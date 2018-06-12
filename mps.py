@@ -13,14 +13,23 @@ def subimage(image, nx, ny):
     return image[x:x+nx,y:y+ny]
 
 def loadtxt(filename, nx, ny):
+    """
+    Reads column vector from file and loads it to numpy 2D array
+    """
     array = np.loadtxt(filename)
     return array.reshape((nx, ny))
 
 def loadimage(filename, nx, ny):
+    """
+    Reads column vector from file and loads it to Image object
+    """
     array = np.loadtxt(filename)
     return Image(array, nx, ny)
 
 def plot_image(image):
+    """
+    Plots 2D numpy array as image
+    """
     fig, axes = plt.subplots(nrows=1, ncols=1)
     axes.imshow(image)
     plt.show()
@@ -29,6 +38,19 @@ def discrete_histogram(image):
     """
     Generates histogram of categorical vairables
     Returns fraction of each category
+    """
+    categories = get_categories(image)
+    histogram = []
+    # Count each category
+    for category in categories:
+        indicator = [image == category]
+        histogram.append(np.sum(indicator)/image.size)
+
+    return histogram
+
+def get_categories(image):
+    """
+    Returns sorted categories list of 2D numpy array
     """
     # Find categories
     categories = []
@@ -40,17 +62,60 @@ def discrete_histogram(image):
             categories.append(pixel)
 
     # Sort categories list
-    categories = np.sort(categories)
+    return np.sort(categories)
     
-    #histogram = np.zeros(len(categories))
-    histogram = []
-    # Count each category
+
+
+def discrete_x_connectivity(image):
+    """
+    Returns dictionary of connectivity function values at all pixels in x direction for all categories
+    """
+    # Compute connected components and size
+    categories = get_categories(image)
+    connected_components = get_connected_components(image) 
+    nx = image.shape[0]
+
+    # Compute same categories and same components
+    connectivity = {}
     for category in categories:
-        indicator = [image == category]
-        histogram.append(np.sum(indicator)/image.size)
+        mask = np.array(image == category)
+        same_category_count = np.zeros(nx-1)
+        same_component_count = np.zeros(nx-1)
+        for x in np.arange(1,nx):
+            same_category_count[x-1] = np.sum(np.logical_and(image[x:,:]==image[:-x,:], mask[x:,:]))
+            same_component_count[x-1] = np.sum(np.logical_and(connected_components[x:,:]==connected_components[:-x,:], mask[x:,:]))
+        # Divide components by categories
+        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(same_component_count), where=same_category_count!=0)
 
-    return histogram
+    return connectivity
 
+def indicator_x_variogram(image):
+    """
+    Returns dictionary of indicator variogram values in x direction at all pixels for all categories
+    """
+    # Analyse image
+    nx = image.shape[0]
+    ny = image.shape[1]
+    variogram = {}
+    categories = get_categories(image)
+
+    # Compute variogram for each category and store in dictionary 
+    for category in categories:
+        mask = np.array(image == category)
+        variogram[category] = np.zeros(nx-1) 
+        for x in np.arange(1, nx):
+            variogram[category][x-1] = np.sum(np.logical_and(image[x:,:] != image[:-x,:], mask[x:,:])) / (ny*(nx-x))
+    return variogram
+
+# TODO this function should go to the cc module
+def get_connected_components(image):
+    """
+    Returns image of connected component labels
+    """
+    # Initialise and use connected components generator
+    cc_generator = cc.connected_components(image)
+    cc_generator.fill_label_array()
+    return cc_generator.get_label_array()
 
 
 class Image:
