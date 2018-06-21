@@ -26,13 +26,22 @@ def loadimage(filename, nx, ny):
     array = np.loadtxt(filename)
     return Image(array, nx, ny)
 
+def export_fig_to_eps(fig, filename):
+    fig.savefig(filename, format='eps', dpi=600)
+
+def export_fig_to_svg(fig, filename):
+    fig.savefig(filename, format='svg', dpi=600)
+
+def export_plt_to_svg(plt, filename):
+    export_fig_to_svg(plt.figure(), filename)
+
 def plot_image(image):
     """
     Plots 2D numpy array as image
     """
     fig, axes = plt.subplots(nrows=1, ncols=1)
     axes.imshow(image)
-    plt.show()
+    return fig
 
 def discrete_histogram(image):
     """
@@ -106,6 +115,18 @@ def indicator_x_variogram(image):
         for x in np.arange(1, nx):
             variogram[category][x-1] = np.sum(np.logical_and(image[x:,:] != image[:-x,:], mask[x:,:])) / (ny*(nx-x))
     return variogram
+
+def indicator_x_correlation(image):
+    """
+    Returns indicator autocorrelation in x direction
+    """
+    #TODO absolutely remove this function
+    histogram = discrete_histogram(image)
+    variogram = indicator_x_variogram(image)
+    indicator_x_correlation = {}
+    for key in variogram:
+        indicator_x_correlation[key] = (histogram[int(key-1)]*(1-histogram[int(key-1)]) - variogram[key])/ (histogram[int(key-1)]*(1-histogram[int(key-1)]))
+    return indicator_x_correlation
 
 # TODO this function should go to the cc module
 def get_connected_components(image):
