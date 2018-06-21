@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import matplotlib.pyplot as plt
-import cc
+#import matplotlib.pyplot as plt
+import mpstool.cc
+
+print("Welcome to mpstool!")
 
 def subimage(image, nx, ny):
     """
