@@ -1,22 +1,5 @@
 import numpy as np
 
-class Connectivity:
-    def __init__(self, image, color, nb_bins):
-        self.image = image
-        self.color = color
-        self.nb_bins = nb_bins
-        self.max_distance = self.image.distance(0, self.image.size-1)
-        
-    def count_same_color(self):
-        arr_count = np.zeros(self.nb_bins+1)
-        for i in range(0, self.image.size):
-            if self.image[i] == self.color:
-                for j in range(i, self.image.size):
-                    distance = self.image.distance(i, j)
-                    distance_class = int((distance/self.max_distance) *  self.nb_bins)
-                    arr_count[distance_class] += 1
-        return arr_count
-
 class connected_components:
     def __init__(self, image):
         self.data = image
@@ -117,13 +100,13 @@ class DisjointSet:
         return min(S)
 
 
-def test2():
+def _test2():
 	categ = categories(image_list[0])
 	print(categ)
 	print(percent_of_categories(image_list[0], categ))
 	ind = indicator_variable(image_list[0], 2)
 
-def test():
+def _test():
     data = np.array([5 , 9 , 7, 7, 9, 7, 7, 7, 7])
     cc = connected_components(data)
     cc.fill_label_array()
