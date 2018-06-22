@@ -40,15 +40,15 @@ def get_function_x(image):
 
     Parameters
     ----------
-    image : 2D non-empty numpy array
+    image : 2D non-empty numpy array of size nx, ny
 
     Returns
     -------
-    out : sorted list of all categories (from smallest to greatest)
+    out : dictionary of connectivity functions (numpy arrays of length nx-1) in x for each category
     """
     # Compute connected components and size
     categories = get_categories(image)
-    connected_components = get_connected_components(image)
+    connected_components = get_components(image)
     nx = image.shape[0]
 
     # Compute same categories and same components
@@ -60,6 +60,79 @@ def get_function_x(image):
         for x in np.arange(1,nx):
             same_category_count[x-1] = np.sum(np.logical_and(image[x:,:]==image[:-x,:], mask[x:,:]))
             same_component_count[x-1] = np.sum(np.logical_and(connected_components[x:,:]==connected_components[:-x,:], mask[x:,:]))
+        # Divide components by categories
+        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(same_component_count), where=same_category_count!=0)
+
+    return connectivity
+
+def get_function_y(image):
+    """
+    Computes connectivity function in y direction for all categories in image.
+
+    Returns a dictionary of connectivity functions.
+    Keys of the dictionary are the categories given by get_categories.
+    Each entry is a numpy array of connectivity values 
+    for all pixels in y direction for all categories
+
+    Parameters
+    ----------
+    image : 2D non-empty numpy array of size nx, ny
+
+    Returns
+    -------
+    out : dictionary of connectivity functions (numpy arrays of length ny-1) in y for each category
+    """
+    # Compute connected components and size
+    categories = get_categories(image)
+    connected_components = get_components(image)
+    ny = image.shape[1]
+
+    # Compute same categories and same components
+    connectivity = {}
+    for category in categories:
+        mask = np.array(image == category)
+        same_category_count = np.zeros(ny-1)
+        same_component_count = np.zeros(ny-1)
+        for y in np.arange(1,ny):
+            same_category_count[y-1] = np.sum(np.logical_and(image[:,y:]==image[:,:-y], mask[:,y:]))
+            same_component_count[y-1] = np.sum(np.logical_and(connected_components[:,y:]==connected_components[:,:-y], mask[:,y:]))
+        # Divide components by categories
+        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(same_component_count), where=same_category_count!=0)
+
+    return connectivity
+
+def get_map(image):
+    """
+    Computes connectivity map for all categories in image.
+
+    Returns a dictionary of connectivity maps.
+    Keys of the dictionary are the categories given by get_categories.
+    Each entry is a numpy 2D array of connectivity values for given shifts
+
+    Parameters
+    ----------
+    image : 2D non-empty numpy array of size nx, ny
+
+    Returns
+    -------
+    out : 2D numpy array of size nx-1, ny-1
+    """
+    # Compute connected components and size
+    categories = get_categories(image)
+    connected_components = get_components(image)
+    nx = image.shape[0]
+    ny = image.shape[1]
+
+    # Compute same categories and same components
+    connectivity = {}
+    for category in categories:
+        mask = np.array(image == category)
+        same_category_count = np.zeros((nx-1,ny-1))
+        same_component_count = np.zeros((nx-1, ny-1))
+        for x in np.arange(1,nx):
+            for y in np.arange(1,ny):
+                same_category_count[x-1, y-1] = np.sum(np.logical_and(image[x:,y:]==image[:-x,:-y], mask[x:,y:]))
+                same_component_count[x-1, y-1] = np.sum(np.logical_and(connected_components[x:,y:]==connected_components[:-x,:-y], mask[x:,y:]))
         # Divide components by categories
         connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(same_component_count), where=same_category_count!=0)
 
