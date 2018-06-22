@@ -6,6 +6,12 @@ It is under construction.
 
 Currently the module provides functions for evaluating connectivity functions of 2D categorical images.
 
+# Installation
+Install the mpstool from source (from project main directory):
+`pip install .`
+or if you want ot run it directly from source (useful for development):
+`pip install -e .`
+
 # Example use
 ```python
 import numpy as np
