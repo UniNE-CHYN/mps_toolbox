@@ -1,10 +1,39 @@
-# mps_toolbox: Toolbox for Multipoint statistics [WIP]
+# mpstool: Toolbox for Multipoint statistics [WIP]
 
-This is a python3 project providing tools for analysing multipoint statistics outputs.
+This is a python3 project providing tools for computing quality indicators for multipoint statistics outputs.
+The methods can also be applied to any other 2D images.
 It is under construction.
 
-Currently an example for evaluating the connectivity function in x direction is provided:
-`python3 example.py`
-Three windows with connectivity functions for each facies of the `ti_categoricalSoilCracks.txt` image should be displayed.
+Currently the module provides functions for evaluating connectivity functions of 2D categorical images.
 
-The image is a 2D image 550 by 500 and saved in a text file as a simple column vector.
+# Example use
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import mpstool
+
+# Load image data stored in a text file and reshape to 2D numpy array
+image = np.loadtxt('ti_categoricalSoilCracks.txt').reshape(550, 500)
+plt.imshow(image)
+plt.show()
+
+# Compute the connectivity function for each category
+connectivity = mpstool.connectivity.get_function_x(image)
+
+# Display function for each category on a plot
+categories = mpstool.connectivity.get_categories(image)
+for category in categories:
+    plt.plot(connectivity[category])
+plt.legend(categories)
+plt.xlabel('distance (pixels)')
+plt.ylabel('connectivity')
+plt.show()
+```
+
+The library also provides a function for retrieving connected components:
+```python
+# Get the connected components
+connected_components = mpstool.connectivity.get_components(image)
+plt.imshow(connected_components)
+plt.show()
+```
