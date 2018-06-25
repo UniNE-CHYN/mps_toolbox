@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import mpstool.cc as cc
+import skimage.measure
 
 def get_categories(image):
     """
@@ -154,7 +154,4 @@ def get_components(image):
     -------
     out : numpy array of the same size
     """
-    # Initialise and use connected components generator
-    cc_generator = cc.connected_components(image)
-    cc_generator.fill_label_array()
-    return cc_generator.get_label_array()
+    return skimage.measure.label(image, connectivity=1)
