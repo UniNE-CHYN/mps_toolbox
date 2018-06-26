@@ -19,6 +19,10 @@ def cube():
                       [0, 1, 1],
                       [0, 0, 0]]])
 
+def test_categories(cube):
+    assert all(mpstool.connectivity.get_categories(cube) == [0,1])
+
+
 
 def test_connected_component(cube):
     connectivity_array = np.array([[[0, 0, 0],

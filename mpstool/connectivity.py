@@ -5,13 +5,13 @@ import skimage.measure
 
 def get_categories(image):
     """
-    Find all values in a 2D numpy array
+    Find all values in a numpy array
 
     Return a sorted list of categories found in image 2D arrays.
 
     Parameters
     ----------
-    image : 2D non-empty numpy array
+    image : non-empty numpy array
 
     Returns
     -------
@@ -19,7 +19,7 @@ def get_categories(image):
     """
     # Find categories
     categories = []
-    categories.append(image[0,0])
+    categories.append(image.flatten()[0])
     for pixel in image.flatten():
         if pixel in categories:
             pass
