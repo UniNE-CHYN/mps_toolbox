@@ -29,6 +29,27 @@ def get_categories(image):
     # Sort categories list
     return np.sort(categories)
     
+
+def get_function(image, axis):
+    # Compute connected components and size
+    categories = get_categories(image)
+    connected_components = get_components(image)
+    nx = image.shape[axis]
+
+    # Compute same categories and same components
+    connectivity = {}
+    for category in categories:
+        mask = np.array(image == category)
+        same_category_count = np.zeros(nx-1)
+        same_component_count = np.zeros(nx-1)
+        for x in np.arange(1,nx):
+            same_category_count[x-1] = np.sum(np.logical_and(image.take(indices=range(x,nx), axis=axis)==image.take(indices=range(nx-x), axis=axis), mask.take(indices=range(x,nx), axis=axis)))
+            same_component_count[x-1] = np.sum(np.logical_and(connected_components.take(indices=range(x,nx), axis=axis)==connected_components.take(indices=range(nx-x), axis=axis), mask.take(indices=range(x,nx), axis=axis)))
+        # Divide components by categories
+        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(same_component_count), where=same_category_count!=0)
+
+    return connectivity
+
 def get_function_x(image):
     """
     Computes connectivity function in x direction for all categories in image.
@@ -58,8 +79,8 @@ def get_function_x(image):
         same_category_count = np.zeros(nx-1)
         same_component_count = np.zeros(nx-1)
         for x in np.arange(1,nx):
-            same_category_count[x-1] = np.sum(np.logical_and(image[x:,:]==image[:-x,:], mask[x:,:]))
-            same_component_count[x-1] = np.sum(np.logical_and(connected_components[x:,:]==connected_components[:-x,:], mask[x:,:]))
+            same_category_count[x-1] = np.sum(np.logical_and(image[x:]==image[:-x], mask[x:]))
+            same_component_count[x-1] = np.sum(np.logical_and(connected_components[x:]==connected_components[:-x], mask[x:]))
         # Divide components by categories
         connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(same_component_count), where=same_category_count!=0)
 

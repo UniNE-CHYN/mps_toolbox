@@ -1,10 +1,10 @@
 # mpstool: Toolbox for Multipoint statistics [WIP]
 
 This is a python3 project providing tools for computing quality indicators for multipoint statistics outputs.
-The methods can also be applied to any other 2D images.
+The methods can also be applied to 2D or 3D images.
 It is under construction.
 
-Currently the module provides functions for evaluating connectivity functions of 2D categorical images.
+Currently the module provides functions for evaluating connectivity functions of 2D and 3D categorical images.
 
 # Installation
 Install the mpstool from source (from project main directory):
@@ -26,25 +26,25 @@ plt.imshow(image)
 plt.show()
 
 # Compute the connectivity function for each category
-connectivity_x = mpstool.connectivity.get_function_x(image)
-connectivity_y = mpstool.connectivity.get_function_y(image)
+connectivity_axis0 = mpstool.connectivity.get_function(image, 0)
+connectivity_axis1 = mpstool.connectivity.get_function(image, 1)
 
-# Display function in x for each category on a plot
+# Display function along axis 0 for each category on a plot
 categories = mpstool.connectivity.get_categories(image)
 for category in categories:
-    plt.plot(connectivity_x[category])
+    plt.plot(connectivity_axis0[category])
 plt.legend(categories)
 plt.xlabel('distance (pixels)')
-plt.ylabel('connectivity in x')
+plt.ylabel('connectivity along axis 0')
 plt.show()
 
-# Display function in y for each category on a plot
+# Display function along axis 1 for each category on a plot
 categories = mpstool.connectivity.get_categories(image)
 for category in categories:
-    plt.plot(connectivity_y[category])
+    plt.plot(connectivity_axis1[category])
 plt.legend(categories)
 plt.xlabel('distance (pixels)')
-plt.ylabel('connectivity in y')
+plt.ylabel('connectivity along axis 1')
 plt.show()
 ```
 
