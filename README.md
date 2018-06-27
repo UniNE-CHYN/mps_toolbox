@@ -16,6 +16,8 @@ or if you want ot run it directly from source (useful for development):
 
 Can be found here: https://mps-toolbox.readthedocs.io/en/latest/index.html
 
+[![Documentation Status](//readthedocs.org/projects/mps-toolbox/badge/?version=latest)](https://mps-toolbox.readthedocs.io/en/latest/?badge=latest)                
+
 # Example use
 
 ## Connectivity functions
