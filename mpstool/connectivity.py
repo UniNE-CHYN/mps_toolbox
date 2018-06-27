@@ -167,9 +167,11 @@ def get_components(image):
     The returned array contains integer labels, pixels belonging
     to the same components have the same label.
 
+    # http://scikit-image.org/docs/stable/api/skimage.measure.html#label
+
     Parameters
     ----------
-    image : 2D non-empty numpy array
+    image : non-empty numpy array
 
     Returns
     -------

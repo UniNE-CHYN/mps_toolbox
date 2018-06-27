@@ -26,8 +26,8 @@ plt.imshow(image)
 plt.show()
 
 # Compute the connectivity function for each category
-connectivity_axis0 = mpstool.connectivity.get_function(image, 0)
-connectivity_axis1 = mpstool.connectivity.get_function(image, 1)
+connectivity_axis0 = mpstool.connectivity.get_function(image, axis=0)
+connectivity_axis1 = mpstool.connectivity.get_function(image, axis=1)
 
 # Display function along axis 0 for each category on a plot
 categories = mpstool.connectivity.get_categories(image)

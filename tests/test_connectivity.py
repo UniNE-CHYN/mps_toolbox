@@ -48,8 +48,8 @@ def test_function_2D(array):
     axis0_connectivity = {0: np.array([1., 0.]), 1: np.array([0., 0.])}
     axis1_connectivity = {0: np.array([1., 1.]), 1: np.array([1. , 0.5])}
 
-    axis0_result = mpstool.connectivity.get_function(array, 0)
-    axis1_result = mpstool.connectivity.get_function(array, 1)
+    axis0_result = mpstool.connectivity.get_function(array, axis=0)
+    axis1_result = mpstool.connectivity.get_function(array, axis=1)
 
     for key in axis0_connectivity:
         assert np.alltrue( axis0_result[key] == axis0_connectivity[key])
