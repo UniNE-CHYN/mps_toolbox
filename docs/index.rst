@@ -15,6 +15,7 @@ Welcome to Multiple-Point statistics Toolbox's documentation!
 Indices and tables
 ==================
 
+Test here if integration webhook worsk fine.
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
