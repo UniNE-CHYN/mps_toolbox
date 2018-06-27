@@ -8,9 +8,13 @@ Currently the module provides functions for evaluating connectivity functions of
 
 # Installation
 Install the mpstool from source (from project main directory):
-`pip install .`
+```pip install .```
 or if you want ot run it directly from source (useful for development):
-`pip install -e .`
+```pip install -e .```
+
+# Documentation
+
+Can be found here: https://mps-toolbox.readthedocs.io/en/latest/index.html
 
 # Example use
 
