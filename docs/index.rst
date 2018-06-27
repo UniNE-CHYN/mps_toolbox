@@ -3,19 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Multiple-Point statistics Toolbox's documentation!
-=============================================================
+Multiple-point statistics toolbox: mpstool
+==========================================
+
+The module provides functions which describe spatial
+variability of images.
+Its primary scope is providing functions which can serve
+as quality metrics for multiple-point geostatistical simulations.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   
+   installation
+   connectivity
+   api
 
-
-
-Indices and tables
-==================
-
-Test here if integration webhook worsk fine.
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+..
+    Indices and tables
+    ==================
+..
+    * :ref:`genindex`
+    * :ref:`modindex`
+    * :ref:`search`
