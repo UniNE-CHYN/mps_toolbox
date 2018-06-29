@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 import mpstool
 
 # Load image data stored in a text file and reshape to 2D numpy array
-image = np.loadtxt('ti_categoricalSoilCracks.txt').reshape(550, 500)
+image = np.loadtxt('2D.txt').reshape(550, 500)
 plt.imshow(image)
 plt.show()
 
@@ -77,5 +77,32 @@ The library also provides a function for retrieving connected components:
 # Get the connected components
 connected_components = mpstool.connectivity.get_components(image)
 plt.imshow(connected_components)
+plt.show()
+```
+
+# 3D example
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import mpstool
+
+image = np.loadtxt('3D.txt').reshape((100,90,80))
+c0 = mpstool.connectivity.get_function(image, axis=0)
+c1 = mpstool.connectivity.get_function(image, axis=1)
+c2 = mpstool.connectivity.get_function(image, axis=2)
+
+# Connectivity of category 1
+plt.plot(c0[1])
+plt.plot(c1[1])
+plt.plot(c2[1])
+plt.ylim([0.,1.1])
+plt.show()
+
+# Connectivity of category 2
+plt.plot(c0[2])
+plt.plot(c1[2])
+plt.plot(c2[2])
+plt.ylim([0.,1.1])
 plt.show()
 ```

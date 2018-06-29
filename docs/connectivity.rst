@@ -24,7 +24,7 @@ We will use the categorical soil cracks example ::
     import mpstool
 
     # Load image data stored in a text file and reshape to 2D numpy array
-    image = np.loadtxt('ti_categoricalSoilCracks.txt').reshape(550, 500)
+    image = np.loadtxt('2D.txt').reshape(550, 500)
     plt.imshow(image)
     plt.show()
 
@@ -53,6 +53,32 @@ Let us now display the result::
             plt.xlabel('distance (pixels)')
             plt.ylabel('connectivity along axis 1')
             plt.show()
+            
+The 3D example is analogous::
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import mpstool
+
+    image = np.loadtxt('3D.txt').reshape((100,90,80))
+    c0 = mpstool.connectivity.get_function(image, axis=0)
+    c1 = mpstool.connectivity.get_function(image, axis=1)
+    c2 = mpstool.connectivity.get_function(image, axis=2)
+
+    # Connectivity of category 1
+    plt.plot(c0[1])
+    plt.plot(c1[1])
+    plt.plot(c2[1])
+    plt.ylim([0,1.1])
+    plt.show()
+
+    # Connectivity of category 2
+    plt.plot(c0[2])
+    plt.plot(c1[2])
+    plt.plot(c2[2])
+    plt.ylim([0,1.1])
+    plt.show()
+
 
 Connectivity map
 ----------------
