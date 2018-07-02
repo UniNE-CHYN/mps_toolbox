@@ -109,5 +109,24 @@ The library also provides a function for retrieving connected components::
     plt.imshow(connected_components)
     plt.show()
 
+
+Converting continuous image to categorical
+------------------------------------------
+
+A function for categorizing a continuous image is provided::
+
+    image = np.loadtxt('continuous.txt').reshape((335,408))
+    plt.imshow(image)
+    plt.colorbar()
+    plt.show()
+    
+    thresholds = [100, 200]
+    image_categorized = mpstool.connectivity.categorize(image, thresholds)
+
+    plt.imshow(image_categorized)
+    plt.colorbar()
+    plt.show()
+
+
 ..
   %$\epsilon_i = \sum_{k} |{2\tau_i(\mathbf{h_k}) - 2\tau^{\textrm{ref}}_i(\mathbf{h_k}) |}/{k} $

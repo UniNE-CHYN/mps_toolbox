@@ -106,3 +106,22 @@ plt.plot(c2[2])
 plt.ylim([0.,1.1])
 plt.show()
 ```
+
+# Continuous images
+
+It is possible to convert continuous images into categorical ones and then evaluate the connectivity.
+Connectivity module provides a thresholding function.
+
+```python
+image = np.loadtxt('continuous.txt').reshape((335,408))
+plt.imshow(image)
+plt.colorbar()
+plt.show()
+
+thresholds = [100, 200]
+image_categorized = mpstool.connectivity.categorize(image, thresholds)
+
+plt.imshow(image_categorized)
+plt.colorbar()
+plt.show()
+```

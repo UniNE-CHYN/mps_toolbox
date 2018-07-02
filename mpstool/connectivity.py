@@ -3,6 +3,42 @@
 import numpy as np
 import skimage.measure
 
+def categorize(image, thresholds):
+    """
+    Returns a categorized image according to thresholds specified.
+
+    Parameters
+    ----------
+    image : ndarray
+        non-empty numpy array
+
+    thresholds : array
+        must be non-empty and all image values must lie between first and last element of threshold
+    
+    Returns
+    -------
+    ndarray
+        Array of the same size as the input array, categorized, with labels starting from 1 to n+1,
+        where n is the length of the threshold array.
+        Category 1 corresponds to the values which are below
+        the smallest value in the thresholds array,
+        category 2 to values not exceeding the second smallest value, and so forth.
+        The last category labels image values which exceed the greatest value found in the thresholds.
+        
+    """
+
+    # Check if thresholds input is correct
+    thresholds_sorted = sorted(thresholds)
+    number_of_categories = len(thresholds) + 1
+
+    # Set categories for each interval, starting with the greatest category
+    categorized_image = np.ones_like(image, dtype='int') * number_of_categories
+    for category in range(number_of_categories-1, 0, -1):
+        categorized_image[image <= thresholds_sorted[category-1]] = category
+
+    return categorized_image
+
+
 def get_categories(image):
     """
     Find all values in a numpy array
