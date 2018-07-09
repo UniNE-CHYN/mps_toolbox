@@ -55,17 +55,8 @@ def get_categories(image):
     list
         sorted list of all categories (from smallest to greatest)
     """
-    # Find categories
-    categories = []
-    categories.append(image.flatten()[0])
-    for pixel in image.flatten():
-        if pixel in categories:
-            pass
-        else:
-            categories.append(pixel)
-
     # Sort categories list
-    return np.sort(categories)
+    return np.unique(image)
     
 
 def get_function(image, axis):

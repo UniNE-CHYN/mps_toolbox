@@ -15,7 +15,7 @@ def histogram(image):
     Generates histogram of categorical vairables
     Returns fraction of each category
     """
-    categories = _get_categories(image)
+    categories = np.unique(image)
     histogram = {}
     # Count each category
     for category in categories:
@@ -32,7 +32,7 @@ def variogram(image):
     nx = image.shape[0]
     ny = image.shape[1]
     variogram = {}
-    categories = _get_categories(image)
+    categories = np.unique(image)
 
     # Compute variogram for each category and store in dictionary 
     for category in categories:
@@ -41,31 +41,3 @@ def variogram(image):
         for y in np.arange(1, ny):
             variogram[category][y-1] = np.sum(np.logical_and(image[:,y:] != image[:,:-y], mask[:,y:])) / (nx*(ny-y))
     return variogram
-
-def _get_categories(image):
-    """
-    Find all values in a numpy array
-
-    Return a sorted list of categories found in image 2D arrays.
-
-    Parameters
-    ----------
-    image : ndarray
-        non-empty numpy array
-
-    Returns
-    -------
-    list
-        sorted list of all categories (from smallest to greatest)
-    """
-    # Find categories
-    categories = []
-    categories.append(image.flatten()[0])
-    for pixel in image.flatten():
-        if pixel in categories:
-            pass
-        else:
-            categories.append(pixel)
-
-    # Sort categories list
-    return np.sort(categories)
