@@ -1,0 +1,14 @@
+language: python
+python:
+  - "3.6"
+before_install:
+  - pip install pytest pytest-cov
+  - pip install coveralls
+install:
+  - pip install -e .
+  - pip install numpy
+  - pip install scikit-image
+script: 
+  - pytest --cov=mpstool
+after_success:
+  - coveralls
