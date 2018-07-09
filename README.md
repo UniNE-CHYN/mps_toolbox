@@ -6,25 +6,28 @@ It is under construction.
 
 Currently the module provides functions for evaluating connectivity functions of 2D and 3D categorical images.
 
-[![Build Status](https://travis-ci.org/UniNE-CHYN/mps_toolbox.svg?branch=master)](https://travis-ci.org/UniNE-CHYN/mps_toolbox)
-[![Coverage Status](https://coveralls.io/repos/github/UniNE-CHYN/mps_toolbox/badge.svg)](https://coveralls.io/github/UniNE-CHYN/mps_toolbox)
-
 # Installation
 Install the mpstool from source (from project main directory):
-```pip install .```
+`pip install .`
 or if you want ot run it directly from source (useful for development):
-```pip install -e .```
+` pip install -e .`
+
+# Dependencies
+- py-vox-io for the .vox file conversion (https://github.com/gromgull/py-vox-io)
+- scikit-image
+- Pillow
 
 # Documentation
 
 Can be found here: https://mps-toolbox.readthedocs.io/en/latest/index.html
 
-[![Documentation Status](https://readthedocs.org/projects/mps-toolbox/badge/?version=latest)](https://mps-toolbox.readthedocs.io/en/latest/?badge=latest)                
+[![Documentation Status](//readthedocs.org/projects/mps-toolbox/badge/?version=latest)](https://mps-toolbox.readthedocs.io/en/latest/?badge=latest)                
 
 # Example use
 
 ## Connectivity functions
-```python
+```
+python
 import numpy as np
 import matplotlib.pyplot as plt
 import mpstool
@@ -58,7 +61,8 @@ plt.show()
 ```
 
 ## Connectivity maps
-```python
+```
+python
 # Compute the connectivity map for each category
 connectivity = mpstool.connectivity.get_map(image)
 
@@ -76,7 +80,8 @@ for category in categories:
 
 ## Connected components
 The library also provides a function for retrieving connected components:
-```python
+```
+python
 # Get the connected components
 connected_components = mpstool.connectivity.get_components(image)
 plt.imshow(connected_components)
@@ -85,7 +90,8 @@ plt.show()
 
 # 3D example
 
-```python
+```
+python
 import numpy as np
 import matplotlib.pyplot as plt
 import mpstool
@@ -115,7 +121,8 @@ plt.show()
 It is possible to convert continuous images into categorical ones and then evaluate the connectivity.
 Connectivity module provides a thresholding function.
 
-```python
+```
+python
 image = np.loadtxt('continuous.txt').reshape((335,408))
 plt.imshow(image)
 plt.colorbar()
