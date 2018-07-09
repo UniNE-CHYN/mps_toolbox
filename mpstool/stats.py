@@ -15,14 +15,8 @@ def histogram(image):
     Generates histogram of categorical vairables
     Returns fraction of each category
     """
-    categories = np.unique(image)
-    histogram = {}
-    # Count each category
-    for category in categories:
-        indicator = [image == category]
-        histogram[category] = np.sum(indicator)/image.size
-
-    return histogram
+    categories, counts = np.unique(image, return_counts=True)
+    return dict(zip(categories, counts/image.size))
 
 def variogram(image):
     """
