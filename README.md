@@ -7,6 +7,7 @@ It is under construction.
 Currently the module provides functions for evaluating connectivity functions of 2D and 3D categorical images.
 
 [![Build Status](https://travis-ci.org/UniNE-CHYN/mps_toolbox.svg?branch=master)](https://travis-ci.org/UniNE-CHYN/mps_toolbox)
+[![Coverage Status](https://coveralls.io/repos/github/UniNE-CHYN/mps_toolbox/badge.svg)](https://coveralls.io/github/UniNE-CHYN/mps_toolbox)
 
 # Installation
 Install the mpstool from source (from project main directory):
