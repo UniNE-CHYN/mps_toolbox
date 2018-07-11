@@ -552,6 +552,11 @@ class Image:
 ## ------------------ Conversion functions -------------------------------------
 
 def gslib_to_png(gslib_file, output_name):
+    try:
+        from PIL import Image as PIL_Img
+    except:
+        print("ERROR : is the pillow library installed ?")
+        return
     with open(gslib_file, 'r') as f :
         metadata = f.readline().strip().split()
         xdim = int(metadata[0])
