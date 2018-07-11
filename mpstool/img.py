@@ -282,11 +282,8 @@ class Image:
             output = PIL_Img.fromarray(self.asArray())
             output.save(output_name)
         else:
-            print("A")
             output = PIL_Img.fromarray(np.squeeze(self.asArray()))
-            print("B")
             output.save(output_name, mode="L") # L for greyscale
-            print("C")
         if verbose:
             print("Generated image as {}".format(output_name))
 
