@@ -21,9 +21,9 @@ If you want ot run it directly from source (useful for development):
 ` pip install -e .`
 
 # Dependencies
-- py-vox-io for the .vox file conversion (https://github.com/gromgull/py-vox-io)
-- scikit-image
-- pillow
+- py-vox-io for the .vox file conversion (`pip install py-vox-io`)
+- scikit-image (`pip install scikit-image`)
+- pillow (`pip install pillow`)
 
 # Documentation
 

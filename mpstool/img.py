@@ -223,7 +223,7 @@ class Image:
             from pyvox.parser import VoxParser
         except:
             print("py-vox-io is not installed. Cannot import a vox file.\n\
-                  Please install py-vox-io from https://github.com/gromgull/py-vox-io")
+                  Please install py-vox-io with `pip install py-vox-io`")
             return
         from pyvox.writer import VoxWriter
         data = VoxParser(file_name).parse().to_dense()
@@ -341,7 +341,7 @@ class Image:
             from pyvox.writer import VoxWriter
         except:
             print("py-vox-io is not installed. Cannot export as vox file.\n\
-                  Please install py-vox-io from https://github.com/gromgull/py-vox-io")
+                  Please install py-vox-io with `pip install py-vox-io`")
             return
         self.unnormalize()
         # Crop to 255, otherwise conversion fails because input is too big
