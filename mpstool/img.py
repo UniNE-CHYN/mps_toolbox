@@ -131,7 +131,8 @@ class Image:
         """
         if isinstance(ar,list):
             ar = np.array(ar)
-            assert(len(ar.shape)<4)
+            if len(ar.shape)>3:
+                ar = ar[:,:,:,0]
         shape = ar.shape
         params = dict()
         if len(shape)<3 or shape[2]==1:

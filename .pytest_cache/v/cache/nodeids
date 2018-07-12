@@ -1,1 +1,11 @@
-[]
+[
+  "tests/test_image.py::test_threshold",
+  "tests/test_image.py::test_saturate",
+  "tests/test_image.py::test_from_list",
+  "tests/test_image.py::test_from_txt",
+  "tests/test_image.py::test_conversion_txt_gslib",
+  "tests/test_image.py::test_conversion_gslib_vox",
+  "tests/test_image.py::test_conversion_vox_png",
+  "tests/test_image.py::test_conversion_png_txt",
+  "tests/test_image.py::test_conversion_final"
+]
