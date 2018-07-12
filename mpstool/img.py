@@ -121,13 +121,18 @@ class Image:
 
         Parameters
         ----------
-        'ar' : ndarray
-            the numpy array around which the Image object is built
+        'ar' : ndarray | list of ndarray
+            The numpy array around which the Image object is built
+            A list of 2D ndarray can be given in order to build a 3D image
 
         Returns
         ----------
         A new Image object
         """
+        if isinstance(ar,list):
+            ar = np.array(ar)
+            if len(ar.shape)>3:
+                ar = ar[:,:,:,0]
         shape = ar.shape
         params = dict()
         if len(shape)<3 or shape[2]==1:
@@ -218,7 +223,7 @@ class Image:
             from pyvox.parser import VoxParser
         except:
             print("py-vox-io is not installed. Cannot import a vox file.\n\
-                  Please install py-vox-io from https://github.com/gromgull/py-vox-io")
+                  Please install py-vox-io with `pip install py-vox-io`")
             return
         from pyvox.writer import VoxWriter
         data = VoxParser(file_name).parse().to_dense()
@@ -336,7 +341,7 @@ class Image:
             from pyvox.writer import VoxWriter
         except:
             print("py-vox-io is not installed. Cannot export as vox file.\n\
-                  Please install py-vox-io from https://github.com/gromgull/py-vox-io")
+                  Please install py-vox-io with `pip install py-vox-io`")
             return
         self.unnormalize()
         # Crop to 255, otherwise conversion fails because input is too big

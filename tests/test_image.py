@@ -33,6 +33,16 @@ def test_saturate():
     assert saturated.shape==expected.shape
     assert np.alltrue(saturated == expected)
 
+def test_from_list():
+    data1 = np.array([[0, 255],
+                      [255, 100]])
+    data2 =  np.array([[100, 255],
+                       [255, 0]])
+    input_data = [data1,data2]
+    expected = np.array(input_data)
+    img = Image.fromArray(input_data)
+    assert np.alltrue(img._data == expected)
+
 def test_from_txt():
     img = Image.fromTxt("test_img.txt", (3,3))
     img2 = Image.fromTxt("test_img.txt", (3,3,1))
