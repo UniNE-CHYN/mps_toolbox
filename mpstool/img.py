@@ -502,7 +502,7 @@ class Image:
             choice_z = np.random.randint(zs-zd)
             sample = self._data[choice_x:choice_x+xd, choice_y:choice_y+yd,choice_z:choice_z+zd]
         else:
-            xs,ys = self.shape
+            xs,ys = self.shape[0],self.shape[1]
             choice_x = np.random.randint(xs-xd)
             choice_y = np.random.randint(ys-yd)
             if is_colored:
