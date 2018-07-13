@@ -114,7 +114,7 @@ class Image:
         return img
 
     @staticmethod
-    def fromArray(ar):
+    def fromArray(ar, normalize=False):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a numpy array
@@ -144,10 +144,13 @@ class Image:
         else:
             params["isColored"] = False
             params["is3D"] = True
-        return Image(ar,params)
+        output = Image(ar,params)
+        if normalize:
+            output.normalize()
+        return output
 
     @staticmethod
-    def fromTxt(file_name,shape):
+    def fromTxt(file_name, shape, normalize=False):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a raw txt file
@@ -165,7 +168,7 @@ class Image:
         A new Image object
         """
         array = np.loadtxt(file_name).reshape(shape)
-        return Image.fromArray(array)
+        return Image.fromArray(array, normalize)
 
     @staticmethod
     def fromPng(file_name, normalize=False):
