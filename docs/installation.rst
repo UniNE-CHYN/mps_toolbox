@@ -7,8 +7,13 @@ Install the mpstool from source. From the project's main directory, type::
 
 or, alternatively::
 
-    pip install -e .
+    chmod +x build.sh
+    ./build.sh
 
-if you want to run it directly from source (useful for development).
-
-mps_toolbox requires python3, numpy and scikit-image installed
+Dependencies
+------------
+mps_toolbox requires the following python packages to function properly:
+ - numpy
+ - scikit-image
+ - pillow
+ - py-vox-io

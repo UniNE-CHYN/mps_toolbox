@@ -44,37 +44,37 @@ def test_from_list():
     assert np.alltrue(img._data == expected)
 
 def test_from_txt():
-    img = Image.fromTxt("test_img.txt", (3,3))
-    img2 = Image.fromTxt("test_img.txt", (3,3,1))
+    img = Image.fromTxt("tests/test_img.txt", (3,3))
+    img2 = Image.fromTxt("tests/test_img.txt", (3,3,1))
     expected = example_image()
     assert img == img2
     assert img == expected
 
 def test_conversion_txt_gslib():
-    img = Image.fromTxt("test_img.txt", (3,3))
-    img.exportAsGslib("test_img.gslib")
-    img_test = Image.fromGslib("test_img.gslib")
+    img = Image.fromTxt("tests/test_img.txt", (3,3))
+    img.exportAsGslib("tests/test_img.gslib")
+    img_test = Image.fromGslib("tests/test_img.gslib")
     assert np.alltrue(img_test._data == img._data)
 
 def test_conversion_gslib_vox():
-    img = Image.fromGslib("test_img.gslib")
-    img.exportAsVox("test_img.vox")
-    img_test = Image.fromVox("test_img.vox")
+    img = Image.fromGslib("tests/test_img.gslib")
+    img.exportAsVox("tests/test_img.vox")
+    img_test = Image.fromVox("tests/test_img.vox")
     assert np.alltrue(img_test._data == img._data)
 
 def test_conversion_vox_png():
-    img = Image.fromVox("test_img.vox")
-    img.exportAsPng("test_img.png")
-    img_test = Image.fromPng("test_img.png")
+    img = Image.fromVox("tests/test_img.vox")
+    img.exportAsPng("tests/test_img.png")
+    img_test = Image.fromPng("tests/test_img.png")
     assert np.alltrue(img_test._data == img._data)
 
 def test_conversion_png_txt():
-    img = Image.fromPng("test_img.png")
-    img.exportAsTxt("test_img2.txt")
-    img_test = Image.fromTxt("test_img2.txt",(3,3))
+    img = Image.fromPng("tests/test_img.png")
+    img.exportAsTxt("tests/test_img2.txt")
+    img_test = Image.fromTxt("tests/test_img2.txt",(3,3))
     assert np.alltrue(img_test._data == img._data)
 
 def test_conversion_final():
-    a = np.loadtxt("test_img.txt")
-    b = np.loadtxt("test_img2.txt")
+    a = np.loadtxt("tests/test_img.txt")
+    b = np.loadtxt("tests/test_img2.txt")
     return np.alltrue(a==b)
