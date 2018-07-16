@@ -2,6 +2,7 @@
 
 import numpy as np
 import skimage.measure
+from .img import Image
 
 def categorize(image, thresholds):
     """
@@ -9,12 +10,12 @@ def categorize(image, thresholds):
 
     Parameters
     ----------
-    image : ndarray
+    image : ndarray | Image
         non-empty numpy array
 
     thresholds : array
         must be non-empty and all image values must lie between first and last element of threshold
-    
+
     Returns
     -------
     ndarray
@@ -24,8 +25,11 @@ def categorize(image, thresholds):
         the smallest value in the thresholds array,
         category 2 to values not exceeding the second smallest value, and so forth.
         The last category labels image values which exceed the greatest value found in the thresholds.
-        
+
     """
+
+    if isinstance(image,Image):
+        image = image.asArray()
 
     # Check if thresholds input is correct
     thresholds_sorted = sorted(thresholds)
@@ -47,7 +51,7 @@ def get_categories(image):
 
     Parameters
     ----------
-    image : ndarray
+    image : ndarray | Image
         non-empty numpy array
 
     Returns
@@ -55,9 +59,10 @@ def get_categories(image):
     list
         sorted list of all categories (from smallest to greatest)
     """
-    # Sort categories list
+    if isinstance(image,Image):
+        image = image.asArray()
     return np.unique(image)
-    
+
 
 def get_function(image, axis):
     """
@@ -65,18 +70,21 @@ def get_function(image, axis):
 
     Returns a dictionary of connectivity functions.
     Keys of the dictionary are the categories given by get_categories.
-    Each entry is a numpy array of connectivity values 
+    Each entry is a numpy array of connectivity values
     for all pixels in axis  direction for all categories
 
     Parameters
     ----------
-    image : ndarray
+    image : ndarray | Image
 
     Returns
     -------
     dict
         dictionary of connectivity functions, numpy arrays of length n, where n is lenght of the image along the given axis
     """
+    if isinstance(image,Image):
+        image = image.asArray()
+
     # Compute connected components and size
     categories = get_categories(image)
     connected_components = get_components(image)
@@ -107,7 +115,7 @@ def get_map(image):
 
     Parameters
     ----------
-    image : ndarray
+    image : ndarray | Image
         non-empty numpy array
 
     Returns
@@ -115,6 +123,10 @@ def get_map(image):
     ndarray
         2D numpy array of size nx-1, ny-1
     """
+
+    if isinstance(image,Image):
+        image = image.asArray()
+
     # Compute connected components and size
     categories = get_categories(image)
     connected_components = get_components(image)
@@ -139,7 +151,7 @@ def get_map(image):
 def get_components(image):
     """
     Computes connected components array of an input image
-    
+
     Returns array of the same size as the input array.
     The returned array contains integer labels, pixels belonging
     to the same components have the same label.
@@ -148,7 +160,7 @@ def get_components(image):
 
     Parameters
     ----------
-    image : ndarray
+    image : ndarray | Image
         non-empty numpy array
 
     Returns
@@ -156,13 +168,6 @@ def get_components(image):
     ndarray
         numpy array of the same size as input
     """
+    if isinstance(image,Image):
+        image = image.asArray()
     return skimage.measure.label(image, connectivity=1)
-
-
-def subimage(image, nx, ny):
-    """
-    Returns a random subimage of an image of size nx x ny
-    """
-    x = np.random.randint(image.shape[0]-nx)
-    y = np.random.randint(image.shape[1]-ny)
-    return image[x:x+nx,y:y+ny]

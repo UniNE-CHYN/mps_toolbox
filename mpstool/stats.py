@@ -2,19 +2,13 @@
 
 import numpy as np
 
-def subimage(image, nx, ny):
-    """
-    Returns a random subimage of an image of size nx x ny
-    """
-    x = np.random.randint(image.shape[0]-nx)
-    y = np.random.randint(image.shape[1]-ny)
-    return image[x:x+nx,y:y+ny]
-
 def histogram(image):
     """
     Generates histogram of categorical vairables
     Returns fraction of each category
     """
+    if isinstance(image,Image):
+        image = image.asArray()
     categories, counts = np.unique(image, return_counts=True)
     return dict(zip(categories, counts/image.size))
 
@@ -22,13 +16,16 @@ def variogram(image):
     """
     Returns dictionary of indicator variogram values in x direction at all pixels for all categories
     """
+    if isinstance(image,Image):
+        image = image.asArray()
+
     # Analyse image
     nx = image.shape[0]
     ny = image.shape[1]
     variogram = {}
     categories = np.unique(image)
 
-    # Compute variogram for each category and store in dictionary 
+    # Compute variogram for each category and store in dictionary
     for category in categories:
         mask = np.array(image == category)
         variogram[category] = np.zeros(ny-1)
