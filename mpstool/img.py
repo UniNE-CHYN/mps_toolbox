@@ -396,20 +396,20 @@ class Image:
         if axis==1:
             for i in iter:
                 img = array[:,i,:]
-                save_image(img, pj(output_folder,"cut_y_{}.png".format(i)))
+                self.exportAsPng(pj(output_folder,"cut_y_{}.png".format(i)))
         elif axis==2:
             for i in iter:
-                img = array[:,:,i]
-                save_image(img, pj(output_folder,"cut_z_{}.png".format(i)))
+                img = Image.fromArray(array[:,:,i])
+                self.exportAsPng(pj(output_folder,"cut_z_{}.png".format(i)))
         elif axis==0:
             for i in iter:
-                img = array[i,:,:]
-                save_image(img, pj(output_folder,"cut_x_{}.png".format(i)))
+                img = Image.fromArray(array[i,:,:])
+                self.exportAsPng(pj(output_folder,"cut_x_{}.png".format(i)))
         else:
             for i in iter:
-                save_image(array[i,:,:], pj(output_folder,"cut_x_{}.png".format(i)))
-                save_image(array[:,i,:], pj(output_folder,"cut_y_{}.png".format(i)))
-                save_image(array[:,:,i], pj(output_folder,"cut_z_{}.png".format(i)))
+                Image.fromArray(array[i,:,:]).exportAsPng(pj(output_folder,"cut_x_{}.png".format(i)))
+                Image.fromArray(array[:,i,:]).exportAsPng(pj(output_folder,"cut_y_{}.png".format(i)))
+                Image.fromArray(array[:,:,i]).exportAsPng(pj(output_folder,"cut_z_{}.png".format(i)))
 
 
     ## -------- Transformation methods
