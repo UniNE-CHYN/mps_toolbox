@@ -533,6 +533,7 @@ class Image:
               horizontal -> 'h' option
               vertical   -> 'v' option
               square     -> 's' option
+              rectangular -> 'r' option
             default mode is horizontal
         """
         image_stack = [img.asArray() for img in image_stack]
@@ -540,6 +541,17 @@ class Image:
             return Image.fromArray(np.concatenate(image_stack, axis=1))
         elif mode in ["vertical", 'v']:
             return Image.fromArray(np.concatenate(image_stack, axis=0))
+        elif mode in ["rectangular", 'r']:
+            N=len(image_stack)
+            nb_rows = N//10
+            rows = []
+            imgshape = image_stack[0].shape
+            blacks = np.zeros(imgshape)
+            for i in range(10-N%10):
+                image_stack.append(blacks)
+            for i in range(nb_rows):
+                rows.append(np.concatenate(image_stack[i:i+10], axis=1))
+            return Image.fromArray(np.concatenate(rows, axis=0))
         elif mode in ["square", 's']:
             N = len(image_stack)
             n = int(sqrt(N))
