@@ -6,5 +6,5 @@ This is API documentation.
 .. automodule:: connectivity
    :members:
 
-.. autmodule:: img
+.. automodule:: img
    :members:
