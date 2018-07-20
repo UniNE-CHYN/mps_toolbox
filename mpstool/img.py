@@ -1,4 +1,3 @@
-from PIL import Image as PIL_Img
 import numpy as np
 import os
 from math import sqrt
@@ -56,11 +55,15 @@ class Image:
         if self.is3D:
             self.shape = self._data.shape
         else:
-            self.shape = self._data.shape[:2]
+            self.shape = self._data.shape[:3]
             if len(self._data.shape)==2:
-                self._data.reshape(self.shape+(1,))
+                self.shape = self.shape + (1,)
+                self._data = self._data.reshape(self.shape)
             elif len(self._data.shape)==3 and self._data.shape[2]==4:
                 self._data = self._data[:,:,:3] # get rid of transparency
+
+    def __eq__(self,other):
+        return np.alltrue(self._data == other._data)
 
     ## ------- Import methods
     @staticmethod
@@ -111,20 +114,25 @@ class Image:
         return img
 
     @staticmethod
-    def fromArray(ar):
+    def fromArray(ar, normalize=False):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a numpy array
 
         Parameters
         ----------
-        'ar' : ndarray
-            the numpy array around which the Image object is built
+        'ar' : ndarray | list of ndarray
+            The numpy array around which the Image object is built
+            A list of 2D ndarray can be given in order to build a 3D image
 
         Returns
         ----------
         A new Image object
         """
+        if isinstance(ar,list):
+            ar = np.array(ar)
+            if len(ar.shape)>3:
+                ar = ar[:,:,:,0]
         shape = ar.shape
         params = dict()
         if len(shape)<3 or shape[2]==1:
@@ -136,7 +144,31 @@ class Image:
         else:
             params["isColored"] = False
             params["is3D"] = True
-        return Image(ar,params)
+        output = Image(ar,params)
+        if normalize:
+            output.normalize()
+        return output
+
+    @staticmethod
+    def fromTxt(file_name, shape, normalize=False):
+        """
+        Image staticmethod. Used as an initializer.
+        Builds the container from a raw txt file
+
+        Parameters
+        ----------
+        'file_name' : string
+            the relative path to the txt file to read
+        'shape' : tuple of int
+            the shape of the data (shape is not contained in the raw txt file,
+            thus this parameter is necessary)
+
+        Returns
+        ----------
+        A new Image object
+        """
+        array = np.loadtxt(file_name).reshape(shape)
+        return Image.fromArray(array, normalize)
 
     @staticmethod
     def fromPng(file_name, normalize=False):
@@ -157,11 +189,17 @@ class Image:
         ----------
         A new Image object
         """
+        try:
+            from PIL import Image as PIL_Img
+        except:
+            print("Cannot read from png. Is the pillow library installed ?\n\
+                   To install it, run `pip install pillow`")
+            return
         data = PIL_Img.open(file_name)
         data = np.array(data).astype(np.float32)
         params = dict()
         params["is3D"]=False
-        params["isColored"]= data.shape[2]==3
+        params["isColored"]= len(data.shape)==3 and data.shape[2]==3
         img = Image(data, params)
         if normalize:
             img.normalize()
@@ -188,12 +226,12 @@ class Image:
             from pyvox.parser import VoxParser
         except:
             print("py-vox-io is not installed. Cannot import a vox file.\n\
-                  Please install py-vox-io from https://github.com/gromgull/py-vox-io")
+                  Please install py-vox-io with `pip install py-vox-io`")
             return
         from pyvox.writer import VoxWriter
-        params = dict([("is3D",True),("isColored",False)])
-        data = VoxParser(in_file).parse()
-        return Image(data.to_dense(),params)
+        data = VoxParser(file_name).parse().to_dense()
+        params = dict([("is3D",data.shape[2]>1),("isColored",False)])
+        return Image(data, params)
 
 
     ## ------- Export methods
@@ -202,6 +240,27 @@ class Image:
         Return the raw data as a numpy array
         """
         return self._data
+
+    def exportAsTxt(self,output_name, verbose=False):
+        """
+        Export the Image object data as a txt file.
+        Requires the data to be two dimensionnal.
+
+        Parameters
+        ----------
+        'output_name' : string
+            relative path to the txt file to be output
+        'verbose' : boolean
+            enables verbose mode. Set to False by default
+        """
+        if self.is3D:
+            print("ERROR : Export as a txt file requires the data \
+                   to be 2 dimensionnal.")
+            return
+        output = self._data.reshape(self.shape[:2])
+        np.savetxt(output_name, output)
+        if verbose:
+            print("Generated txt file as {}".format(output_name))
 
     def exportAsPng(self, output_name, verbose=False):
         """
@@ -215,17 +274,23 @@ class Image:
         'verbose' : boolean
             enables verbose mode. Set to False by default
         """
+        try:
+            from PIL import Image as PIL_Img
+        except Exception as e:
+            print("ERROR : Cannot export as a png. Received the following error :\n{}\n\
+                   Is the pillow library installed ?\n\
+                   To install it, run `pip install pillow`".format(e))
+            return
         if self.is3D:
-            print("The data has to be two dimensionnal in order to be \
-                   exported in .png ! Aborting operation")
+            print("ERROR : Export as a png file requires the data \
+                   to be 2 dimensionnal.")
             return
         self.unnormalize()
-        output = self.asArray()
         if self.isColored:
-            output = PIL_Img.fromarray(output)
+            output = PIL_Img.fromarray(self.asArray())
             output.save(output_name)
         else:
-            output = PIL_Img.fromarray(np.squeeze(output))
+            output = PIL_Img.fromarray(np.squeeze(self.asArray()))
             output.save(output_name, mode="L") # L for greyscale
         if verbose:
             print("Generated image as {}".format(output_name))
@@ -279,7 +344,7 @@ class Image:
             from pyvox.writer import VoxWriter
         except:
             print("py-vox-io is not installed. Cannot export as vox file.\n\
-                  Please install py-vox-io from https://github.com/gromgull/py-vox-io")
+                  Please install py-vox-io with `pip install py-vox-io`")
             return
         self.unnormalize()
         # Crop to 255, otherwise conversion fails because input is too big
@@ -306,7 +371,7 @@ class Image:
         'output_folder' : string
             relative path to the folder file in which the cuts will be saved
 
-        'axis' : int
+        'axis' : intI
             The axis along the cuts are made. If set to -1, will perform cuts along
             all axis.
             default=-1
@@ -331,20 +396,20 @@ class Image:
         if axis==1:
             for i in iter:
                 img = array[:,i,:]
-                save_image(img, pj(output_folder,"cut_y_{}.png".format(i)))
+                self.exportAsPng(pj(output_folder,"cut_y_{}.png".format(i)))
         elif axis==2:
             for i in iter:
-                img = array[:,:,i]
-                save_image(img, pj(output_folder,"cut_z_{}.png".format(i)))
+                img = Image.fromArray(array[:,:,i])
+                self.exportAsPng(pj(output_folder,"cut_z_{}.png".format(i)))
         elif axis==0:
             for i in iter:
-                img = array[i,:,:]
-                save_image(img, pj(output_folder,"cut_x_{}.png".format(i)))
+                img = Image.fromArray(array[i,:,:])
+                self.exportAsPng(pj(output_folder,"cut_x_{}.png".format(i)))
         else:
             for i in iter:
-                save_image(array[i,:,:], pj(output_folder,"cut_x_{}.png".format(i)))
-                save_image(array[:,i,:], pj(output_folder,"cut_y_{}.png".format(i)))
-                save_image(array[:,:,i], pj(output_folder,"cut_z_{}.png".format(i)))
+                Image.fromArray(array[i,:,:]).exportAsPng(pj(output_folder,"cut_x_{}.png".format(i)))
+                Image.fromArray(array[:,i,:]).exportAsPng(pj(output_folder,"cut_y_{}.png".format(i)))
+                Image.fromArray(array[:,:,i]).exportAsPng(pj(output_folder,"cut_z_{}.png".format(i)))
 
 
     ## -------- Transformation methods
@@ -440,7 +505,7 @@ class Image:
             choice_z = np.random.randint(zs-zd)
             sample = self._data[choice_x:choice_x+xd, choice_y:choice_y+yd,choice_z:choice_z+zd]
         else:
-            xs,ys = self.shape
+            xs,ys = self.shape[0],self.shape[1]
             choice_x = np.random.randint(xs-xd)
             choice_y = np.random.randint(ys-yd)
             if is_colored:
@@ -468,6 +533,7 @@ class Image:
               horizontal -> 'h' option
               vertical   -> 'v' option
               square     -> 's' option
+              rectangular -> 'r' option
             default mode is horizontal
         """
         image_stack = [img.asArray() for img in image_stack]
@@ -475,6 +541,17 @@ class Image:
             return Image.fromArray(np.concatenate(image_stack, axis=1))
         elif mode in ["vertical", 'v']:
             return Image.fromArray(np.concatenate(image_stack, axis=0))
+        elif mode in ["rectangular", 'r']:
+            N=len(image_stack)
+            nb_rows = N//10
+            rows = []
+            imgshape = image_stack[0].shape
+            blacks = np.zeros(imgshape)
+            for i in range(10-N%10):
+                image_stack.append(blacks)
+            for i in range(nb_rows):
+                rows.append(np.concatenate(image_stack[i:i+10], axis=1))
+            return Image.fromArray(np.concatenate(rows, axis=0))
         elif mode in ["square", 's']:
             N = len(image_stack)
             n = int(sqrt(N))
@@ -495,6 +572,11 @@ class Image:
 ## ------------------ Conversion functions -------------------------------------
 
 def gslib_to_png(gslib_file, output_name):
+    try:
+        from PIL import Image as PIL_Img
+    except:
+        print("ERROR : is the pillow library installed ?")
+        return
     with open(gslib_file, 'r') as f :
         metadata = f.readline().strip().split()
         xdim = int(metadata[0])

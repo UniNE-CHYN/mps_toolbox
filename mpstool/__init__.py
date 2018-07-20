@@ -1,2 +1,6 @@
-import mpstool.connectivity
-import mpstool.stats
+try:
+    import mpstool.connectivity
+    import mpstool.stats
+    import mpstool.img
+except:
+    pass

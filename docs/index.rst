@@ -14,9 +14,10 @@ as quality metrics for multiple-point geostatistical simulations.
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   
+
    installation
    connectivity
+   image
    api
 
 ..
