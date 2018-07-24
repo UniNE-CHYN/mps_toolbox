@@ -10,31 +10,27 @@ class Image:
     from the following data types :
 
     png
-    ---------
     The classical image extension
 
-
     gslib
-    ----------
     The .gslib format is a text format with the following structure :
 
-     nx  ny  nz  x_orig  y_orig  z_orig x_padding y_padding z_padding
-     number_of_variables (should be 1 for our use)
-     name_of_variable_1
-     ...
-     name_of_variable_n
+    | nx  ny  nz  x_orig  y_orig  z_orig x_padding y_padding z_padding
+    | number_of_variables (should be 1 for our use)
+    | name_of_variable_1 
+    | ... 
+    | name_of_variable_n
 
-     then, on each line, the value of a coordinate (x,y,z), in the order of the
-     nested loop :
-     for x = 1 to nx
-         for y = 1 to ny:
-             for z = 1 to nz:
+    then, on each line, the value of a coordinate (x,y,z), in the order of the
+    nested loop :
 
+    for x = 1 to nx
+        for y = 1 to ny:
+            for z = 1 to nz:
 
     vox
-    ----------
     A binary file used in MagicaVoxel and in other voxel editors.
-    See : https://ephtracy.github.io/index.html?page=mv_main
+    https://ephtracy.github.io/index.html?page=mv_main
     """
 
     def __init__(self, data, params):

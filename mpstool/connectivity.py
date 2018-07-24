@@ -2,7 +2,7 @@
 
 import numpy as np
 import skimage.measure
-from .img import Image
+from mpstool.img import Image
 
 def categorize(image, thresholds):
     """
