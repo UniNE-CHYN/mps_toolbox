@@ -438,10 +438,10 @@ class Image:
         f = lambda x : 0 if x<=t else 255
         self.apply_fun(f)
 
-    def saturate_white(self,t=250):
+    def saturate_white(self,t=5):
         """
         Transformation method. Applies a saturation of height t on the image, that is to say :
-        sends elements with values>t to 255 and does not change other values
+        sends elements with values<t to 255 and does not change other values
 
         Parameters
         ----------
@@ -449,7 +449,7 @@ class Image:
             the height of the saturation.
             default = 250
         """
-        f = lambda x : x if x<t else 255
+        f = lambda x : x if x>t else 0
         self.apply_fun(f)
 
     def normalize(self):
