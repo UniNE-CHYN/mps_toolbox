@@ -650,7 +650,7 @@ def labelize(image):
     Parameters
     ----------
     image : ndarray | Image
-        non-empty numpy array
+        non-empty numpy array or Image class object
 
     Returns
     -------
@@ -660,8 +660,8 @@ def labelize(image):
     data = image.asArray() if isinstance(image,Image) else image
     output = np.zeros(data.shape).astype(np.int32)
     facies = np.unique(data)
-    labels = dict([(val,ind) for ind,val in np.ndenumerate(facies)])
-    for pos in np.ndindex(data):
+    labels = dict([(val,ind[0]) for ind,val in np.ndenumerate(facies)])
+    for pos in np.ndindex(data.shape):
         output[pos]=labels[data[pos]]
     return output
 
