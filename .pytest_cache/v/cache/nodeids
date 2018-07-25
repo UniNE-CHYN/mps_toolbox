@@ -1,7 +1,0 @@
-[
-  "tests/test_connectivity.py::test_threshold",
-  "tests/test_connectivity.py::test_connected_component",
-  "tests/test_connectivity.py::test_categories",
-  "tests/test_connectivity.py::test_function_2D",
-  "tests/test_connectivity.py::test_function_3D"
-]
