@@ -34,16 +34,14 @@ Can be found here: https://mps-toolbox.readthedocs.io/en/latest/index.html
 # Example use
 
 ## Connectivity functions
-```
-python
+```python
 import numpy as np
 import matplotlib.pyplot as plt
 import mpstool
 
 # Load image data stored in a text file and reshape to 2D numpy array
-image = np.loadtxt('2D.txt').reshape(550, 500)
-plt.imshow(image)
-plt.show()
+image = mpstool.img.Image.fromTxt('2D.txt', (550, 500))
+image.plot()
 
 # Compute the connectivity function for each category
 connectivity_axis0 = mpstool.connectivity.get_function(image, axis=0)
@@ -69,8 +67,7 @@ plt.show()
 ```
 
 ## Connectivity maps
-```
-python
+```python
 # Compute the connectivity map for each category
 connectivity = mpstool.connectivity.get_map(image)
 
@@ -88,8 +85,7 @@ for category in categories:
 
 ## Connected components
 The library also provides a function for retrieving connected components:
-```
-python
+```python
 # Get the connected components
 connected_components = mpstool.connectivity.get_components(image)
 plt.imshow(connected_components)
@@ -98,13 +94,12 @@ plt.show()
 
 # 3D example
 
-```
-python
+```python
 import numpy as np
 import matplotlib.pyplot as plt
 import mpstool
 
-image = np.loadtxt('3D.txt').reshape((100,90,80))
+image = mpstool.img.Image.fromTxt('3D.txt', (100,90,80))
 c0 = mpstool.connectivity.get_function(image, axis=0)
 c1 = mpstool.connectivity.get_function(image, axis=1)
 c2 = mpstool.connectivity.get_function(image, axis=2)
@@ -129,17 +124,17 @@ plt.show()
 It is possible to convert continuous images into categorical ones and then evaluate the connectivity.
 Connectivity module provides a thresholding function.
 
-```
-python
-image = np.loadtxt('continuous.txt').reshape((335,408))
-plt.imshow(image)
-plt.colorbar()
-plt.show()
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import mpstool
 
-thresholds = [100, 200]
-image_categorized = mpstool.connectivity.categorize(image, thresholds)
+image = mpstool.img.Image.fromTxt('continuous.txt', (335,408))
+image.plot()
 
-plt.imshow(image_categorized)
+image.threshold(thresholds = [100, 200])
+image_labels = mpstool.img.labelize(image)
+plt.imshow(image_labels)
 plt.colorbar()
 plt.show()
 ```

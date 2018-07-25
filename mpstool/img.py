@@ -233,7 +233,19 @@ class Image:
         params = dict([("is3D", data.shape[2] > 1), ("isColored", False)])
         return Image(data, params)
 
-    # ------- Export methods
+    ## ------- Export methods
+
+    def plot(self):
+        """
+        Displays the image using matplotlib.pyplot
+        """
+        import matplotlib.pyplot as plt
+        if self._data.shape[-1]==1:
+            plt.imshow(self._data[:,:,0])
+        else:
+            plt.imshow(self._data)
+        plt.colorbar()
+        plt.show()
 
     def asArray(self):
         """
@@ -422,8 +434,10 @@ class Image:
                 Image.fromArray(array[:, :, i]).exportAsPng(
                     pj(output_folder, "cut_z_{}.png".format(i)))
 
-    # -------- Transformation methods
-    def apply_fun(self, fun):
+
+    ## -------- Transformation methods
+
+    def apply_fun(self,fun):
         """
         Transformation method. Applies a function to every element of the
         data container.
@@ -436,37 +450,55 @@ class Image:
         for x in np.nditer(self._data, op_flags=['readwrite']):
             x[...] = fun(x)
 
-    def threshold(self, t=127):
-        """
-        Transformation method. Applies a threshold of height t on the image,
-        that is to say : sends elements with values<t to 0
-        and other values to 255
-
-        Parameters
-        ----------
-        't' : int
-            the height of the threshold.
-            default = 127
-        """
-        assert t >= 0 and t < 256
-
-        def f(x): return 0 if x <= t else 255
-        self.apply_fun(f)
-
-    def saturate_white(self, t=5):
+    def saturate(self,t=5):
         """
         Transformation method. Applies a saturation of height t on the image,
         that is to say : sends elements with values<t to 255 and does not change
         other values.
 
+        This is usefull for the .vox format, where 0 values are being rendered
+        as transparent.
+
         Parameters
         ----------
         't' : int
             the height of the saturation.
-            default = 250
+            default = 5
         """
-        def f(x): return x if x > t else 0
+        f = lambda x : x if x>t else 0
         self.apply_fun(f)
+
+    def threshold(self, thresholds=[127], values=None):
+        """
+        Returns a categorized image according to thresholds specified.
+
+        Parameters
+        ----------
+        'thresholds' : ndarray | list
+            must be non-empty and all image values must lie between
+            first and last element of threshold
+
+        'values' : ndarray | list
+            a list of size len(thresholds)+1. If this argument is not None,
+            the categories will take the given. Otherwise, the categores will
+            have their mean value as a category value.
+        """
+
+        # Check if thresholds input is correct
+        thresholds = sorted(thresholds)
+        replaced = np.zeros(self._data.shape)
+        for i in range(len(thresholds)):
+            i_th_cat = (self._data<thresholds[i]) & (replaced==0)
+            replaced[i_th_cat]=1
+            if values is None :
+                self._data[i_th_cat] = np.mean(self._data[i_th_cat])
+            else:
+                self._data[i_th_cat] = values[i]
+        final_cat = replaced==0
+        if values is None :
+            self._data[final_cat] = np.mean(self._data[final_cat])
+        else:
+            self._data[final_cat] = values[-1]
 
     def categorize(self,
                    nb_categories: int,
@@ -514,10 +546,9 @@ class Image:
                 n += 1
                 # update centroids positions
                 for i in range(nb_categories):
-                    centroids[i] = np.mean([self._data[pos]
-                                    for pos in np.ndindex(categories.shape)
-                                    if categories[pos] == i])
-                print(centroids)
+                    centroids[i]=np.mean([self._data[pos]
+                                 for pos in np.ndindex(categories.shape)
+                                 if categories[pos]==i])
                 # update every point
                 for ind, val in np.ndenumerate(self._data):
                     new_ind = np.argmin([abs(x-val) for x in centroids])
@@ -654,10 +685,34 @@ class Image:
                 "tiling mode should be 'horizontal' ('h'),\
                   'vertical' ('v') or 'square' ('s')")
 
-# ------------------ Conversion functions -------------------------------------
+def labelize(image):
+    """
+    Label the data to get integers from 0 to the number of facies
 
+    Parameters
+    ----------
+    image : ndarray | Image
+        non-empty numpy array or Image class object
 
-def gslib_to_png(gslib_file, output_name):
+    Returns
+    -------
+    ndarray
+        array of the same shape of image containing the categories
+    """
+    data = image.asArray() if isinstance(image,Image) else image
+    output = np.zeros(data.shape).astype(np.int32)
+    facies = np.unique(data)
+    labels = dict([(val,ind[0]) for ind,val in np.ndenumerate(facies)])
+    for pos in np.ndindex(data.shape):
+        output[pos]=labels[data[pos]]
+    if output.shape[-1]==1:
+        output=output.reshape(output.shape[:-1])
+    return output
+
+## ------------------ Conversion functions -------------------------------------
+
+def gslib_to_png(gslib_file :str, output_name:str):
+    """ Conversion function """
     try:
         from PIL import Image as PIL_Img
     except ImportError:
@@ -681,16 +736,17 @@ def gslib_to_png(gslib_file, output_name):
             output.save('{}_{}.png'.format(output_name, iz))
 
 
-def png_to_gslib(png_file, output_name):
+def png_to_gslib(png_file:str, output_name:str):
+    """ Conversion function """
     img = Image.fromPng(png_file)
     img.exportAsGslib(output_name)
 
-
-def gslib_to_vox(in_file, out_file, verbose=False):
+def gslib_to_vox(in_file:str, out_file:str, verbose=False):
+    """ Conversion function """
     img = Image.fromGslib(in_file)
     img.exportAsVox(out_file, verbose)
 
-
-def vox_to_gslib(in_file, out_file):
+def vox_to_gslib(in_file:str,out_file:str):
+    """ Conversion function """
     img = Image.fromVox(in_file)
     img.exportAsGslib(out_file)
