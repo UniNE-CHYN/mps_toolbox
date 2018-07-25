@@ -170,4 +170,8 @@ def get_components(image):
     """
     if isinstance(image,Image):
         image = image.asArray()
-    return skimage.measure.label(image, connectivity=1)
+    categories = get_categories(image)
+    background_value = 0
+    if len(categories) > 0:
+        background_value = categories[0] - 1
+    return skimage.measure.label(image, connectivity=1, background=background_value)
