@@ -232,8 +232,17 @@ class Image:
         params = dict([("is3D",data.shape[2]>1),("isColored",False)])
         return Image(data, params)
 
-
     ## ------- Export methods
+
+    def plot(self):
+        import matplotlib.pyplot as plt
+        if self._data.shape[-1]==1:
+            plt.imshow(self._data[:,:,0])
+        else:
+            plt.imshow(self._data)
+        plt.colorbar()
+        plt.show()
+
     def asArray(self):
         """
         Return the raw data as a numpy array
@@ -663,6 +672,8 @@ def labelize(image):
     labels = dict([(val,ind[0]) for ind,val in np.ndenumerate(facies)])
     for pos in np.ndindex(data.shape):
         output[pos]=labels[data[pos]]
+    if output.shape[-1]==1:
+        output=output.reshape(output.shape[:-1])
     return output
 
 ## ------------------ Conversion functions -------------------------------------
