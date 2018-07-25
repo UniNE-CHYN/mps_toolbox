@@ -108,7 +108,7 @@ def get_map(image):
 
     return connectivity
 
-def get_components(image):
+def get_components(image, background=None):
     """
     Computes connected components array of an input image
 
@@ -123,6 +123,11 @@ def get_components(image):
     image : ndarray | Image
         non-empty numpy array
 
+    background : int
+        optional argument for background category;
+        background pixels will belong to the same connected component
+        If no background specified, no background is used at all
+
     Returns
     -------
     ndarray
@@ -130,4 +135,18 @@ def get_components(image):
     """
     if isinstance(image,Image):
         image = image.asArray()
-    return skimage.measure.label(image, connectivity=1)
+    
+    # Choose correct background value
+    if background is None:
+        categories = get_categories(image)
+        # empty image should be valid
+        if len(categories) > 0:
+            # background value which is not present in the image
+            background  = categories[0]-1
+
+    # Call skimage.measure.label as backend for connected components
+
+    # It appears that it must have some background specified
+    # even if we don't want to use any value as background.
+    # In this case we set a value not present in the image
+    return skimage.measure.label(image, connectivity=1, background=background)
