@@ -4,6 +4,7 @@ import numpy as np
 import skimage.measure
 from mpstool.img import Image
 
+
 def categorize(image, thresholds):
     """
     Returns a categorized image according to thresholds specified.
@@ -14,21 +15,22 @@ def categorize(image, thresholds):
         non-empty numpy array
 
     thresholds : array
-        must be non-empty and all image values must lie between first and last element of threshold
+        non-empty numpy array
 
     Returns
     -------
     ndarray
-        Array of the same size as the input array, categorized, with labels starting from 1 to n+1,
+        Array of the same size as the input array,
+        categorized, with labels starting from 1 to n+1,
         where n is the length of the threshold array.
         Category 1 corresponds to the values which are below
         the smallest value in the thresholds array,
-        category 2 to values not exceeding the second smallest value, and so forth.
-        The last category labels image values which exceed the greatest value found in the thresholds.
+        category 2 : values not exceeding the second smallest value, and so on.
+        Last category: pixel values exceeding the greatest value in thresholds.
 
     """
 
-    if isinstance(image,Image):
+    if isinstance(image, Image):
         image = image.asArray()
 
     # Check if thresholds input is correct
@@ -59,7 +61,7 @@ def get_categories(image):
     list
         sorted list of all categories (from smallest to greatest)
     """
-    if isinstance(image,Image):
+    if isinstance(image, Image):
         image = image.asArray()
     return np.unique(image)
 
@@ -80,9 +82,10 @@ def get_function(image, axis):
     Returns
     -------
     dict
-        dictionary of connectivity functions, numpy arrays of length n, where n is lenght of the image along the given axis
+        dictionary of connectivity functions,
+        each being a numpy array of length n = image.shape[axis]
     """
-    if isinstance(image,Image):
+    if isinstance(image, Image):
         image = image.asArray()
 
     # Compute connected components and size
@@ -96,14 +99,21 @@ def get_function(image, axis):
         mask = np.array(image == category)
         same_category_count = np.zeros(nx-1)
         same_component_count = np.zeros(nx-1)
-        for x in np.arange(1,nx):
-            same_category_count[x-1] = np.sum(np.logical_and(image.take(indices=range(x,nx), axis=axis)==image.take(indices=range(nx-x), axis=axis), mask.take(indices=range(x,nx), axis=axis)))
-            same_component_count[x-1] = np.sum(np.logical_and(connected_components.take(indices=range(x,nx), axis=axis)==connected_components.take(indices=range(nx-x), axis=axis), mask.take(indices=range(x,nx), axis=axis)))
+        for x in np.arange(1, nx):
+            same_category_count[x-1] = np.sum(np.logical_and(
+                image.take(indices=range(x, nx), axis=axis) == image.take(
+                indices=range(nx-x), axis=axis), mask.take(indices=range(x, nx), axis=axis)))
+            same_component_count[x-1] = np.sum(np.logical_and(
+                connected_components.take(indices=range(x, nx), axis=axis)
+                    == connected_components.take(indices=range(nx-x), axis=axis), 
+                    mask.take(indices=range(x, nx), axis=axis)))
 
         # Divide components by categories
-        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(same_component_count), where=same_category_count!=0)
+        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(
+            same_component_count), where=same_category_count != 0)
 
     return connectivity
+
 
 def get_map(image):
     """
@@ -124,7 +134,7 @@ def get_map(image):
         2D numpy array of size nx-1, ny-1
     """
 
-    if isinstance(image,Image):
+    if isinstance(image, Image):
         image = image.asArray()
 
     # Compute connected components and size
@@ -137,16 +147,20 @@ def get_map(image):
     connectivity = {}
     for category in categories:
         mask = np.array(image == category)
-        same_category_count = np.zeros((nx-1,ny-1))
+        same_category_count = np.zeros((nx-1, ny-1))
         same_component_count = np.zeros((nx-1, ny-1))
-        for x in np.arange(1,nx):
-            for y in np.arange(1,ny):
-                same_category_count[x-1, y-1] = np.sum(np.logical_and(image[x:,y:]==image[:-x,:-y], mask[x:,y:]))
-                same_component_count[x-1, y-1] = np.sum(np.logical_and(connected_components[x:,y:]==connected_components[:-x,:-y], mask[x:,y:]))
+        for x in np.arange(1, nx):
+            for y in np.arange(1, ny):
+                same_category_count[x-1, y-1] = np.sum(np.logical_and(
+                    image[x:, y:] == image[:-x, :-y], mask[x:, y:]))
+                same_component_count[x-1, y-1] = np.sum(np.logical_and(
+                    connected_components[x:, y:] == connected_components[:-x, :-y], mask[x:, y:]))
         # Divide components by categories
-        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(same_component_count), where=same_category_count!=0)
+        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(
+            same_component_count), where=same_category_count != 0)
 
     return connectivity
+
 
 def get_components(image, background=None):
     """
@@ -173,16 +187,16 @@ def get_components(image, background=None):
     ndarray
         numpy array of the same size as input
     """
-    if isinstance(image,Image):
+    if isinstance(image, Image):
         image = image.asArray()
-    
+
     # Choose correct background value
     if background is None:
         categories = get_categories(image)
         # empty image should be valid
         if len(categories) > 0:
             # background value which is not present in the image
-            background  = categories[0]-1
+            background = categories[0]-1
 
     # Call skimage.measure.label as backend for connected components
 
