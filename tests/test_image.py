@@ -33,7 +33,7 @@ def test_threshold2():
 
 def test_saturate():
     img = example_image()
-    img.saturate_white(t=127)
+    img.saturate(t=127)
     saturated = img.asArray()
     expected = np.array([[200, 255, 0],
                          [0, 0, 255],
