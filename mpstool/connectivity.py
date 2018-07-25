@@ -68,7 +68,7 @@ def get_categories(image):
 
 def get_function(image, axis):
     """
-    Computes connectivity function along given axis for all categories in image.
+    Computes connectivity function along given axis for all categories in image
 
     Returns a dictionary of connectivity functions.
     Keys of the dictionary are the categories given by get_categories.
@@ -102,15 +102,19 @@ def get_function(image, axis):
         for x in np.arange(1, nx):
             same_category_count[x-1] = np.sum(np.logical_and(
                 image.take(indices=range(x, nx), axis=axis) == image.take(
-                indices=range(nx-x), axis=axis), mask.take(indices=range(x, nx), axis=axis)))
+                    indices=range(nx-x), axis=axis),
+                mask.take(indices=range(x, nx), axis=axis)))
             same_component_count[x-1] = np.sum(np.logical_and(
                 connected_components.take(indices=range(x, nx), axis=axis)
-                    == connected_components.take(indices=range(nx-x), axis=axis), 
-                    mask.take(indices=range(x, nx), axis=axis)))
+                == connected_components.take(indices=range(nx-x), axis=axis),
+                mask.take(indices=range(x, nx), axis=axis)))
 
         # Divide components by categories
-        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(
-            same_component_count), where=same_category_count != 0)
+        connectivity[category] = np.divide(same_component_count,
+                                           same_category_count,
+                                           out=np.zeros_like(
+                                               same_component_count),
+                                           where=same_category_count != 0)
 
     return connectivity
 
@@ -154,10 +158,14 @@ def get_map(image):
                 same_category_count[x-1, y-1] = np.sum(np.logical_and(
                     image[x:, y:] == image[:-x, :-y], mask[x:, y:]))
                 same_component_count[x-1, y-1] = np.sum(np.logical_and(
-                    connected_components[x:, y:] == connected_components[:-x, :-y], mask[x:, y:]))
+                    connected_components[x:, y:]
+                    == connected_components[:-x, :-y], mask[x:, y:]))
         # Divide components by categories
-        connectivity[category] = np.divide(same_component_count, same_category_count, out=np.zeros_like(
-            same_component_count), where=same_category_count != 0)
+        connectivity[category] = np.divide(same_component_count,
+                                           same_category_count,
+                                           out=np.zeros_like(
+                                               same_component_count),
+                                           where=same_category_count != 0)
 
     return connectivity
 
