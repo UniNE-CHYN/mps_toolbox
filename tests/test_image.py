@@ -13,15 +13,23 @@ def example_image():
                      [250, 100, 0]])
     return Image.fromArray(data)
 
-def test_threshold():
-    img = example_image()
-    img.threshold(t=127)
-    thresholded = img.asArray()
-    expected = np.array([[255,255,0],
-                          [0,0,255],
-                          [255,0,0]]).reshape((3,3,1))
-    assert expected.shape==thresholded.shape
-    assert np.alltrue(thresholded == expected)
+def test_threshold1():
+    img1 = example_image()
+    img1.threshold(thresholds=[127], values=[0,255])
+    expected1 = Image.fromArray(
+                    np.array([[255,255,0],
+                              [0,0,255],
+                              [255,0,0]]))
+    assert img1 == expected1
+
+def test_threshold2():
+    img2 = example_image()
+    img2.threshold(thresholds=[80,210], values=[0,127,255])
+    expected2 = Image.fromArray(
+                    np.array([[127,255,0],
+                              [127,0,255],
+                              [255,127,0]]))
+    assert img2 == expected2
 
 def test_saturate():
     img = example_image()

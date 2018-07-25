@@ -412,6 +412,7 @@ class Image:
 
 
     ## -------- Transformation methods
+
     def apply_fun(self,fun):
         """
         Transformation method. Applies a function to every element of the data container.
@@ -422,20 +423,6 @@ class Image:
         """
         for x in np.nditer(self._data, op_flags=['readwrite']):
             x[...]=fun(x)
-
-    def threshold(self,t=127):
-        """
-        Transformation method. Applies a threshold of height t on the image, that is to say :
-        sends elements with values<t to 0 and other values to 255
-        Parameters
-        ----------
-        't' : int
-            the height of the threshold.
-            default = 127
-        """
-        assert t>=0 and t<256
-        f = lambda x : 0 if x<=t else 255
-        self.apply_fun(f)
 
     def saturate_white(self,t=5):
         """
@@ -450,6 +437,38 @@ class Image:
         """
         f = lambda x : x if x>t else 0
         self.apply_fun(f)
+
+    def threshold(self, thresholds=[127], values=None):
+        """
+        Returns a categorized image according to thresholds specified.
+
+        Parameters
+        ----------
+        'thresholds' : ndarray | list
+            must be non-empty and all image values must lie between
+            first and last element of threshold
+
+        'values' : ndarray | list
+            a list of size len(thresholds)+1. If this argument is not None,
+            the categories will take the given. Otherwise, the categores will
+            have their mean value as a category value.
+        """
+
+        # Check if thresholds input is correct
+        thresholds = sorted(thresholds)
+        replaced = np.zeros(self._data.shape)
+        for i in range(len(thresholds)):
+            i_th_cat = (self._data<thresholds[i]) & (replaced==0)
+            replaced[i_th_cat]=1
+            if values is None :
+                self._data[i_th_cat] = np.mean(self._data[i_th_cat])
+            else:
+                self._data[i_th_cat] = values[i]
+        final_cat = replaced==0
+        if values is None :
+            self._data[final_cat] = np.mean(self._data[final_cat])
+        else:
+            self._data[final_cat] = values[-1]
 
     def categorize(self, nb_categories:int , initial_clusters=None, norm="l1", max_iter=10):
         """
@@ -493,7 +512,6 @@ class Image:
                 # update centroids positions
                 for i in range(nb_categories):
                     centroids[i]=np.mean([self._data[pos] for pos in np.ndindex(categories.shape) if categories[pos]==i])
-                print(centroids)
                 # update every point
                 for ind,val in np.ndenumerate(self._data):
                     new_ind=np.argmin([abs(x-val) for x in centroids])
@@ -623,6 +641,29 @@ class Image:
             return Image.fromArray(image_stack)
         else:
             raise Exception("tiling mode should be 'horizontal' ('h'),  'vertical' ('v') or 'square' ('s')")
+
+## -----------------------------------
+def labelize(image):
+    """
+    Label the data to get integers from 0 to the number of facies
+
+    Parameters
+    ----------
+    image : ndarray | Image
+        non-empty numpy array
+
+    Returns
+    -------
+    ndarray
+        array of the same shape of image containing the categories
+    """
+    data = image.asArray() if isinstance(image,Image) else image
+    output = np.zeros(data.shape).astype(np.int32)
+    facies = np.unique(data)
+    labels = dict([(val,ind) for ind,val in np.ndenumerate(facies)])
+    for pos in np.ndindex(data):
+        output[pos]=labels[data[pos]]
+    return output
 
 ## ------------------ Conversion functions -------------------------------------
 
