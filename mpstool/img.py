@@ -433,16 +433,18 @@ class Image:
         for x in np.nditer(self._data, op_flags=['readwrite']):
             x[...]=fun(x)
 
-    def saturate_white(self,t=5):
+    def saturate(self,t=5):
         """
         Transformation method. Applies a saturation of height t on the image, that is to say :
-        sends elements with values<t to 255 and does not change other values
+        sends elements with values<t to 255 and does not change other values.
+
+        This is usefull for the .vox format, where 0 values are being rendered as transparent
 
         Parameters
         ----------
         't' : int
             the height of the saturation.
-            default = 250
+            default = 5
         """
         f = lambda x : x if x>t else 0
         self.apply_fun(f)
@@ -678,7 +680,8 @@ def labelize(image):
 
 ## ------------------ Conversion functions -------------------------------------
 
-def gslib_to_png(gslib_file, output_name):
+def gslib_to_png(gslib_file :str, output_name:str):
+    """ Conversion function """
     try:
         from PIL import Image as PIL_Img
     except:
@@ -701,18 +704,17 @@ def gslib_to_png(gslib_file, output_name):
             output = PIL_Img.fromarray(V, mode='L')
             output.save('{}_{}.png'.format(output_name,iz))
 
-def png_to_gslib(png_file, output_name):
+def png_to_gslib(png_file:str, output_name:str):
+    """ Conversion function """
     img = Image.fromPng(png_file)
     img.exportAsGslib(output_name)
 
-def gslib_to_vox(in_file, out_file, verbose=False):
+def gslib_to_vox(in_file:str, out_file:str, verbose=False):
+    """ Conversion function """
     img = Image.fromGslib(in_file)
     img.exportAsVox(out_file, verbose)
 
-def vox_to_gslib(in_file,out_file):
+def vox_to_gslib(in_file:str,out_file:str):
+    """ Conversion function """
     img = Image.fromVox(in_file)
     img.exportAsGslib(out_file)
-
-def gslib_to_cuts(gslib_file, output_folder="cut_output", axis=-1, n=-1, invert=False):
-    img = Image.fromGslib(gslib_file)
-    img.exportCuts(output_folder=output_folder, axis=axis, n=n, invert=invert)
