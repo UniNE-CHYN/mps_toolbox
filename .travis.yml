@@ -9,8 +9,10 @@ install:
   - pip install scikit-image
   - pip install py-vox-io
   - pip install pillow
+  - pip install pycodestyle
   - pip install -e .
 script:
   - pytest --cov=mpstool
+  - pycodestyle mpstool tests 
 after_success:
   - coveralls
