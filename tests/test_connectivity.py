@@ -47,7 +47,7 @@ def test_connected_component(cube):
                                         [[0, 2, 2],
                                          [0, 2, 2],
                                          [0, 0, 0]]])
-    assert np.alltrue(mpstool.connectivity.get_components(cube) == connectivity_array_cube)
+    assert np.alltrue(mpstool.connectivity.get_components(cube, background=0) == connectivity_array_cube)
 
 def test_categories(cube):
     assert all(mpstool.connectivity.get_categories(cube) == [0,1])
