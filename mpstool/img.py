@@ -233,15 +233,15 @@ class Image:
         params = dict([("is3D", data.shape[2] > 1), ("isColored", False)])
         return Image(data, params)
 
-    ## ------- Export methods
+    # ------- Export methods
 
     def plot(self):
         """
         Displays the image using matplotlib.pyplot
         """
         import matplotlib.pyplot as plt
-        if self._data.shape[-1]==1:
-            plt.imshow(self._data[:,:,0])
+        if self._data.shape[-1] == 1:
+            plt.imshow(self._data[:, :, 0])
         else:
             plt.imshow(self._data)
         plt.colorbar()
@@ -365,8 +365,8 @@ class Image:
         # (Dimension has to fit in uint8 data type)
         a = self._data[:255, :255, :255]
         if ((np.array(self.shape) > 255).any()):
-            print("[WARNING] the image shape {} is to big to be converted into \
-                    vox.\n It will be cropped at 255.")
+            print("[WARNING] the image shape {} is to big to be converted \
+                  into vox.\n It will be cropped at 255.")
         vox = Vox.from_dense(a)
         VoxWriter(output_name, vox).write()
         if verbose:
@@ -434,10 +434,9 @@ class Image:
                 Image.fromArray(array[:, :, i]).exportAsPng(
                     pj(output_folder, "cut_z_{}.png".format(i)))
 
+    # -------- Transformation methods
 
-    ## -------- Transformation methods
-
-    def apply_fun(self,fun):
+    def apply_fun(self, fun):
         """
         Transformation method. Applies a function to every element of the
         data container.
@@ -450,11 +449,11 @@ class Image:
         for x in np.nditer(self._data, op_flags=['readwrite']):
             x[...] = fun(x)
 
-    def saturate(self,t=5):
+    def saturate(self, t=5):
         """
         Transformation method. Applies a saturation of height t on the image,
-        that is to say : sends elements with values<t to 255 and does not change
-        other values.
+        that is to say : sends elements with values<t to 255 and does not
+        change other values.
 
         This is usefull for the .vox format, where 0 values are being rendered
         as transparent.
@@ -465,7 +464,7 @@ class Image:
             the height of the saturation.
             default = 5
         """
-        f = lambda x : x if x>t else 0
+        def f(x): return x if x > t else 0
         self.apply_fun(f)
 
     def threshold(self, thresholds=[127], values=None):
@@ -488,14 +487,14 @@ class Image:
         thresholds = sorted(thresholds)
         replaced = np.zeros(self._data.shape)
         for i in range(len(thresholds)):
-            i_th_cat = (self._data<thresholds[i]) & (replaced==0)
-            replaced[i_th_cat]=1
-            if values is None :
+            i_th_cat = (self._data < thresholds[i]) & (replaced == 0)
+            replaced[i_th_cat] = 1
+            if values is None:
                 self._data[i_th_cat] = np.mean(self._data[i_th_cat])
             else:
                 self._data[i_th_cat] = values[i]
-        final_cat = replaced==0
-        if values is None :
+        final_cat = replaced == 0
+        if values is None:
             self._data[final_cat] = np.mean(self._data[final_cat])
         else:
             self._data[final_cat] = values[-1]
@@ -546,9 +545,10 @@ class Image:
                 n += 1
                 # update centroids positions
                 for i in range(nb_categories):
-                    centroids[i]=np.mean([self._data[pos]
-                                 for pos in np.ndindex(categories.shape)
-                                 if categories[pos]==i])
+                    centroids[i] = np.mean(
+                        [self._data[pos]
+                         for pos in np.ndindex(categories.shape)
+                         if categories[pos] == i])
                 # update every point
                 for ind, val in np.ndenumerate(self._data):
                     new_ind = np.argmin([abs(x-val) for x in centroids])
@@ -557,10 +557,11 @@ class Image:
                         has_updated = True
             # assign value of centroids to majority of their cluster
             for i in range(nb_categories):
-                unique, count = np.unique([self._data[x]
-                                    for x in np.ndindex(categories.shape)
-                                    if categories[x] == i],return_counts=True)
-                centroids[i] = unique[np.argmax(count)]
+                unique, cnt = np.unique([self._data[x]
+                                         for x in np.ndindex(categories.shape)
+                                         if categories[x] == i],
+                                        return_counts=True)
+                centroids[i] = unique[np.argmax(cnt)]
             for ind in np.ndindex(categories.shape):
                 self._data[ind] = centroids[categories[ind]]
 
@@ -597,12 +598,12 @@ class Image:
         Parameters
         ----------
         'output_dim' : tuple
-            The size of the sample. All coordinates should lay between 0 and the
-            corresponding coordinate of self._data
+            The size of the sample. All coordinates should lay between 0 and
+            the corresponding coordinate of self._data
 
         'normalize' : boolean
             if set to true, apply the normalize method to the output sample to
-            get values in [-1;1
+            get values in [-1;1]
 
         Returns
         ----------
@@ -685,6 +686,7 @@ class Image:
                 "tiling mode should be 'horizontal' ('h'),\
                   'vertical' ('v') or 'square' ('s')")
 
+
 def labelize(image):
     """
     Label the data to get integers from 0 to the number of facies
@@ -699,19 +701,20 @@ def labelize(image):
     ndarray
         array of the same shape of image containing the categories
     """
-    data = image.asArray() if isinstance(image,Image) else image
+    data = image.asArray() if isinstance(image, Image) else image
     output = np.zeros(data.shape).astype(np.int32)
     facies = np.unique(data)
-    labels = dict([(val,ind[0]) for ind,val in np.ndenumerate(facies)])
+    labels = dict([(val, ind[0]) for ind, val in np.ndenumerate(facies)])
     for pos in np.ndindex(data.shape):
-        output[pos]=labels[data[pos]]
-    if output.shape[-1]==1:
-        output=output.reshape(output.shape[:-1])
+        output[pos] = labels[data[pos]]
+    if output.shape[-1] == 1:
+        output = output.reshape(output.shape[:-1])
     return output
 
-## ------------------ Conversion functions -------------------------------------
+# ------------------ Conversion functions -------------------------------------
 
-def gslib_to_png(gslib_file :str, output_name:str):
+
+def gslib_to_png(gslib_file: str, output_name: str):
     """ Conversion function """
     try:
         from PIL import Image as PIL_Img
@@ -736,17 +739,19 @@ def gslib_to_png(gslib_file :str, output_name:str):
             output.save('{}_{}.png'.format(output_name, iz))
 
 
-def png_to_gslib(png_file:str, output_name:str):
+def png_to_gslib(png_file: str, output_name: str):
     """ Conversion function """
     img = Image.fromPng(png_file)
     img.exportAsGslib(output_name)
 
-def gslib_to_vox(in_file:str, out_file:str, verbose=False):
+
+def gslib_to_vox(in_file: str, out_file: str, verbose=False):
     """ Conversion function """
     img = Image.fromGslib(in_file)
     img.exportAsVox(out_file, verbose)
 
-def vox_to_gslib(in_file:str,out_file:str):
+
+def vox_to_gslib(in_file: str, out_file: str):
     """ Conversion function """
     img = Image.fromVox(in_file)
     img.exportAsGslib(out_file)
