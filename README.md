@@ -34,8 +34,7 @@ Can be found here: https://mps-toolbox.readthedocs.io/en/latest/index.html
 # Example use
 
 ## Connectivity functions
-```
-python
+```python
 import numpy as np
 import matplotlib.pyplot as plt
 import mpstool
@@ -68,8 +67,7 @@ plt.show()
 ```
 
 ## Connectivity maps
-```
-python
+```python
 # Compute the connectivity map for each category
 connectivity = mpstool.connectivity.get_map(image)
 
@@ -87,8 +85,7 @@ for category in categories:
 
 ## Connected components
 The library also provides a function for retrieving connected components:
-```
-python
+```python
 # Get the connected components
 connected_components = mpstool.connectivity.get_components(image)
 plt.imshow(connected_components)
@@ -97,8 +94,7 @@ plt.show()
 
 # 3D example
 
-```
-python
+```python
 import numpy as np
 import matplotlib.pyplot as plt
 import mpstool
@@ -128,8 +124,7 @@ plt.show()
 It is possible to convert continuous images into categorical ones and then evaluate the connectivity.
 Connectivity module provides a thresholding function.
 
-```
-python
+```python
 import numpy as np
 import matplotlib.pyplot as plt
 import mpstool
