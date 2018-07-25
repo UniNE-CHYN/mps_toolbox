@@ -17,8 +17,8 @@ class Image:
 
     | nx  ny  nz  x_orig  y_orig  z_orig x_padding y_padding z_padding
     | number_of_variables (should be 1 for our use)
-    | name_of_variable_1 
-    | ... 
+    | name_of_variable_1
+    | ...
     | name_of_variable_n
 
     then, on each line, the value of a coordinate (x,y,z), in the order of the
@@ -61,9 +61,12 @@ class Image:
     def __eq__(self,other):
         return np.alltrue(self._data == other._data)
 
+    def __str__(self):
+        return self._data.__str__()
+
     ## ------- Import methods
     @staticmethod
-    def fromGslib(file_name, normalize=False):
+    def fromGslib(file_name:str, normalize=False):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a .gslib file.
@@ -146,7 +149,7 @@ class Image:
         return output
 
     @staticmethod
-    def fromTxt(file_name, shape, normalize=False):
+    def fromTxt(file_name:str, shape, normalize=False):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a raw txt file
@@ -167,7 +170,7 @@ class Image:
         return Image.fromArray(array, normalize)
 
     @staticmethod
-    def fromPng(file_name, normalize=False):
+    def fromPng(file_name:str, normalize=False):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a .png file.
@@ -202,7 +205,7 @@ class Image:
         return img
 
     @staticmethod
-    def fromVox(file_name):
+    def fromVox(file_name:str):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a .vox file.
@@ -237,7 +240,7 @@ class Image:
         """
         return self._data
 
-    def exportAsTxt(self,output_name, verbose=False):
+    def exportAsTxt(self,output_name:str, verbose=False):
         """
         Export the Image object data as a txt file.
         Requires the data to be two dimensionnal.
@@ -258,7 +261,7 @@ class Image:
         if verbose:
             print("Generated txt file as {}".format(output_name))
 
-    def exportAsPng(self, output_name, verbose=False):
+    def exportAsPng(self, output_name:str, verbose=False):
         """
         Export the Image object data as a png file.
         Requires the data to be two dimensionnal.
@@ -291,7 +294,7 @@ class Image:
         if verbose:
             print("Generated image as {}".format(output_name))
 
-    def exportAsGslib(self, output_name, verbose=False):
+    def exportAsGslib(self, output_name:str, verbose=False):
         """
         Export the Image object data as a gslib file.
         Requires the image to be a black and white one (only one channel)
@@ -321,7 +324,7 @@ class Image:
         if verbose:
             print("Generated .gslib file as {}".format(output_name))
 
-    def exportAsVox(self, output_name, verbose=False):
+    def exportAsVox(self, output_name:str, verbose=False):
         """
         Export the Image object data as a vox file.
         Requires the image to be a black and white one (only one channel).
@@ -447,6 +450,62 @@ class Image:
         """
         f = lambda x : x if x>t else 0
         self.apply_fun(f)
+
+    def categorize(self, nb_categories:int , initial_clusters=None, norm="l1", max_iter=10):
+        """
+        Transformation method. Applies a clustering algorithm to categorize the
+        image. k clusters will be created, with the color value of their
+        barycenter.
+
+        Parameters
+        ----------
+        'nb_categories' : int
+            The number of categories
+
+        'initial_clusters' : list
+            Values of the initial centroids for the cluster. If not provided, those
+            values will be taken at random
+
+        'norm' : str
+            The distance to be used. Supported distance are l1 and l2.
+            Only relevant when dealing with colored (multi channel) images.
+
+        'max_iter' : int
+            Maximal number of cluster updates allowed
+        """
+        if self.isColored:
+            raise NotImplementedError()
+        else:
+            vmin, vmax = np.amin(self._data), np.amax(self._data)
+            if initial_clusters is None:
+                centroids = [np.random.rand()*(vmax-vmin)+vmin for i in range(nb_categories)]
+            else:
+                centroids = initial_clusters
+                np.clip(centroids, vmin, vmax)
+            categories = np.zeros(self._data.shape).astype(np.int16)
+            for ind,val in np.ndenumerate(self._data):
+                categories[ind]=np.argmin([abs(x-val) for x in centroids])
+            has_updated=True
+            n = 0
+            while has_updated and n<max_iter:
+                has_updated=False
+                n+=1
+                # update centroids positions
+                for i in range(nb_categories):
+                    centroids[i]=np.mean([self._data[pos] for pos in np.ndindex(categories.shape) if categories[pos]==i])
+                print(centroids)
+                # update every point
+                for ind,val in np.ndenumerate(self._data):
+                    new_ind=np.argmin([abs(x-val) for x in centroids])
+                    if new_ind != categories[ind]:
+                        categories[ind]=new_ind
+                        has_updated=True
+            # assign value of centroids to majority of their cluster
+            for i in range(nb_categories):
+                unique,counts = np.unique([self._data[x] for x in np.ndindex(categories.shape) if categories[x]==i], return_counts=True)
+                centroids[i] = unique[np.argmax(counts)]
+            for ind in np.ndindex(categories.shape):
+                self._data[ind]=centroids[categories[ind]]
 
     def normalize(self):
         """

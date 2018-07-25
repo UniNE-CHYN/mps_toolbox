@@ -27,9 +27,9 @@ def test_saturate():
     img = example_image()
     img.saturate_white(t=127)
     saturated = img.asArray()
-    expected = np.array([[255,255,60],
-                       [100,10,255],
-                       [255,100,0]]).reshape((3,3,1))
+    expected = np.array([[200, 255, 0],
+                         [0, 0, 255],
+                         [250, 0, 0]]).reshape((3,3,1))
     assert saturated.shape==expected.shape
     assert np.alltrue(saturated == expected)
 
@@ -78,3 +78,22 @@ def test_conversion_final():
     a = np.loadtxt("tests/test_img.txt")
     b = np.loadtxt("tests/test_img2.txt")
     return np.alltrue(a==b)
+
+def test_categorize():
+    img2 = example_image()
+    expected2 = Image.fromArray(
+                    np.array([[255, 255, 100],
+                              [100, 100, 255],
+                              [255, 100, 100]]))
+    img2.categorize(2)
+    assert img2==expected2
+
+    img3 = example_image()
+    expected3 = Image.fromArray(
+                    np.array([[255, 255, 100],
+                              [100, 0, 255],
+                              [255, 100, 0]]))
+    img3.categorize(3, initial_clusters=[2,99,254])
+    print(img3)
+    print(expected3)
+    assert img3==expected3
