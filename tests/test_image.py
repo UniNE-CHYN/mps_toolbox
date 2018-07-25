@@ -45,7 +45,7 @@ def test_labelize():
     img = example_image()
     expected = np.array([[4, 6, 2],
                          [3, 1, 6],
-                         [5, 3, 0]]).reshape((3,3,1))
+                         [5, 3, 0]])
     labels = labelize(img)
     assert np.alltrue(labels==expected)
 
