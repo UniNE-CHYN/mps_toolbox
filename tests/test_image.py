@@ -108,21 +108,23 @@ def test_conversion_final():
     return np.alltrue(a == b)
 
 
-def test_categorize():
-    img2 = example_image()
-    expected2 = Image.fromArray(
+def test_categorize1():
+    img = example_image()
+    expected = Image.fromArray(
         np.array([[255, 255, 100],
                   [100, 100, 255],
                   [255, 100, 100]]))
-    img2.categorize(2)
-    assert img2 == expected2
+    print(img._data)
+    img.categorize(2)
+    print(img._data)
+    assert img == expected
 
-    img3 = example_image()
-    expected3 = Image.fromArray(
+def test_categorize2():
+    img = example_image()
+    expected = Image.fromArray(
         np.array([[255, 255, 100],
                   [100, 0, 255],
                   [255, 100, 0]]))
-    img3.categorize(3, initial_clusters=[2, 99, 254])
-    print(img3)
-    print(expected3)
-    assert img3 == expected3
+    img.categorize(3, initial_clusters=[2, 99, 254])
+    print(img._data)
+    assert img == expected

@@ -528,6 +528,7 @@ class Image:
         if self.isColored:
             raise NotImplementedError()
         else:
+            # Initialize centroids
             vmin, vmax = np.amin(self._data), np.amax(self._data)
             if initial_clusters is None:
                 centroids = [np.random.rand()*(vmax-vmin) +
@@ -535,35 +536,46 @@ class Image:
             else:
                 centroids = initial_clusters
                 np.clip(centroids, vmin, vmax)
-            categories = np.zeros(self._data.shape).astype(np.int16)
-            for ind, val in np.ndenumerate(self._data):
-                categories[ind] = np.argmin([abs(x-val) for x in centroids])
+
+            # Initialize categories : assign value to closest centroid
+            categories, counts = np.unique(self._data, return_counts=True)
+            total = np.sum(counts)
+            mapsto = np.zeros(categories.shape).astype(np.int16)
+            for ind, val in np.ndenumerate(categories):
+                mapsto[ind] = np.argmin([abs(x-val) for x in centroids])
+
+            # Iteration while something is changing
             has_updated = True
             n = 0
             while has_updated and n < max_iter:
                 has_updated = False
                 n += 1
-                # update centroids positions
+                # Update centroids positions
                 for i in range(nb_categories):
                     centroids[i] = np.mean(
-                        [self._data[pos]
+                        [categories[pos]
                          for pos in np.ndindex(categories.shape)
-                         if categories[pos] == i])
-                # update every point
-                for ind, val in np.ndenumerate(self._data):
+                         if mapsto[pos] == i])
+                # Update every value according to new centroids
+                for ind, val in np.ndenumerate(categories):
                     new_ind = np.argmin([abs(x-val) for x in centroids])
-                    if new_ind != categories[ind]:
-                        categories[ind] = new_ind
+                    if new_ind != mapsto[ind]:
+                        mapsto[ind] = new_ind
                         has_updated = True
+
             # assign value of centroids to majority of their cluster
             for i in range(nb_categories):
-                unique, cnt = np.unique([self._data[x]
-                                         for x in np.ndindex(categories.shape)
-                                         if categories[x] == i],
-                                        return_counts=True)
-                centroids[i] = unique[np.argmax(cnt)]
-            for ind in np.ndindex(categories.shape):
-                self._data[ind] = centroids[categories[ind]]
+                i_th_category = mapsto == i
+                majority_i = np.argmax(counts[i_th_category])
+                centroids[i] = categories[i_th_category][majority_i]
+
+            # rewrite self._data with new categorical data
+            mapsto_dict = dict()
+            for ind, cat in np.ndenumerate(categories):
+                mapsto_dict[cat] = centroids[mapsto[ind]]
+            print(mapsto_dict)
+            for pos in np.ndindex(self._data.shape):
+                self._data[pos] = mapsto_dict[self._data[pos]]
 
     def normalize(self):
         """
