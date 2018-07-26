@@ -634,7 +634,7 @@ class Image:
         return sample
 
     @staticmethod
-    def tile_images(image_stack, mode='h'):
+    def tile_images(image_stack, mode):
         """
         Given a list of Images, reshapes them into a tiling for display.
 
@@ -643,48 +643,45 @@ class Image:
         'image_stack' : list of Images
             the images that will be concatenated
 
-        'mode' : string
-            The mode of tiling. Three modes are available :
+        'mode' : string | tuple
+            The mode of tiling. Three predefined modes are available :
               horizontal -> 'h' option
               vertical   -> 'v' option
               square     -> 's' option
-              rectangular -> 'r' option
-            default mode is horizontal
+            You can also provide a tuple (nb_lines,nb_columns) for any
+            rectangular tiling. If your number of images is not
+            nb_lines*nb_columns, the function will complete with black images
         """
         image_stack = [img.asArray() for img in image_stack]
+        shape = None
+        N = len(image_stack)
         if mode in ["horizontal", 'h']:
-            return Image.fromArray(np.concatenate(image_stack, axis=1))
+            shape = (1, N)
         elif mode in ["vertical", 'v']:
-            return Image.fromArray(np.concatenate(image_stack, axis=0))
-        elif mode in ["rectangular", 'r']:
-            N = len(image_stack)
-            nb_rows = N//10
-            rows = []
-            imgshape = image_stack[0].shape
-            blacks = np.zeros(imgshape)
-            for i in range(10-N % 10):
-                image_stack.append(blacks)
-            for i in range(nb_rows):
-                rows.append(np.concatenate(image_stack[i:i+10], axis=1))
-            return Image.fromArray(np.concatenate(rows, axis=0))
+            shape = (N, 1)
         elif mode in ["square", 's']:
-            N = len(image_stack)
             n = int(sqrt(N))
             m = n if n*n == N else n+1
-            imgshape = image_stack[0].shape
-            blacks = np.zeros(imgshape)
-            for i in range(N-n*m):
-                image_stack.append(blacks)
-            image_stack = np.array(image_stack)
-            image_stack = image_stack.reshape((n, m)+imgshape)
-            image_stack = np.concatenate(image_stack, axis=1)
-            image_stack = np.concatenate(image_stack, axis=1)
-            print(image_stack.shape)
-            return Image.fromArray(image_stack)
+            shape = (m, m)
         else:
-            raise Exception(
-                "tiling mode should be 'horizontal' ('h'),\
-                  'vertical' ('v') or 'square' ('s')")
+            assert (len(mode) == 2)
+            x, y = mode
+            if x*y < N:
+                while x*y < N:
+                    y += 1
+            elif x*y > N:
+                while x*y > N:
+                    y -= 1
+            shape = (x, y)
+        imgshape = image_stack[0].shape
+        blacks = np.zeros(imgshape)
+        for i in range(shape[0]*shape[1]-N):
+            image_stack.append(blacks)
+        rows = []
+        for i in range(0, shape[0]):
+            rows.append(np.concatenate(
+                image_stack[i*shape[0]:i*shape[0]+shape[1]], axis=1))
+        return Image.fromArray(np.concatenate(rows, axis=0))
 
 
 def labelize(image):
