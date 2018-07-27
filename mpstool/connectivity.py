@@ -4,6 +4,7 @@ import numpy as np
 import skimage.measure
 from mpstool.img import Image
 
+
 def get_categories(image):
     """
     Find all values in a numpy array
@@ -23,6 +24,7 @@ def get_categories(image):
     if isinstance(image, Image):
         image = image.asArray()
     return np.unique(image)
+
 
 def get_function(image, axis):
     """

@@ -662,6 +662,10 @@ class Image:
             You can also provide a tuple (nb_lines,nb_columns) for any
             rectangular tiling. If your number of images is not
             nb_lines*nb_columns, the function will complete with black images
+
+        Returns
+        -------
+        A new Image instance
         """
         image_stack = [img.asArray() for img in image_stack]
         shape = None
@@ -689,9 +693,9 @@ class Image:
         for i in range(shape[0]*shape[1]-N):
             image_stack.append(blacks)
         rows = []
-        for i in range(0, shape[0]):
+        for i in range(shape[0]):
             rows.append(np.concatenate(
-                image_stack[i*shape[0]:i*shape[0]+shape[1]], axis=1))
+                image_stack[i*shape[1]:(i+1)*shape[1]], axis=1))
         return Image.fromArray(np.concatenate(rows, axis=0))
 
 
