@@ -573,7 +573,6 @@ class Image:
             mapsto_dict = dict()
             for ind, cat in np.ndenumerate(categories):
                 mapsto_dict[cat] = centroids[mapsto[ind]]
-            print(mapsto_dict)
             for pos in np.ndindex(self._data.shape):
                 self._data[pos] = mapsto_dict[self._data[pos]]
 
