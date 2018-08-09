@@ -119,6 +119,7 @@ def test_categorize1():
     print(img._data)
     assert img == expected
 
+
 def test_categorize2():
     img = example_image()
     expected = Image.fromArray(

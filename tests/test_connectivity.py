@@ -34,18 +34,19 @@ def cube():
 
 def test_threshold():
     image = mpstool.img.Image.fromArray(
-            np.array([[0.3, 3.0],
-                      [1.2, 2.4],
-                      [2.1, 1.1]]))
+        np.array([[0.3, 3.0],
+                  [1.2, 2.4],
+                  [2.1, 1.1]]))
 
     categorical_ref = np.array([[0, 2],
                                 [1, 2],
                                 [2, 1]])
 
-    thresholds= np.array([1.0, 2.0])
+    thresholds = np.array([1.0, 2.0])
     image.threshold(thresholds)
     labels = mpstool.img.labelize(image)
-    assert np.alltrue(labels == categorical_ref )
+    assert np.alltrue(labels == categorical_ref)
+
 
 def test_connected_component(cube):
     connectivity_array_cube = np.array([[[0, 0, 0],
