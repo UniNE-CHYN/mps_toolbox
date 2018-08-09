@@ -17,7 +17,8 @@ def example_image():
 
 def test_str():
     img = example_image()
-    display = '[[[200]\n  [255]\n  [ 60]]\n\n [[100]\n  [ 10]\n  [255]]\n\n [[250]\n  [100]\n  [  0]]]'
+    display = '[[[200]\n  [255]\n  [ 60]]\n\n [[100]\n  [ 10]\n  [255]]\n\n \
+[[250]\n  [100]\n  [  0]]]'
     assert str(img) == display
 
 
