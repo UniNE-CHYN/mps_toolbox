@@ -15,6 +15,12 @@ def example_image():
     return Image.fromArray(data)
 
 
+def test_str():
+    img = example_image()
+    display = '[[[200]\n  [255]\n  [ 60]]\n\n [[100]\n  [ 10]\n  [255]]\n\n [[250]\n  [100]\n  [  0]]]'
+    assert str(img) == display
+
+
 def test_threshold1():
     img = example_image()
     img.threshold(thresholds=[127], values=[0, 255])
