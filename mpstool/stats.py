@@ -3,21 +3,24 @@
 import numpy as np
 from mpstool.img import Image
 
+
 def histogram(image):
     """
     Generates histogram of categorical vairables
     Returns fraction of each category
     """
-    if isinstance(image,Image):
+    if isinstance(image, Image):
         image = image.asArray()
     categories, counts = np.unique(image, return_counts=True)
     return dict(zip(categories, counts/image.size))
 
+
 def variogram(image):
     """
-    Returns dictionary of indicator variogram values in x direction at all pixels for all categories
+    Returns dictionary of indicator variogram values
+    in x direction at all pixels for all categories
     """
-    if isinstance(image,Image):
+    if isinstance(image, Image):
         image = image.asArray()
 
     # Analyse image
@@ -31,5 +34,6 @@ def variogram(image):
         mask = np.array(image == category)
         variogram[category] = np.zeros(ny-1)
         for y in np.arange(1, ny):
-            variogram[category][y-1] = np.sum(np.logical_and(image[:,y:] != image[:,:-y], mask[:,y:])) / (nx*(ny-y))
+            variogram[category][y-1] = np.sum(np.logical_and(
+                image[:, y:] != image[:, :-y], mask[:, y:])) / (nx*(ny-y))
     return variogram

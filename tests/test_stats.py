@@ -4,15 +4,32 @@ Test module for stats. Execute with pytest
 
 import numpy as np
 import mpstool
-
 import pytest
 
-@pytest.fixture
+EPS = 1e-8  # equality threshold for float values
+
+
+def array():
+    return np.array([[1, 1, 1],
+                     [0, 0, 0],
+                     [1, 0, 1]])
+
+
 def image():
-    return np.array([[1,2],[2,2],[3,2]])
+    return mpstool.img.Image.fromArray(array())
 
-def test_histogram(image):
-    result = {1: 1/6, 2: 4/6, 3: 1/6}
-    assert(result == mpstool.stats.histogram(image))
 
-    
+def test_histo():
+    expected_histo = {0: 4./9., 1: 5./9.}
+    for ar in [array(), image()]:
+        assert mpstool.stats.histogram(ar) == expected_histo
+
+
+def test_vario():
+    expected_vario = {0: np.array([0.16666667, 0.]),
+                      1: np.array([0.16666667, 0.])}
+    for ar in [array(), image()]:
+        real_vario = mpstool.stats.variogram(ar)
+        assert real_vario.keys() == expected_vario.keys()
+        for k in expected_vario.keys():
+            assert np.alltrue(abs(real_vario[k]-expected_vario[k]) < EPS)

@@ -51,15 +51,25 @@ The normalize parameter is set to False by default in the importation functions.
 
 Transformation functions
 ------------------------
+Categorize::
+
+    image.categorize(3)
+    # will discretize the image to have only 3 different values
+    # The discretization algorithm is a k-means where k is the number of categories
+    # Each category will then take the color of the majority of pixels within it
+
 Threshold::
 
-    image.threshold(t=120)
-    # values under t are sent to 0. Values above are sent to 255
+    image.threshold(thresholds=[100,200], values=[10,50,150])
+    # this will transform the image the following way:
+    # values < 100 will be sent to 10
+    # values >=100 but <200 will be sent to 50
+    # values >=200 will be sent to 150
 
 Saturation of the white::
 
-    image.saturate_white(t=120)
-    # Values above t are sent to 255. Values below are unchanged
+    image.saturate(t=5)
+    # Values below t will be sent to 0
 
 You can also apply your custom transformation on the values of the pixels::
 
