@@ -5,7 +5,7 @@ with open("README.md", "r") as file_handle:
 
 setuptools.setup(
         name='mpstool',
-        version='0.0.2dev',
+        version='0.1.0',
         author="Przemyslaw Juda & Guillaume Coiffier",
         description="Multiple-point statistics toolbox",
         long_description=long_description,
