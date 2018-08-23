@@ -17,6 +17,7 @@ as quality metrics for multiple-point geostatistical simulations.
 
    installation
    connectivity
+   stats
    image
    api
 

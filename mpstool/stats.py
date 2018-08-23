@@ -15,7 +15,7 @@ def histogram(image):
     return dict(zip(categories, counts/image.size))
 
 
-def variogram(image):
+def variogram(image, axis):
     """
     Returns dictionary of indicator variogram values
     in x direction at all pixels for all categories
@@ -24,16 +24,25 @@ def variogram(image):
         image = image.asArray()
 
     # Analyse image
-    nx = image.shape[0]
-    ny = image.shape[1]
+    n = image.shape[axis]
     variogram = {}
     categories = np.unique(image)
 
+    # Compute *volume*
+    volume = 1
+    for i in range(0, image.ndim):
+        volume = volume*image.shape[i]
+
+    # Compute *area*
+    area = volume / n
+
     # Compute variogram for each category and store in dictionary
     for category in categories:
-        mask = np.array(image == category)
-        variogram[category] = np.zeros(ny-1)
-        for y in np.arange(1, ny):
-            variogram[category][y-1] = np.sum(np.logical_and(
-                image[:, y:] != image[:, :-y], mask[:, y:])) / (nx*(ny-y))
+        indicator_image = np.array(image == category)
+        variogram[category] = np.zeros(n)
+        for x in np.arange(1, n):
+            variogram[category][x] = np.sum(
+                indicator_image.take(indices=range(x, n), axis=axis) !=
+                indicator_image.take(indices=range(n-x), axis=axis)
+                ) / (area*(n-x))
     return variogram
