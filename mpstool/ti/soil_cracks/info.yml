@@ -1,0 +1,4 @@
+name: soil_cracks
+file: ti_categoricalSoilCracks.gslib 
+type: categorical
+info: Eef's paper
