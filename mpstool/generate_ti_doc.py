@@ -5,13 +5,16 @@ import os
 
 
 def build_doc(path):
+    print("Im generating rst doc")
     ti_base = mpstool.ti.build_TrainingImageBase()
     with open(os.path.join(path, 'ti_list.inc'), 'w') as ti_list_file:
+        print("opened " + os.path.join(path, 'ti_list.inc') )
         ti_list_file.write(".. toctree::" + "\n" + "\n")
         ti_base = ti_base.as_dict()
         for key in ti_base:
             ti_list_file.write('   ' + key + '\n')
             with open(os.path.join(path, filename(key)), 'w') as ti_file:
+                print("opened " +  os.path.join(path, filename(key)))
                 ti_file.write(key + '\n')
                 ti_file.write('========================' + '\n' + '\n')
                 ti_file.write(

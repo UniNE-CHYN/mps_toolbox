@@ -175,4 +175,5 @@ texinfo_documents = [
 
 def setup(app):
     import generate_ti_doc
+    print("Im doing setup")
     generate_ti_doc.build_doc(docs_path)
