@@ -20,6 +20,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../mpstool'))
+docs_path = os.path.abspath(os.path.dirname(__file__))
 
 
 # -- General configuration ------------------------------------------------
@@ -174,4 +175,4 @@ texinfo_documents = [
 
 def setup(app):
     import generate_ti_doc
-    generate_ti_doc.build_doc()
+    generate_ti_doc.build_doc(docs_path)
