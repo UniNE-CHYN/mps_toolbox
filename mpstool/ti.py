@@ -33,6 +33,7 @@ class TrainingImageBase:
 def build_TrainingImageBase():
     filename = __file__
     module_dir = os.path.dirname(filename)
+    print(module_dir)
     ti_dir = os.path.join(module_dir, 'ti')
     filenames = [x for x in os.walk(ti_dir)]
     directories = []
