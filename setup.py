@@ -9,5 +9,6 @@ setuptools.setup(
         author="Przemyslaw Juda & Guillaume Coiffier",
         description="Multiple-point statistics toolbox",
         long_description=long_description,
-        packages=setuptools.find_packages()
+        packages=setuptools.find_packages(),
+        include_package_data=True
         )
