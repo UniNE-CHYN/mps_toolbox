@@ -1,4 +1,5 @@
 name: soil_cracks
 file: ti_categoricalSoilCracks.gslib 
+image: ti_categoricalSoilCracks.png
 type: categorical
 info: Eef's paper

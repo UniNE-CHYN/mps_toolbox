@@ -20,6 +20,7 @@ as quality metrics for multiple-point geostatistical simulations.
    stats
    image
    api
+   ti
 
 ..
     Indices and tables

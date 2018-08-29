@@ -172,4 +172,6 @@ texinfo_documents = [
 ]
 
 
-
+def setup(app):
+    import generate_ti_doc
+    generate_ti_doc.build_doc()

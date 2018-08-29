@@ -26,6 +26,9 @@ class TrainingImageBase:
     def as_dict(self):
         return self._base
 
+    def get_names(self):
+        return self._base.keys()
+
 
 def build_TrainingImageBase():
     filename = __file__
@@ -42,6 +45,7 @@ def build_TrainingImageBase():
                 ti_info = yaml.load(stream)
                 ti_name = ti_info['name']
                 ti_file = os.path.join(directory, ti_info['file'])
+                ti_info['image'] = os.path.join(directory, ti_info['image'])
                 ti_Image = Image.fromGslib(ti_file)
                 ti = TI(ti_info, ti_Image)
                 base[ti_name] = ti
