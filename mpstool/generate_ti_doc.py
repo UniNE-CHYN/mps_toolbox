@@ -11,6 +11,7 @@ def build_doc(path):
         print("opened " + os.path.join(path, 'ti_list.inc') )
         ti_list_file.write(".. toctree::" + "\n" + "\n")
         ti_base = ti_base.as_dict()
+        print(ti_base)
         for key in ti_base:
             ti_list_file.write('   ' + key + '\n')
             with open(os.path.join(path, filename(key)), 'w') as ti_file:

@@ -38,6 +38,7 @@ def build_TrainingImageBase():
     filenames = [x for x in os.walk(ti_dir)]
     directories = []
     files = get_yml_files(ti_dir)
+    print(files)
 
     base = {}
     for yml_file, directory in files:
@@ -64,6 +65,7 @@ class TI:
 def get_yml_files(directory):
     files_list = []
     for root, dirs, files in os.walk(directory):
+        print(root, dirs, files)
         for name in files:
             if name.endswith('.yml'):
                 files_list.append((os.path.join(root, name), root))
