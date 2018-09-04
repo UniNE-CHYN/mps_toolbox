@@ -14,14 +14,6 @@ def example_image():
                      [250, 100, 0]])
     return Image.fromArray(data)
 
-
-def test_str():
-    img = example_image()
-    display = '[[[200]\n  [255]\n  [ 60]]\n\n [[100]\n  [ 10]\n  [255]]\n\n \
-[[250]\n  [100]\n  [  0]]]'
-    assert str(img) == display
-
-
 def test_threshold1():
     img = example_image()
     img.threshold(thresholds=[127], values=[0, 255])
@@ -69,8 +61,8 @@ def test_from_list():
                       [255, 0]])
     input_data = [data1, data2]
     expected = np.array(input_data)
-    img = Image.fromArray(input_data)
-    assert np.alltrue(img._data == expected)
+    img = Image.fromArray(input_data).asArray()
+    assert np.alltrue(img == expected)
 
 
 def test_from_txt():
@@ -85,28 +77,28 @@ def test_conversion_txt_gslib():
     img = Image.fromTxt("tests/test_img.txt", (3, 3))
     img.exportAsGslib("tests/test_img.gslib")
     img_test = Image.fromGslib("tests/test_img.gslib")
-    assert np.alltrue(img_test._data == img._data)
+    assert np.alltrue(img_test == img)
 
 
 def test_conversion_gslib_vox():
     img = Image.fromGslib("tests/test_img.gslib")
     img.exportAsVox("tests/test_img.vox")
     img_test = Image.fromVox("tests/test_img.vox")
-    assert np.alltrue(img_test._data == img._data)
+    assert np.alltrue(img_test == img)
 
 
 def test_conversion_vox_png():
     img = Image.fromVox("tests/test_img.vox")
     img.exportAsPng("tests/test_img.png")
     img_test = Image.fromPng("tests/test_img.png")
-    assert np.alltrue(img_test._data == img._data)
+    assert np.alltrue(img_test == img)
 
 
 def test_conversion_png_txt():
     img = Image.fromPng("tests/test_img.png")
     img.exportAsTxt("tests/test_img2.txt")
     img_test = Image.fromTxt("tests/test_img2.txt", (3, 3))
-    assert np.alltrue(img_test._data == img._data)
+    assert np.alltrue(img_test == img)
 
 
 def test_conversion_final():

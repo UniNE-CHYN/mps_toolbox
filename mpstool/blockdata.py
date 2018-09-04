@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
 file:           blockdata.py
@@ -13,6 +13,8 @@ import numpy as np
 import os
 
 # ============================================================================
+
+
 class BlockData:
     """
     Defines block data (for one variable):
@@ -78,12 +80,14 @@ class BlockData:
         if activatePropMin is None:
             self.activatePropMin = None
         else:
-            self.activatePropMin = np.asarray(activatePropMin, dtype=float).reshape(nblock)
+            self.activatePropMin = np.asarray(
+                activatePropMin, dtype=float).reshape(nblock)
 
         if activatePropMax is None:
             self.activatePropMax = None
         else:
-            self.activatePropMax = np.asarray(activatePropMax, dtype=float).reshape(nblock)
+            self.activatePropMax = np.asarray(
+                activatePropMax, dtype=float).reshape(nblock)
 
     @staticmethod
     def readFromFile(filename):
@@ -100,7 +104,7 @@ class BlockData:
             return
 
         # Open the file in read mode
-        with open(filename,'r') as ff:
+        with open(filename, 'r') as ff:
             # Read number of block (1st line)
             nblock = int(ff.readline())
 
@@ -116,8 +120,10 @@ class BlockData:
                 li = ff.readline()
                 t = [x for x in li.split()]
                 nnode = int(t[0])
-                value[i], tolerance[i], activatePropMin[i], activatePropMax[i] = [float(x) for x in t[1:5]]
-                nodeIndex.append(np.array([[int(j) for j in ff.readline().split()] for k in range(nnode)]))
+                value[i], tolerance[i], activatePropMin[i], activatePropMax[i] = [
+                    float(x) for x in t[1:5]]
+                nodeIndex.append(
+                    np.array([[int(j) for j in ff.readline().split()] for k in range(nnode)]))
 
         # Set block data
         bd = BlockData(blockDataUsage=1,
@@ -143,7 +149,7 @@ class BlockData:
             return
 
         # Open the file in write binary mode
-        with open(filename,'wb') as ff:
+        with open(filename, 'wb') as ff:
             # Write the number of block(s)
             ff.write('{}\n'.format(self.nblock).encode())
 
@@ -151,5 +157,6 @@ class BlockData:
             for ni, v, t, amin, amax in zip(self.nodeIndex, self.value,
                                             self.tolerance, self.activatePropMin,
                                             self.activatePropMax):
-                ff.write('{} {:{fmt}} {:{fmt}} {:{fmt}} {:{fmt}}\n'.format(len(ni), v, t, amin, amax, fmt=fmt).encode())
+                ff.write('{} {:{fmt}} {:{fmt}} {:{fmt}} {:{fmt}}\n'.format(
+                    len(ni), v, t, amin, amax, fmt=fmt).encode())
                 np.savetxt(ff, np.asarray(ni), delimiter=' ', fmt="%g")

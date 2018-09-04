@@ -44,5 +44,5 @@ def variogram(image, axis):
             variogram[category][x] = np.sum(
                 indicator_image.take(indices=range(x, n), axis=axis) !=
                 indicator_image.take(indices=range(n-x), axis=axis)
-                ) / (area*(n-x))
+            ) / (area*(n-x))
     return variogram
