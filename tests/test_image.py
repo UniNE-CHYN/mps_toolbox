@@ -186,9 +186,45 @@ def test_categorize2():
     assert img == expected
 
 
-def test_add_variable():
-    pass
+def test_setters():
+    img = example_image()
+    img.set_dimension((1, 1, 1))
+    assert img.shape == (1, 1, 1)
 
 
-def test_delete_variable():
-    pass
+def test_dimension():
+    img = example_image()
+    assert img.nxyz() == 9
+    assert img.nxy() == 9
+    assert img.nxz() == 3
+    assert img.nyz() == 3
+    assert img.xmin() == 0
+    assert img.xmax() == 3
+    assert img.ymin() == 0
+    assert img.ymax() == 3
+    assert img.zmin() == 0
+    assert img.zmax() == 1
+    coords = np.array([0.5, 1.5, 2.5])
+    assert np.alltrue(img.x() == coords)
+    assert np.alltrue(img.y() == coords)
+    assert np.alltrue(img.z() == np.array([0.5]))
+    assert img.vmin() == 0
+    assert img.vmax() == 255
+    assert img.get_variables() == ["V0"]
+
+
+def test_variable():
+    img = example_image()
+    data = np.array([[200, 255, 60],
+                     [100, 10, 255],
+                     [250, 100, 0]])
+    img.add_variable("test", data)
+    assert set(img.get_variables()) == {"V0", "test"}
+    assert np.alltrue(img._data["test"] == data)
+    data = np.zeros(img.shape)
+    img.set_variable("test", data)
+    assert np.alltrue(img._data["test"] == data)
+    img.rename_variable("test", "toto")
+    assert np.alltrue(img._data["toto"] == data)
+    img.remove_variable("toto")
+    assert img.get_variables() == ["V0"]

@@ -945,26 +945,11 @@ class Image:
         """Sets default variable names: var_name = ('V0', 'V1',...)."""
         self.var_name = ["V{:d}".format(i) for i in range(self.nvariables)]
 
-    def set_dimension(self, *args) -> None:
-        """
-        TODO
-        """
-        assert len(args) == 3
-        self.shape = tuple(args)
-
-    def set_spacing(self, *args) -> None:
-        """
-        TODO
-        """
-        assert len(args) == 3
-        self.spacing = tuple(args)
-
-    def set_origin(self, *args) -> None:
-        """
-        TODO
-        """
-        assert len(args) == 3
-        self.orig = tuple(args)
+    def set_dimension(self, new_size, new_val=0) -> None:
+        """Resets the dimension of all variables"""
+        assert len(new_size) == 3
+        self.shape = tuple(new_size)
+        # TODO
 
     def nxyz(self):
         return (self.shape[0] * self.shape[1] * self.shape[2])
@@ -996,17 +981,20 @@ class Image:
     def zmax(self):
         return (self.orig[2] + self.spacing[2] * self.shape[2])
 
+    def _dim(self, axis):
+        return (self.orig[axis] + 0.5 * self.spacing[axis] + self.spacing[axis] * np.arange(self.shape[axis]))
+
     def x(self):
         """Returns 1-dimensional array of x coordinates."""
-        return (self.ox + 0.5 * self.sx + self.sx * np.arange(self.nx))
+        return self._dim(0)
 
     def y(self):
         """Returns 1-dimensional array of y coordinates."""
-        return (self.oy + 0.5 * self.sy + self.sy * np.arange(self.ny))
+        return self._dim(1)
 
     def z(self):
         """Returns 1-dimensional array of z coordinates."""
-        return (self.oz + 0.5 * self.sz + self.sz * np.arange(self.nz))
+        return self._dim(2)
 
     def vmin(self, var_name: str = None):
         """
@@ -1021,7 +1009,7 @@ class Image:
         if var_name is None and self.nvariables > 1:
             raise UndefVarExc("vmmin")
         key = var_name if var_name is not None else self.get_variables()[0]
-        return (np.nanmin(self._data[key].reshape(self.nxyz()), axis=1))
+        return (np.nanmin(self._data[key].reshape(self.nxyz()), axis=0))
 
     def vmax(self, var_name: str = None):
         """
@@ -1036,7 +1024,7 @@ class Image:
         if var_name is None and self.nvariables > 1:
             raise UndefVarExc("vmax")
         key = var_name if var_name is not None else self.get_variables()[0]
-        return (np.nanmax(self._data[key].reshape(self.nxyz()), axis=1))
+        return (np.nanmax(self._data[key].reshape(self.nxyz()), axis=0))
 
     def get_variables(self) -> list:
         return list(self._data.keys())
@@ -1063,17 +1051,14 @@ class Image:
         if value is None:
             ar = np.zeros(self.shape)
         elif isinstance(value, int) or isinstance(value, float):
-            nx, ny, nz = self.shape
-            ar = [value]*(nx*ny*nz)
-            ar = np.array(ar).reshape(self.shape)
+            ar = np.array([value]*self.nxyz()).reshape(self.shape)
         else:
-            ar = np.asarray(v, dtype=float)
+            ar = np.asarray(value, dtype=float)
 
         # handle var_name
         if var_name is None:
             var_name = "V"+str(len(self._data.keys()))
         self._data[var_name] = ar
-
         self.nvariables = len(self._data.keys())
 
     def set_variable(self, var_name: str, value):
@@ -1093,7 +1078,8 @@ class Image:
                 which are appended in the image (reshaped if needed)
         """
 
-        # handle value
+        if var_name not in self._data:
+            return
         if value is None:
             ar = np.zeros(self.shape)
         elif isinstance(value, int) or isinstance(value, float):
@@ -1101,31 +1087,25 @@ class Image:
             ar = [value]*(nx*ny*nz)
             ar = np.array(ar).reshape(self.shape)
         else:
-            ar = np.asarray(v, dtype=float)
+            ar = np.asarray(value, dtype=float)
+        assert ar.shape == self.shape
+        self._data[var_name] = ar
 
-        if ind < 0:
-            ii = self.nv + ind
-        else:
-            ii = ind
+    def rename_variable(self, old_var_name: str, new_var_name: str) -> None:
+        """
+        Rename one variable.
+        Parameters
+        ----------
+        'old_var_name' : string
+            The name of the variable to be replaced.
+            If old_var_name does not exist in the Image, nothing happens
 
-        if ii < 0 or ii >= self.nv:
-            print("Nothing is done! (invalid index)")
+        'new_var_name' : string
+            The new name of the variable
+        """
+        if old_var_name not in self._data:
             return
-
-        # numpy.ndarray (possibly 0-dimensional)
-        val_arr = np.asarray(v, dtype=float)
-        if val_arr.size == 1:
-            val_arr = val_arr.flat[0] * np.ones(self.nxyz())
-        elif val_arr.size != self.nxyz():
-            print('ERROR: v have not an acceptable size')
-            return
-
-        # Set variable of index ii
-        self.val[ii, ...] = val_arr.reshape(self.nz, self.ny, self.nx)
-
-        # Set variable name of index ii
-        if vname is not None:
-            self.var_name[ii] = vname
+        self._data[new_var_name] = self._data.pop(old_var_name)
 
     def remove_variable(self, var_name: str) -> None:
         """
