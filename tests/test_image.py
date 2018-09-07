@@ -228,3 +228,28 @@ def test_variable():
     assert np.alltrue(img._data["toto"] == data)
     img.remove_variable("toto")
     assert img.get_variables() == ["V0"]
+
+def test_extract():
+    img = example_image()
+    img2 = img.extract_variable(["V0"],copy=False)
+    assert img2 == example_image()
+    assert len(img.get_variables())==0
+
+
+def test_flip():
+    img = example_image()
+    img.flipx()
+    img.flipy()
+    img.flipz()
+    img.flipx()
+    img.flipy()
+    img.flipz()
+    assert img == example_image()
+
+def test_perm():
+    img = example_image()
+    img.permxy()
+    img.permyz()
+    img.permxz()
+    img.permyz()
+    assert img == example_image()

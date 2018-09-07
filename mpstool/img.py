@@ -158,8 +158,10 @@ class Image:
         return output
 
     @staticmethod
-    def empty(self, size, default_value=np.nan):
-        return fromArray(np.full(size, default_value))
+    def empty(size, default_value=np.nan):
+        img = Image.fromArray(np.full(size, default_value))
+        img.remove_variable("V0")
+        return img
 
     def asArray(self, var_name=None):
         """
@@ -1120,6 +1122,31 @@ class Image:
         self._data.pop(var_name, None)
         self.nvariables = len(self._data.keys())
 
+    def extract_variable(self, var_name:list, copy=True):
+        """
+        Creates a new Image containing only the extracted variable
+
+        Parameters
+        ----------
+        'var_name': list
+            List of the names of variables to be extracted
+
+        'copy' : boolean
+            If set to False, will delete the variables of var_name
+            from the original imageself.
+
+        Returns
+        -------
+        A new Image object
+        """
+        assert len(var_name)>0
+        new_image = Image.empty(self.shape)
+        for v in var_name:
+            new_image._data[v] = np.copy(self._data[v])
+            if not copy:
+                self.remove_variable(v)
+        return new_image
+
     # ------ Transformation methods ------
 
     def apply_fun(self, var_name: str = None, fun=None):
@@ -1330,6 +1357,43 @@ class Image:
         for key in keys:
             self._data[key] = (self._data[key]+1)*127.5
             self._data[key] = self._data[key].astype(output_type)
+
+    def flipx(self):
+        """ Flips variable values according to x direction. """
+        for k in self._data:
+            self._data[k] = self._data[k][::-1,:,:]
+
+    def flipy(self):
+        """ Flips variable values according to x direction. """
+        for k in self._data:
+            self._data[k] = self._data[k][:,::-1,:]
+
+    def flipz(self):
+        """ Flips variable values according to x direction. """
+        if self.is3D:
+            for k in self._data:
+                self._data[k] = self._data[k][:,:,::-1]
+
+    def _perm(self,i,j):
+        for k in self._data:
+            self._data[k] = np.swapaxes(self._data[k],i,j)
+        new_order = [0,1,2]
+        new_order[i], new_order[j] = new_order[j], new_order[i]
+        self.orig = tuple(self.orig[i] for i in new_order)
+        self.spacing = tuple(self.spacing[i] for i in new_order)
+        self.shape = tuple(self.shape[i] for i in new_order)
+
+    def permxy(self):
+        """Permutes x and y directions."""
+        self._perm(0,1)
+
+    def permxz(self):
+        """Permutes x and z directions."""
+        self._perm(0,2)
+
+    def permyz(self):
+        """Permutes y and z directions."""
+        self._perm(1,2)
 
     def get_sample(self, output_dim, var_name: str = None, normalize=False):
         """

@@ -3,6 +3,29 @@
 import numpy as np
 from mpstool.img import Image
 
+def get_categories(image):
+    """
+    Find all values in a numpy array
+
+    Return a sorted list of categories found in image 2D arrays.
+
+    Parameters
+    ----------
+    image : ndarray | Image
+        non-empty numpy array
+
+    Returns
+    -------
+    list
+        sorted list of all categories (from smallest to greatest)
+    """
+    if isinstance(image, Image):
+        image = image.asArray()
+    return np.unique(image)
+
+def compute_stats(image):
+    if isinstance(image,Image):
+        image = image.asArray()
 
 def histogram(image):
     """
