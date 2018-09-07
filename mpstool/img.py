@@ -26,11 +26,11 @@ class Image:
     """
     A data container. Defines an image as a 3D grid
     with variable(s) / attribute(s):
-     size:     (3-uple of int) number of grid cells in each direction
+     shape:    (3-uple of int) number of grid cells in each direction
      spacing : (3-uple of  float) cell size in each direction
      origin :  (3-uple  float) origin of the grid (bottom-lower-left corner)
      nv:       (int) number of variable(s) / attribute(s)
-     data:      dictionnary of (nz,ny,nx) arrays
+     data:     dictionnary of (nz,ny,nx) arrays
      name:     (string) name of the image
 
     The underlying data structure is a numpy ndarray.
@@ -38,7 +38,9 @@ class Image:
     from the following data types :
 
     *png*
-    The classical image extension
+    *pgm*
+    *ppm*
+    *vtk*
 
     *gslib*
     The .gslib format is a text format with the following structure :
@@ -112,7 +114,7 @@ class Image:
     # ------ Numpy Array ------
 
     @staticmethod
-    def fromArray(ar, normalize=False):
+    def fromArray(ar, var_first=True, normalize=False):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a numpy array
@@ -123,6 +125,10 @@ class Image:
             The numpy array around which the Image object is built
             A list of 2D ndarray can be given in order to build a 3D image
 
+        'var_first' : boolean
+            Indicates if the variable index is the first of the last
+            of the array. Set to True by default.
+
         Returns
         ----------
         A new Image object
@@ -132,8 +138,12 @@ class Image:
 
         data = {}
         if len(ar.shape) > 3:
-            for i in range(ar.shape[3]):
-                data["V{}".format(i)] = ar[:, :, :, i]
+            if var_first:
+                for i in range(ar.shape[0]):
+                    data["V{}".format(i)] = ar[i, ...]
+            else:
+                for i in range(ar.shape[3]):
+                    data["V{}".format(i)] = ar[:, :, :, i]
         else:
             data["V0"] = ar
         shape = ar.shape
@@ -151,13 +161,22 @@ class Image:
     def empty(self, size, default_value=np.nan):
         return fromArray(np.full(size, default_value))
 
-    def asArray(self):
+    def asArray(self, var_name=None):
         """
         Return the raw data as a numpy array
+
+        Parameters
+        ----------
+        'var_name' : string
+            The variable to export. If None, all variables will be exported and
+            the variable selection will be the first dimension of the array
         """
         if self.nvariables == 1:
             return list(self._data.values())[0]
-        return np.array(self._data.values())
+        if var_name is None:
+            return np.array(list(self._data.values()))
+        else:
+            return self._data[var_name]
 
     # ------ GSLIB ------
     @staticmethod
@@ -199,15 +218,17 @@ class Image:
             var_names = []
             for i in range(nVar):
                 var_names.append(f.readline().strip())
-
-            data = dict([(var_names[i], np.zeros((xdim, ydim, zdim)))
+            data = dict([(var_names[i], np.zeros((zdim, ydim, xdim)))
                          for i in range(nVar)])
             for iz in range(zdim):
                 for iy in range(ydim):
                     for ix in range(xdim):
                         values = f.readline().strip().split()
-                        for i in range(nVar):
-                            data[var_names[i]][ix, iy, iz] = float(values[i])
+                        for iv in range(nVar):
+                            key = var_names[iv]
+                            data[key][iz, iy, ix] = np.float32(values[iv])
+        for k in data:
+            data[k] = data[k].T
         img = Image(data, params)
         if normalize:
             img.normalize()
@@ -288,9 +309,8 @@ class Image:
             output_name = output_name.split(".txt")[0]
 
         if self.is3D:
-            print("ERROR : Export as a txt file requires the data \
+            raise Exception("ERROR : Export as a txt file requires the data \
                    to be 2 dimensionnal.")
-            return
         for key in self._data:
             output = self._data[key].reshape(self.shape[:2])
             final_output_name = output_name+"_"+key + \
@@ -306,6 +326,9 @@ class Image:
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a .png file.
+        If the png file is colored, three variables, named R,G and B will
+        be imported.
+
         Makes calls to the Pillow library
 
         Parameters
@@ -323,20 +346,28 @@ class Image:
         try:
             from PIL import Image as PIL_Img
         except ImportError:
-            print("Cannot read from png. Is the pillow library installed ?\n\
-                   To install it, run `pip install pillow`")
+            print("Cannot read from png. Is the pillow library installed ?\nTo install it, run `pip install pillow`")
             return
         ar = PIL_Img.open(file_name)
+        if ar.mode == 'P':
+            ar = ar.convert('RGB')
         ar = np.array(ar).astype(np.float32)
-        data = {"V0": ar}
-        params = dict()
-        params["is3D"] = False
+        shape = ar.shape
+        if len(shape) == 2 or shape[2] == 1:  # only one canal
+            data = {"V0": ar}
+            params = {"is3D": False, "nVariables": 1}
+        else:
+            data = {"R": ar[:, :, 0],
+                    "G": ar[:, :, 1],
+                    "B": ar[:, :, 2]}
+            params = {"is3D": False, "nVariables": 3}
         img = Image(data, params)
         if normalize:
             img.normalize()
         return img
 
-    def exportAsPng(self, output_name: str, verbose=False):
+    def exportAsPng(self, output_name: str, colored=True,
+                    color_channels=['R', 'G', 'B'], verbose=False):
         """
         Export the Image object data as a png file.
         Requires the data to be two dimensionnal.
@@ -345,6 +376,18 @@ class Image:
         ----------
         'output_name' : string
             relative path to the png file to be output
+
+        'colored' : boolean
+            Say if the output images is colored.
+            If colored is False, will output every variable as a different png.
+            If colored is True, will output one png file with 3 channels.
+            Channels are defined in the color_channels argument
+
+        'color_channels' : list of 3 strings
+            The name of the three variables to be taken as red, green and
+            blue channels. Default names are ['R', 'G', 'B'].
+            This argument is ignored if colored is False
+
         'verbose' : boolean
             enables verbose mode. Set to False by default
         """
@@ -356,20 +399,33 @@ class Image:
                    Is the pillow library installed ?\n\
                    To install it, run `pip install pillow`".format(e))
             return
-        if ".png" in output_name:
-            output_name = output_name.split(".png")[0]
+
         if self.is3D:
-            print("ERROR : Export as a png file requires the data \
-                   to be 2 dimensionnal.")
-            return
-        self.unnormalize()
-        for key in self._data:
-            output_k = PIL_Img.fromarray(np.squeeze(self._data[key]))
-            final_output_name = output_name+"_"+key + \
-                ".png" if key != "V0" else output_name+".png"
-            output_k.save(final_output_name, mode="L")  # L for greyscale
-        if verbose:
-            print("Generated image as {}".format(output_name))
+            raise Exception("ERROR : Export as a png file requires the data \
+                                to be 2 dimensionnal.")
+        if self.nvariables == 1:
+            colored = False
+        if colored:
+            assert len(color_channels) == 3
+            self.unnormalize(color_channels)
+            r_data, g_data, b_data = (self._data[k] for k in color_channels)
+            data = np.array([r_data, g_data, b_data])
+            data = np.moveaxis(data, 0, -1)
+            output = PIL_Img.fromarray(np.squeeze(data))
+            output.save(output_name, mode="RGB")
+            if verbose:
+                print("Generated image as {}".format(output_name))
+        else:
+            if ".png" in output_name:
+                output_name = output_name.split(".png")[0]
+            self.unnormalize()
+            for key in self._data:
+                output_k = PIL_Img.fromarray(np.squeeze(self._data[key]))
+                final_output_name = output_name+"_" + key + ".png"\
+                    if key != "V0" else output_name+".png"
+                if verbose:
+                    print("Generated image as {}".format(final_output_name))
+                output_k.save(final_output_name, mode="L")  # L for greyscale
 
     # ------- Vox ------
 
@@ -439,6 +495,360 @@ class Image:
         if verbose:
             print("Generated .vox file as {}".format(output_name))
 
+    # ------ Vtk ------
+    @staticmethod
+    def fromVtk(file_name: str, missing_value=None):
+        """
+        Image static method. Used as an initializer.
+        Builds the container from a .vtk file.
+
+        Parameters
+        ----------
+        'file_name' : string
+            name of the file
+
+        'missing_value' : float|None
+            value that will be replaced by nan
+
+        Returns
+        ----------
+        A new Image object
+        """
+
+        # Check if the file exists
+        if not os.path.isfile(file_name):
+            raise Exception("Error: invalid filename ({})".format(filename))
+
+        # Open the file in read mode
+        with open(file_name, 'r') as ff:
+            # Read lines 1 to 10
+            header = [ff.readline() for i in range(10)]
+            # Read the rest of the file
+            val_arr = np.loadtxt(ff)
+
+        # Set grid
+        shape = [int(n) for n in header[4].split()[1:4]]
+        orig = [float(n) for n in header[5].split()[1:4]]
+        spacing = [float(n) for n in header[6].split()[1:4]]
+
+        # Set variable
+        tmp = header[8].split()
+        nvariables = int(tmp[3])
+        var_name = tmp[1]
+
+        # Replace missing_value by np.nan
+        if missing_value is not None:
+            np.putmask(val_arr, val_arr == missing_value, np.nan)
+
+        # create image
+        data = {var_name: val_arr.reshape(shape)}
+        params = {
+            "origin": orig,
+            "spacing": spacing,
+            "is3D": shape[2] > 1,
+            "nVariables": nvariables
+        }
+        return Image(data, params)
+
+    def exportAsVtk(self, output_name: str, var_name=None, missing_value=None,
+                    fmt="%.10g", data_type='float', version=3.4):
+        """
+        Export the Image object data as a vtk file.
+
+        Parameters
+        ----------
+        'output_name' : string
+            relative path to the vox file to be output
+
+        'var_name' : string
+            The variable to be exported.
+            name to be written at line 2
+
+        'verbose' : boolean
+            enables verbose mode.
+            default=False
+
+        'missing_value' : float|None
+            nan values will be replaced by this value before writing
+
+        'fmt' : string
+            single format for variable values, of the form:
+                '%[flag]width[.precision]specifier'
+
+        'data_type' : string
+            data type (can be 'float', 'int', ...)
+
+        'version' : float
+            version number (for data file)
+        """
+
+        if var_name is None and self.nvariables > 1:
+            raise UndefVarExc("exportAsVtk")
+        key = var_name if var_name is not None else self.get_variables()[0]
+        data = self._data[key]
+
+        nx, ny, nz = self.shape
+        ox, oy, oz = self.orig
+        sx, sy, sz = self.spacing
+
+        # Set header (10 first lines)
+        shead = (
+            "# vtk DataFile Version {0}\n"
+            "{1}\n"
+            "ASCII\n"
+            "DATASET STRUCTURED_POINTS\n"
+            "DIMENSIONS {2} {3} {4}\n"
+            "ORIGIN     {5} {6} {7}\n"
+            "SPACING    {8} {9} {10}\n"
+            "POINT_DATA {11}\n"
+            "SCALARS {12} {13} {14}\n"
+            "LOOKUP_TABLE default\n"
+        ).format(version,
+                 key,
+                 nx, ny, nz,
+                 ox, oy, oz,
+                 sx, sy, sz,
+                 self.nxyz(),
+                 '/'.join(self.get_variables()),
+                 data_type, self.nvariables)
+
+        # Replace np.nan by missing_value
+        if missing_value is not None:
+            np.putmask(data, np.isnan(data), missing_value)
+
+        # Open the file in write binary mode
+        with open(output_name, 'wb') as ff:
+            ff.write(shead.encode())
+            # Write variable values
+            np.savetxt(ff, data.reshape(1, -1).T, delimiter=' ', fmt=fmt)
+
+        # Replace missing_value by np.nan (restore)
+        if missing_value is not None:
+            np.putmask(data, data == missing_value, np.nan)
+
+    # ------ Pgm ------
+    @staticmethod
+    def fromPgm(file_name: str, missing_value=None, var_name=['pgmValue']):
+        """
+        Image static method. Used as an initializer.
+        Builds the container from a .pgm file.
+
+        Parameters
+        ----------
+        'file_name' : string
+            name of the file
+
+        'missing_value' : float|None
+            value that will be replaced by nan
+
+        Returns
+        ----------
+        A new Image object
+        """
+
+        # Check if the file exists
+        if not os.path.isfile(file_name):
+            raise Exception("Error: invalid filename ({})".format(filename))
+
+        # Open the file in read mode
+        with open(file_name, 'r') as ff:
+            # Read 1st line
+            line = ff.readline()
+            if line[:2] != 'P2':
+                raise Exception("Error: invalid format (first line)")
+
+            # Read 2nd line
+            line = ff.readline()
+            while line[0] == '#':
+                # Read next line
+                line = ff.readline()
+
+            # Set dimension
+            nx, ny = [int(x) for x in line.split()]
+
+            # Read next line
+            line = ff.readline()
+            if line[:3] != '255':
+                print("Error: invalid format (number of colors / max val)")
+                return
+
+            # Read the rest of the file
+            vv = [x.split() for x in ff.readlines()]
+
+        # Set variable array
+        val_arr = np.array([int(x) for line in vv for x in line],
+                           dtype=float).reshape((nx, ny, 1))
+        params = {
+            "origin": (0., 0., 0.),
+            "spacing": (1., 1., 1.),
+            "is3D": False,
+            "nVariables": 1
+        }
+
+        # Replace missing_value by np.nan
+        if missing_value is not None:
+            np.putmask(val_arr, val_arr == missing_value, np.nan)
+        return Image({"V0": val_arr}, params)
+
+    def exportAsPgm(self, output_name: str, var_name=None, missing_value=None, fmt="%.10g"):
+        """
+        Export the Image object data as a  pgm file.
+
+        Parameters
+        ----------
+
+        'output_name' : string
+            name of the file to be written
+
+        'var_name' : string
+            The variable to be exported. Needs to be not None if several
+            variables are present in the Image class.
+
+        'missing_value' float or None
+            nan values will be replaced by missing_value before writing
+
+        'fmt' : string
+            single format for variable values, of the form:
+                '%[flag]width[.precision]specifier'
+        """
+        if var_name is None and self.nvariables > 1:
+            raise UndefVarExc("exportAsPgm")
+        key = var_name if var_name is not None else self.get_variables()[0]
+        data = self._data[key]
+        nx, ny, nz = self.shape
+        ox, oy, oz = self.orig
+        sx, sy, sz = self.spacing
+        # Write 1st line in string shead
+        shead = "P2\n# {0} {1} {2}   {3} {4} {5}   {6} {7} {8}\n{0} {1}\n255\n".format(
+            nx, ny, nz, sx, sy, sz, ox, oy, oz)
+
+        # Replace np.nan by missing_value
+        if missing_value is not None:
+            np.putmask(data, np.isnan(data), missing_value)
+
+        # Open the file in write binary mode
+        with open(output_name, 'wb') as ff:
+            ff.write(shead.encode())
+            # Write variable values
+            np.savetxt(ff, data.reshape(1, -1).T, delimiter=' ', fmt=fmt)
+
+        # Replace missing_value by np.nan (restore)
+        if missing_value is not None:
+            np.putmask(data, data == missing_value, np.nan)
+
+    # ------ Ppm ------
+    @staticmethod
+    def fromPpm(file_name: str, missing_value=None, var_name=['R', 'G', 'B']):
+        """
+        Image static method. Used as an initializer.
+        Builds the container from a .ppm file.
+
+        Parameters
+        ----------
+        'file_name' : string
+            name of the file
+
+        'missing_value' : float|None
+            value that will be replaced by nan
+
+        'var_name' : list of 3 strings
+            name of the different variables of the image
+            (default is ['R','G','B'])
+
+        Returns
+        ----------
+        A new Image object
+        """
+
+        # Check if the file exists
+        if not os.path.isfile(file_name):
+            raise Exception("Error: invalid filename ({})".format(filename))
+
+        # Open the file in read mode
+        with open(file_name, 'r') as ff:
+            # Read 1st line
+            line = ff.readline()
+            if line[:2] != 'P3':
+                print("Error: invalid format (first line)")
+                return
+
+            # Read 2nd line
+            line = ff.readline()
+            while line[0] == '#':
+                # Read next line
+                line = ff.readline()
+
+            # Set dimension
+            nx, ny = [int(x) for x in line.split()]
+
+            # Read next line
+            line = ff.readline()
+            if line[:3] != '255':
+                raise Exception(
+                    "Error: invalid format (number of colors / max val)")
+
+            # Read the rest of the file
+            vv = [x.split() for x in ff.readlines()]
+
+        # Replace missing_value by np.nan
+        if missing_value is not None:
+            np.putmask(val_arr, val_arr == missing_value, np.nan)
+
+        # Set variable array
+        val_arr = np.array([float(x) for line in vv for x in line],
+                           dtype=float).reshape((nx, ny, 1, 3))
+        data = dict([(var_name[i], val_arr[:, :, :, i]) for i in range(3)])
+        params = {"is3D": False, "nVariables": 3}
+        return Image(data, params)
+
+    def exportAsPpm(self, output_name: str, var_name=['R', 'G', 'B'], missing_value=None, fmt="%.10g"):
+        """
+        Export the Image object data as a  pgm file.
+
+        Parameters
+        ----------
+        'output_name' : string
+            name of the file to be written
+
+        'var_name' : list of 3 strings
+            The names of the channels to be output. There should be three channels
+
+        'missing_value' : float or None
+            nan values will be replaced by missing_value before writing
+
+        'fmt' : string
+            single format for variable values, of the form:
+                '%[flag]width[.precision]specifier'
+        """
+        # Check if the file is RGB
+        if self.nvariables < 3:
+            raise Exception("Ppm file uses RGB channels. Only {} variables \
+                            were found. To export only one variable, please \
+                            use the pgm file format instead".format(self.nvariables))
+
+        # Write 1st line in string shead
+        nx, ny, nz = self.shape
+        sx, sy, sz = self.spacing
+        ox, oy, oz = self.orig
+        r_data, g_data, b_data = (self._data[k] for k in var_name)
+        data = np.array([r_data, g_data, b_data])
+        shead = "P3\n# {0} {1} {2}   {3} {4} {5}   {6} {7} {8}\n{0} {1}\n255\n".format(
+            nx, ny, nz, sx, sy, sz, ox, oy, oz)
+
+        # Replace np.nan by missing_value
+        if missing_value is not None:
+            np.putmask(data, np.isnan(data), missing_value)
+
+        # Open the file in write binary mode
+        with open(output_name, 'wb') as ff:
+            ff.write(shead.encode())
+            # Write variable values
+            np.savetxt(ff, data.reshape(3, -1).T, delimiter=' ', fmt=fmt)
+
+        # Replace missing_value by np.nan (restore)
+        if missing_value is not None:
+            np.putmask(data, data == missing_value, np.nan)
+
     # ------ Misc Export ------
     def plot(self, name_var=None):
         """
@@ -507,7 +917,7 @@ class Image:
         if invert:
             array = -array
         iter = range(array.shape[0]) if n == -1 \
-                else np.random.randint(array.shape[0], size=n)
+            else np.random.randint(array.shape[0], size=n)
         if axis == 1:
             for i in iter:
                 img = array[:, i, :]
@@ -531,33 +941,204 @@ class Image:
 
     # ------ Setters and getters -------
 
-    def set_default_varname(self):
-        """Sets default variable names: varname = ('V0', 'V1',...)."""
-        self.varname = ["V{:d}".format(i) for i in range(self.nvariables)]
+    def set_default_var_name(self):
+        """Sets default variable names: var_name = ('V0', 'V1',...)."""
+        self.var_name = ["V{:d}".format(i) for i in range(self.nvariables)]
 
-    def set_dimension(self, *args):
+    def set_dimension(self, *args) -> None:
         """
         TODO
         """
         assert len(args) == 3
         self.shape = tuple(args)
 
-    def set_spacing(self, *args):
+    def set_spacing(self, *args) -> None:
         """
         TODO
         """
         assert len(args) == 3
         self.spacing = tuple(args)
 
-    def set_origin(self, *args):
+    def set_origin(self, *args) -> None:
         """
         TODO
         """
         assert len(args) == 3
         self.orig = tuple(args)
 
-    def get_variables(self):
-        return list(self.data.keys())
+    def nxyz(self):
+        return (self.shape[0] * self.shape[1] * self.shape[2])
+
+    def nxy(self):
+        return (self.shape[0] * self.shape[1])
+
+    def nxz(self):
+        return (self.shape[0] * self.shape[2])
+
+    def nyz(self):
+        return (self.shape[1] * self.shape[2])
+
+    def xmin(self):
+        return (self.orig[0])
+
+    def ymin(self):
+        return (self.orig[1])
+
+    def zmin(self):
+        return (self.orig[2])
+
+    def xmax(self):
+        return (self.orig[0] + self.spacing[0] * self.shape[0])
+
+    def ymax(self):
+        return (self.orig[1] + self.spacing[1] * self.shape[1])
+
+    def zmax(self):
+        return (self.orig[2] + self.spacing[2] * self.shape[2])
+
+    def x(self):
+        """Returns 1-dimensional array of x coordinates."""
+        return (self.ox + 0.5 * self.sx + self.sx * np.arange(self.nx))
+
+    def y(self):
+        """Returns 1-dimensional array of y coordinates."""
+        return (self.oy + 0.5 * self.sy + self.sy * np.arange(self.ny))
+
+    def z(self):
+        """Returns 1-dimensional array of z coordinates."""
+        return (self.oz + 0.5 * self.sz + self.sz * np.arange(self.nz))
+
+    def vmin(self, var_name: str = None):
+        """
+        Minimal value of a variable.
+
+        Parameters
+        ----------
+        'var_name' : string
+            The variable to consider. Has to be provided if there is more
+            than one variable in the Image.
+        """
+        if var_name is None and self.nvariables > 1:
+            raise UndefVarExc("vmmin")
+        key = var_name if var_name is not None else self.get_variables()[0]
+        return (np.nanmin(self._data[key].reshape(self.nxyz()), axis=1))
+
+    def vmax(self, var_name: str = None):
+        """
+        Maximal value of a variable.
+
+        Parameters
+        ----------
+        'var_name' : string
+            The variable to consider. Has to be provided if there is more
+            than one variable in the Image.
+        """
+        if var_name is None and self.nvariables > 1:
+            raise UndefVarExc("vmax")
+        key = var_name if var_name is not None else self.get_variables()[0]
+        return (np.nanmax(self._data[key].reshape(self.nxyz()), axis=1))
+
+    def get_variables(self) -> list:
+        return list(self._data.keys())
+
+    def add_variable(self, var_name: str = None, value=None) -> None:
+        """
+        Appends one variable to the image
+
+        Parameters
+        ----------
+        'var_name' : string | None
+            Name of the appended variable (set by default if None)
+
+        'v' :   int/float | tuple/list/ndarray
+            value(s) of the newvariable:
+            if type is int/float: constant variable
+            if tuple/list/ndarray: must contain nx*ny*nz values,
+                        which are appended in the image (after reshape
+                        if needed)
+
+        """
+
+        # handle value
+        if value is None:
+            ar = np.zeros(self.shape)
+        elif isinstance(value, int) or isinstance(value, float):
+            nx, ny, nz = self.shape
+            ar = [value]*(nx*ny*nz)
+            ar = np.array(ar).reshape(self.shape)
+        else:
+            ar = np.asarray(v, dtype=float)
+
+        # handle var_name
+        if var_name is None:
+            var_name = "V"+str(len(self._data.keys()))
+        self._data[var_name] = ar
+
+        self.nvariables = len(self._data.keys())
+
+    def set_variable(self, var_name: str, value):
+        """
+        Sets one variable (of given name):
+
+        Parameters
+        ----------
+        var_name : string
+            variable name. If the name is not present in the image,
+            nothing happens
+
+        v : int/float | tuple/list/ndarray
+            value(s) of the new variable:
+            if type is int/float: constant variable
+            if tuple/list/ndarray: must contain nx*ny*nz values,
+                which are appended in the image (reshaped if needed)
+        """
+
+        # handle value
+        if value is None:
+            ar = np.zeros(self.shape)
+        elif isinstance(value, int) or isinstance(value, float):
+            nx, ny, nz = self.shape
+            ar = [value]*(nx*ny*nz)
+            ar = np.array(ar).reshape(self.shape)
+        else:
+            ar = np.asarray(v, dtype=float)
+
+        if ind < 0:
+            ii = self.nv + ind
+        else:
+            ii = ind
+
+        if ii < 0 or ii >= self.nv:
+            print("Nothing is done! (invalid index)")
+            return
+
+        # numpy.ndarray (possibly 0-dimensional)
+        val_arr = np.asarray(v, dtype=float)
+        if val_arr.size == 1:
+            val_arr = val_arr.flat[0] * np.ones(self.nxyz())
+        elif val_arr.size != self.nxyz():
+            print('ERROR: v have not an acceptable size')
+            return
+
+        # Set variable of index ii
+        self.val[ii, ...] = val_arr.reshape(self.nz, self.ny, self.nx)
+
+        # Set variable name of index ii
+        if vname is not None:
+            self.var_name[ii] = vname
+
+    def remove_variable(self, var_name: str) -> None:
+        """
+        Delete one variable of the image
+
+        Parameters
+        ----------
+        'var_name'  string
+            Name of the variable to delete. If this variable is not present in
+            the image, nothing happens
+        """
+        self._data.pop(var_name, None)
+        self.nvariables = len(self._data.keys())
 
     # ------ Transformation methods ------
 
@@ -749,7 +1330,7 @@ class Image:
                 self._data[key] = self._data[key] / m
             self._data[key] = 2*self._data[key] - 1
 
-    def unnormalize(self, output_type=np.uint8, var_names=[]):
+    def unnormalize(self, var_names=[], output_type=np.uint8):
         """
         Transformation method. Applies a linear transformation
         to get all data in range [0,255]

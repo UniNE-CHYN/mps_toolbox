@@ -1,5 +1,6 @@
 from .img import *
 
+
 class PointSet:
     """
     Defines a point set:
@@ -27,11 +28,12 @@ class PointSet:
         self.npt = npt
         self.nv = nv
 
-        valarr = np.asarray(v, dtype=float) # numpy.ndarray (possibly 0-dimensional)
+        # numpy.ndarray (possibly 0-dimensional)
+        valarr = np.asarray(v, dtype=float)
         if valarr.size == 1:
             valarr = valarr.flat[0] * np.ones(npt*nv)
         elif valarr.size != npt*nv:
-            print ('ERROR: v have not an acceptable size')
+            print('ERROR: v have not an acceptable size')
             return
 
         self.val = valarr.reshape(nv, npt)
@@ -49,13 +51,13 @@ class PointSet:
                 self.varname.append("Z")
 
             if nv > 3:
-                for i in range(3,nv):
+                for i in range(3, nv):
                     self.varname.append("V{:d}".format(i-3))
 
         else:
             varname = list(np.asarray(varname).reshape(-1))
             if len(varname) != nv:
-                print ('ERROR: varname have not an acceptable size')
+                print('ERROR: varname have not an acceptable size')
                 return
 
             self.varname = list(np.asarray(varname).reshape(-1))
@@ -78,7 +80,7 @@ class PointSet:
             self.varname.append("Z")
 
         if self.nv > 3:
-            for i in range(3,self.nv):
+            for i in range(3, self.nv):
                 self.varname.append("V{:d}".format(i-3))
     # ------------------------------------------------------------------------
 
@@ -126,22 +128,23 @@ class PointSet:
             print("Nothing is done! (invalid index)")
             return
 
-        valarr = np.asarray(v, dtype=float) # numpy.ndarray (possibly 0-dimensional)
+        # numpy.ndarray (possibly 0-dimensional)
+        valarr = np.asarray(v, dtype=float)
         if valarr.size == 1:
             valarr = valarr.flat[0] * np.ones(self.npt)
         elif valarr.size != self.npt:
-            print ('ERROR: v have not an acceptable size')
+            print('ERROR: v have not an acceptable size')
             return
 
         # Extend val
-        self.val = np.concatenate((self.val[0:ii,...],
+        self.val = np.concatenate((self.val[0:ii, ...],
                                    valarr.reshape(1, self.npt),
-                                   self.val[ii:,...]),
+                                   self.val[ii:, ...]),
                                   0)
         # Extend varname list
         if vname is None:
             vname = "V{:d}".format(self.nv)
-        self.varname.insert(ii,vname)
+        self.varname.insert(ii, vname)
 
         # Update nv
         self.nv = self.nv + 1
@@ -179,9 +182,9 @@ class PointSet:
             return
 
         # Update val array
-        iv =[i for i in range(self.nv)]
+        iv = [i for i in range(self.nv)]
         del iv[ii]
-        self.val = self.val[iv,...]
+        self.val = self.val[iv, ...]
 
         # Update varname list
         del self.varname[ii]
@@ -228,15 +231,16 @@ class PointSet:
             print("Nothing is done! (invalid index)")
             return
 
-        valarr = np.asarray(v, dtype=float) # numpy.ndarray (possibly 0-dimensional)
+        # numpy.ndarray (possibly 0-dimensional)
+        valarr = np.asarray(v, dtype=float)
         if valarr.size == 1:
             valarr = valarr.flat[0] * np.ones(self.npt)
         elif valarr.size != self.npt:
-            print ('ERROR: v have not an acceptable size')
+            print('ERROR: v have not an acceptable size')
             return
 
         # Set variable of index ii
-        self.val[ii,...] = valarr.reshape(self.npt)
+        self.val[ii, ...] = valarr.reshape(self.npt)
 
         # Set variable name of index ii
         if vname is not None:
@@ -254,7 +258,7 @@ class PointSet:
             return
 
         # Update val array
-        self.val = self.val[indlist,...]
+        self.val = self.val[indlist, ...]
 
         # Update varname list
         self.varname = [self.varname[i] for i in indlist]
@@ -264,7 +268,7 @@ class PointSet:
     # ------------------------------------------------------------------------
 
     # ------------------------------------------------------------------------
-    def get_unique(self,ind=0):
+    def get_unique(self, ind=0):
         """
         Gets unique values of one variable (of given index):
 
@@ -282,7 +286,7 @@ class PointSet:
             print("Nothing is done! (invalid index)")
             return
 
-        return (np.unique(self.val[ind,...]))
+        return (np.unique(self.val[ind, ...]))
     # ------------------------------------------------------------------------
 
     # ------------------------------------------------------------------------
@@ -310,7 +314,7 @@ class PointSet:
             print("Nothing is done! (invalid index)")
             return
 
-        uv, cv = list(np.unique(self.val[ind,...],return_counts=True))
+        uv, cv = list(np.unique(self.val[ind, ...], return_counts=True))
 
         cv = cv[~np.isnan(uv)]
         uv = uv[~np.isnan(uv)]
@@ -365,7 +369,7 @@ def readPointSetGslib(filename, missing_value=None):
         return
 
     # Open the file in read mode
-    with open(filename,'r') as ff:
+    with open(filename, 'r') as ff:
         # Read 1st line
         line1 = ff.readline()
 
@@ -376,7 +380,7 @@ def readPointSetGslib(filename, missing_value=None):
         nv = int(line2)
 
         # Set variable name (next nv lines)
-        varname = [ff.readline().replace("\n",'') for i in range(nv)]
+        varname = [ff.readline().replace("\n", '') for i in range(nv)]
 
         # Read the rest of the file
         valarr = np.loadtxt(ff)
@@ -395,6 +399,8 @@ def readPointSetGslib(filename, missing_value=None):
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
+
+
 def writePointSetGslib(ps, filename, missing_value=None, fmt="%.10g"):
     """
     Writes a point set in a file (gslib format):
@@ -422,7 +428,7 @@ def writePointSetGslib(ps, filename, missing_value=None, fmt="%.10g"):
         np.putmask(ps.val, np.isnan(ps.val), missing_value)
 
     # Open the file in write binary mode
-    with open(filename,'wb') as ff:
+    with open(filename, 'wb') as ff:
         ff.write(shead.encode())
         # Write variable values
         np.savetxt(ff, ps.val.reshape(ps.nv, -1).T, delimiter=' ', fmt=fmt)
@@ -433,6 +439,8 @@ def writePointSetGslib(ps, filename, missing_value=None, fmt="%.10g"):
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
+
+
 def imageToPointSet(im):
     """
     Returns a point set corresponding to the input image:
@@ -467,12 +475,14 @@ def imageToPointSet(im):
 
     # Set next variable(s)
     for i in range(im.nv):
-        ps.set_var(v=im.val[i,...], vname=im.varname[i], ind=3+i)
+        ps.set_var(v=im.val[i, ...], vname=im.varname[i], ind=3+i)
 
     return (ps)
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
+
+
 def pointSetToImage(ps, nx, ny, nz, sx, sy, sz, ox, oy, oz, job=0):
     """
     Returns an image corresponding to the input point set and grid:
@@ -508,23 +518,23 @@ def pointSetToImage(ps, nx, ny, nz, sx, sy, sz, ox, oy, oz, job=0):
     xmin, xmax = im.xmin(), im.xmax()
     ymin, ymax = im.ymin(), im.ymax()
     zmin, zmax = im.zmin(), im.zmax()
-    ix = np.array(np.floor((ps.val[0]-xmin)/sx),dtype=int)
-    iy = np.array(np.floor((ps.val[1]-ymin)/sy),dtype=int)
-    iz = np.array(np.floor((ps.val[2]-zmin)/sz),dtype=int)
+    ix = np.array(np.floor((ps.val[0]-xmin)/sx), dtype=int)
+    iy = np.array(np.floor((ps.val[1]-ymin)/sy), dtype=int)
+    iz = np.array(np.floor((ps.val[2]-zmin)/sz), dtype=int)
     # ix = [np.floor((x-xmin)/sx + 0.5) for x in ps.val[0]]
     # iy = [np.floor((y-ymin)/sy + 0.5) for y in ps.val[1]]
     # iz = [np.floor((z-zmin)/sz + 0.5) for z in ps.val[2]]
     for i in range(ps.npt):
         if ix[i] == nx:
-            if (ps.val[0,i]-xmin)/sx - nx < 1.e-10:
+            if (ps.val[0, i]-xmin)/sx - nx < 1.e-10:
                 ix[i] = nx-1
 
         if iy[i] == ny:
-            if (ps.val[0,i]-ymin)/sy - ny < 1.e-10:
+            if (ps.val[0, i]-ymin)/sy - ny < 1.e-10:
                 iy[i] = ny-1
 
         if iz[i] == nz:
-            if (ps.val[0,i]-zmin)/sz - nz < 1.e-10:
+            if (ps.val[0, i]-zmin)/sz - nz < 1.e-10:
                 iz[i] = nz-1
 
     # Check which index is out of the image grid
@@ -537,12 +547,12 @@ def pointSetToImage(ps, nx, ny, nz, sx, sy, sz, ox, oy, oz, job=0):
                             iz < 0, iz >= nz)), 0)
 
     if not job and sum(iout) > 0:
-        print ("Error: point out of the image grid!")
+        print("Error: point out of the image grid!")
         return
 
     # Set values in the image
-    for i in range(ps.npt): # ps.npt is equal to iout.size
+    for i in range(ps.npt):  # ps.npt is equal to iout.size
         if not iout[i]:
-            im.val[:,iz[i], iy[i], ix[i]] = ps.val[3:ps.nv,i]
+            im.val[:, iz[i], iy[i], ix[i]] = ps.val[3:ps.nv, i]
 
     return (im)
