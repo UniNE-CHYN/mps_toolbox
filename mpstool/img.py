@@ -182,7 +182,7 @@ class Image:
 
     # ------ GSLIB ------
     @staticmethod
-    def fromGslib(file_name: str, normalize=False):
+    def fromGslib(file_name: str, normalize=False, missing_value=None):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a .gslib file.
@@ -231,6 +231,9 @@ class Image:
                             data[key][iz, iy, ix] = np.float32(values[iv])
         for k in data:
             data[k] = data[k].T
+            if missing_value is not None:
+                # Replace missing_value by np.nan
+                np.putmask(data[k], data[k] == missing_value, np.nan)
         img = Image(data, params)
         if normalize:
             img.normalize()
