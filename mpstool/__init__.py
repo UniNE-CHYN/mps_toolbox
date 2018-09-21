@@ -1,4 +1,5 @@
 try:
+    import mpstool.cross_validation
     import mpstool.connectivity
     import mpstool.stats
     import mpstool.img
