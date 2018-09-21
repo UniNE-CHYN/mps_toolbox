@@ -3,10 +3,10 @@ install:
 	pip3 install .
 
 pep8:
-	autopep8 --in-place graphtool/*.py
+	autopep8 --in-place mpstool/*.py
 	autopep8 --in-place tests/*.py
 
 test:
 	pytest tests/*.py
-	pycodestyle graphtool/*.py
+	pycodestyle mpstool/*.py
 	pycodestyle tests/*.py

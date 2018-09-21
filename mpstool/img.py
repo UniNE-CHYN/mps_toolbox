@@ -351,7 +351,8 @@ class Image:
         try:
             from PIL import Image as PIL_Img
         except ImportError:
-            print("Cannot read from png. Is the pillow library installed ?\nTo install it, run `pip install pillow`")
+            print("Cannot read from png. Is the pillow library installed ?\n\
+                   To install it, run `pip install pillow`")
             return
         ar = PIL_Img.open(file_name)
         if ar.mode == 'P':
@@ -495,7 +496,8 @@ class Image:
             a = self._data[key].copy()
             a = a[:255, :255, :255]
             vox = Vox.from_dense(a)
-            final_output_name = output_name+"_"+key if key != "V0" else output_name
+            final_output_name = output_name+"_"+key if key != "V0"
+                                                    else output_name
             VoxWriter(final_output_name, vox).write()
         if verbose:
             print("Generated .vox file as {}".format(output_name))
@@ -695,7 +697,8 @@ class Image:
             np.putmask(val_arr, val_arr == missing_value, np.nan)
         return Image({"V0": val_arr}, params)
 
-    def exportAsPgm(self, output_name: str, var_name=None, missing_value=None, fmt="%.10g"):
+    def exportAsPgm(self, output_name: str, var_name=None,
+                    missing_value=None, fmt="%.10g"):
         """
         Export the Image object data as a  pgm file.
 
@@ -724,8 +727,8 @@ class Image:
         ox, oy, oz = self.orig
         sx, sy, sz = self.spacing
         # Write 1st line in string shead
-        shead = "P2\n# {0} {1} {2}   {3} {4} {5}   {6} {7} {8}\n{0} {1}\n255\n".format(
-            nx, ny, nz, sx, sy, sz, ox, oy, oz)
+        shead = "P2\n# {0} {1} {2}   {3} {4} {5}   {6} {7} {8}\n\
+                 {0} {1}\n255\n".format(nx, ny, nz, sx, sy, sz, ox, oy, oz)
 
         # Replace np.nan by missing_value
         if missing_value is not None:
@@ -806,7 +809,8 @@ class Image:
         params = {"is3D": False, "nVariables": 3}
         return Image(data, params)
 
-    def exportAsPpm(self, output_name: str, var_name=['R', 'G', 'B'], missing_value=None, fmt="%.10g"):
+    def exportAsPpm(self, output_name: str, var_name=['R', 'G', 'B'],
+                    missing_value=None, fmt="%.10g"):
         """
         Export the Image object data as a  pgm file.
 
@@ -829,7 +833,8 @@ class Image:
         if self.nvariables < 3:
             raise Exception("Ppm file uses RGB channels. Only {} variables \
                             were found. To export only one variable, please \
-                            use the pgm file format instead".format(self.nvariables))
+                            use the pgm file format \
+                            instead".format(self.nvariables))
 
         # Write 1st line in string shead
         nx, ny, nz = self.shape
@@ -987,7 +992,8 @@ class Image:
         return (self.orig[2] + self.spacing[2] * self.shape[2])
 
     def _dim(self, axis):
-        return (self.orig[axis] + 0.5 * self.spacing[axis] + self.spacing[axis] * np.arange(self.shape[axis]))
+        return (self.orig[axis] + 0.5 * self.spacing[axis] +
+                self.spacing[axis] * np.arange(self.shape[axis]))
 
     def x(self):
         """Returns 1-dimensional array of x coordinates."""
@@ -1330,7 +1336,8 @@ class Image:
         ----------
         'var_names' : list of string
             The names of the variables to normalize.
-            If set to empty list (default value), all variables will be normalized
+            If set to empty list (default value), all variables will be
+            normalized
         """
         keys = self._data.keys() if not var_names else var_names
         for key in keys:
@@ -1353,7 +1360,8 @@ class Image:
 
         'var_names' : list of string
             The names of the variables to normalize.
-            If set to empty list (default value), all variables will be normalized
+            If set to empty list (default value), all variables will be
+            normalized
         """
         self.normalize()
         keys = self._data.keys() if not var_names else var_names
