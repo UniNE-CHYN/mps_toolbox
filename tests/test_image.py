@@ -7,7 +7,6 @@ from mpstool.img import *
 import pytest
 
 
-@pytest.fixture
 def example_image():
     data = np.array([[200, 255, 60],
                      [100, 10, 255],

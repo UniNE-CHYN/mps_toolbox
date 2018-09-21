@@ -16,13 +16,15 @@ class PointSet:
                  nv=0, v=np.nan, varname=None,
                  name=""):
         """
-        Inits function for the class:
+        Inits function for the class
 
-        :param v:   (int/float or tuple/list/ndarray) value(s) of the new
-                        variable:
-                        if type is int/float: constant variable
-                        if tuple/list/ndarray: must contain nv*nx*ny*nz values,
-                            which are put in the image (after reshape if needed)
+        Parameters
+        ----------
+        'v' : int/float or tuple/list/ndarray
+            value(s) of the new variable:
+            if type is int/float: constant variable
+            if tuple/list/ndarray: must contain nv*nx*ny*nz values,
+                which are put in the image (after reshape if needed)
         """
 
         self.npt = npt

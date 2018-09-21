@@ -26,33 +26,33 @@ class BlockData:
         nblock:     (int) number of block(s) (unused if blockDataUsage == 0)
 
         nodeIndex:  (list of nblock 2-dimensional array of ints with 3 columns)
-                        node index in each block, nodeIndex[i] is a (n_i, 3)
-                        array a containing the node index in the simulation grid
-                        along each coordinate for the i-th block, n_i beeing
-                        the number of nodes in that block
-                        (unused if blockDataUsage == 0)
+                     node index in each block, nodeIndex[i] is a (n_i, 3)
+                     array a containing the node index in the simulation grid
+                     along each coordinate for the i-th block, n_i beeing
+                     the number of nodes in that block
+                     (unused if blockDataUsage == 0)
 
         value:      (1-dimensional array of floats of size nblock)
-                        target value for each block
-                        (unused if blockDataUsage == 0)
+                     target value for each block
+                     (unused if blockDataUsage == 0)
 
         tolerance:  (1-dimensional array of floats of size nblock)
-                        tolerance for each block
-                        (unused if blockDataUsage == 0)
+                     tolerance for each block
+                     (unused if blockDataUsage == 0)
 
         activatePropMin:
                     (1-dimensional array of floats of size nblock)
-                        minimal proportion of informed nodes in the block,
-                        under which the block data constraint is deactivated,
-                        for each block
-                        (unused if blockDataUsage == 0)
+                     minimal proportion of informed nodes in the block,
+                     under which the block data constraint is deactivated,
+                     for each block
+                     (unused if blockDataUsage == 0)
 
         activatePropMax:
                     (1-dimensional array of floats of size nblock)
-                        maximal proportion of informed nodes in the block,
-                        above which the block data constraint is deactivated,
-                        for each block
-                        (unused if blockDataUsage == 0)
+                     maximal proportion of informed nodes in the block,
+                     above which the block data constraint is deactivated,
+                     for each block
+                     (unused if blockDataUsage == 0)
     """
 
     def __init__(self,
@@ -120,10 +120,11 @@ class BlockData:
                 li = ff.readline()
                 t = [x for x in li.split()]
                 nnode = int(t[0])
-                value[i], tolerance[i], activatePropMin[i], activatePropMax[i] = [
-                    float(x) for x in t[1:5]]
+                value[i], tolerance[i], activatePropMin[i], \
+                    activatePropMax[i] = [float(x) for x in t[1:5]]
                 nodeIndex.append(
-                    np.array([[int(j) for j in ff.readline().split()] for k in range(nnode)]))
+                    np.array([[int(j) for j in ff.readline().split()]
+                              for k in range(nnode)]))
 
         # Set block data
         bd = BlockData(blockDataUsage=1,
@@ -141,8 +142,13 @@ class BlockData:
         """
         Writes block data in a file (ASCII):
 
-        :param filename:    (string) name of the file
-        :param fmt:         (string) format for value, toleance and activate proportions
+        Parameters
+        ----------
+        'filename' : string
+            name of the file
+
+        'fmt' : string
+            format for value, tolerance and activation proportions
         """
 
         if self.blockDataUsage == 0:
@@ -155,7 +161,8 @@ class BlockData:
 
             # Write "blocks"...
             for ni, v, t, amin, amax in zip(self.nodeIndex, self.value,
-                                            self.tolerance, self.activatePropMin,
+                                            self.tolerance,
+                                            self.activatePropMin,
                                             self.activatePropMax):
                 ff.write('{} {:{fmt}} {:{fmt}} {:{fmt}} {:{fmt}}\n'.format(
                     len(ni), v, t, amin, amax, fmt=fmt).encode())

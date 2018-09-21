@@ -109,7 +109,7 @@ class Image:
     def __str__(self):
         return self._data.__str__()
 
-    # ---------------- Import/Export methods -----------------------------------
+    # ---------------- Import/Export methods ----------------------------------
 
     # ------ Numpy Array ------
 
@@ -496,8 +496,8 @@ class Image:
             a = self._data[key].copy()
             a = a[:255, :255, :255]
             vox = Vox.from_dense(a)
-            final_output_name = output_name+"_"+key if key != "V0"
-                                                    else output_name
+            final_output_name = output_name+"_"+key if key != "V0" \
+                else output_name
             VoxWriter(final_output_name, vox).write()
         if verbose:
             print("Generated .vox file as {}".format(output_name))
@@ -820,7 +820,8 @@ class Image:
             name of the file to be written
 
         'var_name' : list of 3 strings
-            The names of the channels to be output. There should be three channels
+            The names of the channels to be output.
+            There should be three channels
 
         'missing_value' : float or None
             nan values will be replaced by missing_value before writing
@@ -842,8 +843,8 @@ class Image:
         ox, oy, oz = self.orig
         r_data, g_data, b_data = (self._data[k] for k in var_name)
         data = np.array([r_data, g_data, b_data])
-        shead = "P3\n# {0} {1} {2}   {3} {4} {5}   {6} {7} {8}\n{0} {1}\n255\n".format(
-            nx, ny, nz, sx, sy, sz, ox, oy, oz)
+        shead = "P3\n# {0} {1} {2}   {3} {4} {5}   {6} {7} {8}\n\
+            {0} {1}\n255\n".format(nx, ny, nz, sx, sy, sz, ox, oy, oz)
 
         # Replace np.nan by missing_value
         if missing_value is not None:
@@ -956,10 +957,11 @@ class Image:
         self.var_name = ["V{:d}".format(i) for i in range(self.nvariables)]
 
     def set_dimension(self, new_size, new_val=0) -> None:
-        """Resets the dimension of all variables"""
+        """Resets the dimension of all variables
+           TODO
+        """
         assert len(new_size) == 3
         self.shape = tuple(new_size)
-        # TODO
 
     def nxyz(self):
         return (self.shape[0] * self.shape[1] * self.shape[2])
