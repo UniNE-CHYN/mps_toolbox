@@ -5,6 +5,7 @@ import skimage.measure
 from mpstool.img import Image
 from mpstool.stats import *
 
+
 def get_function(image, axis):
     """
     Computes connectivity function along given axis for all categories in image

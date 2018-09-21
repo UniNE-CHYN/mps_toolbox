@@ -229,11 +229,12 @@ def test_variable():
     img.remove_variable("toto")
     assert img.get_variables() == ["V0"]
 
+
 def test_extract():
     img = example_image()
-    img2 = img.extract_variable(["V0"],copy=False)
+    img2 = img.extract_variable(["V0"], copy=False)
     assert img2 == example_image()
-    assert len(img.get_variables())==0
+    assert len(img.get_variables()) == 0
 
 
 def test_flip():
@@ -245,6 +246,7 @@ def test_flip():
     img.flipy()
     img.flipz()
     assert img == example_image()
+
 
 def test_perm():
     img = example_image()

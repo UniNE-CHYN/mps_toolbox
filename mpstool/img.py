@@ -1125,7 +1125,7 @@ class Image:
         self._data.pop(var_name, None)
         self.nvariables = len(self._data.keys())
 
-    def extract_variable(self, var_name:list, copy=True):
+    def extract_variable(self, var_name: list, copy=True):
         """
         Creates a new Image containing only the extracted variable
 
@@ -1142,7 +1142,7 @@ class Image:
         -------
         A new Image object
         """
-        assert len(var_name)>0
+        assert len(var_name) > 0
         new_image = Image.empty(self.shape)
         for v in var_name:
             new_image._data[v] = np.copy(self._data[v])
@@ -1364,23 +1364,23 @@ class Image:
     def flipx(self):
         """ Flips variable values according to x direction. """
         for k in self._data:
-            self._data[k] = self._data[k][::-1,:,:]
+            self._data[k] = self._data[k][::-1, :, :]
 
     def flipy(self):
         """ Flips variable values according to x direction. """
         for k in self._data:
-            self._data[k] = self._data[k][:,::-1,:]
+            self._data[k] = self._data[k][:, ::-1, :]
 
     def flipz(self):
         """ Flips variable values according to x direction. """
         if self.is3D:
             for k in self._data:
-                self._data[k] = self._data[k][:,:,::-1]
+                self._data[k] = self._data[k][:, :, ::-1]
 
-    def _perm(self,i,j):
+    def _perm(self, i, j):
         for k in self._data:
-            self._data[k] = np.swapaxes(self._data[k],i,j)
-        new_order = [0,1,2]
+            self._data[k] = np.swapaxes(self._data[k], i, j)
+        new_order = [0, 1, 2]
         new_order[i], new_order[j] = new_order[j], new_order[i]
         self.orig = tuple(self.orig[i] for i in new_order)
         self.spacing = tuple(self.spacing[i] for i in new_order)
@@ -1388,15 +1388,15 @@ class Image:
 
     def permxy(self):
         """Permutes x and y directions."""
-        self._perm(0,1)
+        self._perm(0, 1)
 
     def permxz(self):
         """Permutes x and z directions."""
-        self._perm(0,2)
+        self._perm(0, 2)
 
     def permyz(self):
         """Permutes y and z directions."""
-        self._perm(1,2)
+        self._perm(1, 2)
 
     def get_sample(self, output_dim, var_name: str = None, normalize=False):
         """
