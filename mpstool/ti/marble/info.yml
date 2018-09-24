@@ -2,4 +2,6 @@ name: marble
 file: ti_continuousMarble.gslib
 image: ti_continuousMarble.png
 type: continuous
-info: Eef's paper
+dimensionality: 2D
+source: Meerschman et al, 2013
+doi: http://dx.doi.org/10.1016/j.cageo.2012.09.019
