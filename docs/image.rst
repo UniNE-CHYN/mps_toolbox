@@ -33,12 +33,42 @@ We can export it to various file formats::
     image.exportAsVox("black.vox")
     image.exportAsTxt("black.txt")
 
+Supported formats are txt (numpy dump), gslib, png, vox, vtk, pgm, ppm
+
 The 3D example is analogous. Be careful however, that some file formats like png
 and txt will not work::
 
     image = mpsimg.Image.fromArray(np.zeros((10,10,10)))
     image.exportAsGslib("black.gslib")
     image.exportAsVox("black.vox")
+
+Image class support multiple variables. This allow to define several channels,
+and output images in colors::
+
+    data = np.array([np.zeros((10,10,1)) for i in range(3)]) #define three channels for a 2D picture of size 10x10
+    image = mpsimg.fromArray(data)
+    image.rename_variable("V0", "R")
+    image.rename_variable("V1","G")
+    image.rename_variable("V2","B")
+    image.exportAsPng("black.png",colored=True)
+    image.exportAsGslib("black.gslib") # will output the three variables side by side
+
+Image modification
+------------------
+
+One can add, remove of modify the variables in an image::
+
+    data = np.zeros((10,10,10))
+    image.add_variable(data,"new_var")
+    image.rename_variable("new_var","my_var_name")
+    image.remove_variable("my_var_name")
+
+
+One can also perform several operations, like flipping or permuting axis::
+
+    image.flipx()
+    image.permxy()
+
 
 Normalizing
 -----------

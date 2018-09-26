@@ -7,19 +7,11 @@ from mpstool.img import *
 import pytest
 
 
-@pytest.fixture
 def example_image():
     data = np.array([[200, 255, 60],
                      [100, 10, 255],
                      [250, 100, 0]])
     return Image.fromArray(data)
-
-
-def test_str():
-    img = example_image()
-    display = '[[[200]\n  [255]\n  [ 60]]\n\n [[100]\n  [ 10]\n  [255]]\n\n \
-[[250]\n  [100]\n  [  0]]]'
-    assert str(img) == display
 
 
 def test_threshold1():
@@ -69,50 +61,106 @@ def test_from_list():
                       [255, 0]])
     input_data = [data1, data2]
     expected = np.array(input_data)
-    img = Image.fromArray(input_data)
-    assert np.alltrue(img._data == expected)
+    img = Image.fromArray(input_data).asArray()
+    assert np.alltrue(img == expected)
 
+
+# ------ Test of conversion functions ------
 
 def test_from_txt():
-    img = Image.fromTxt("tests/test_img.txt", (3, 3))
-    img2 = Image.fromTxt("tests/test_img.txt", (3, 3, 1))
+    img = Image.fromTxt("tests/data/test_img.txt", (3, 3))
+    img2 = Image.fromTxt("tests/data/test_img.txt", (3, 3, 1))
     expected = example_image()
     assert img == img2
     assert img == expected
 
 
 def test_conversion_txt_gslib():
-    img = Image.fromTxt("tests/test_img.txt", (3, 3))
-    img.exportAsGslib("tests/test_img.gslib")
-    img_test = Image.fromGslib("tests/test_img.gslib")
-    assert np.alltrue(img_test._data == img._data)
+    img = Image.fromTxt("tests/data/test_img.txt", (3, 3))
+    img.exportAsGslib("tests/data/test_img.gslib")
+    img_test = Image.fromGslib("tests/data/test_img.gslib")
+    assert np.alltrue(img_test == img)
 
 
-def test_conversion_gslib_vox():
-    img = Image.fromGslib("tests/test_img.gslib")
-    img.exportAsVox("tests/test_img.vox")
-    img_test = Image.fromVox("tests/test_img.vox")
-    assert np.alltrue(img_test._data == img._data)
+def test_gslib_to_vtk():
+    img = Image.fromGslib("tests/data/test_img.gslib")
+    img.exportAsVtk("tests/data/test_img.vtk")
+    img2 = img.fromVtk("tests/data/test_img.vtk")
+    assert np.alltrue(img == img2)
+
+
+def test_vtk_pgm():
+    img = Image.fromVtk("tests/data/test_img.vtk")
+    img.exportAsPgm("tests/data/test_img.pgm")
+    img2 = img.fromPgm("tests/data/test_img.pgm")
+    assert np.alltrue(img == img2)
+
+
+def test_pgm_vox():
+    img = Image.fromPgm("tests/data/test_img.pgm")
+    img.exportAsVox("tests/data/test_img.vox")
+    img_test = Image.fromVox("tests/data/test_img.vox")
+    assert np.alltrue(img_test == img)
 
 
 def test_conversion_vox_png():
-    img = Image.fromVox("tests/test_img.vox")
-    img.exportAsPng("tests/test_img.png")
-    img_test = Image.fromPng("tests/test_img.png")
-    assert np.alltrue(img_test._data == img._data)
+    img = Image.fromVox("tests/data/test_img.vox")
+    img.exportAsPng("tests/data/test_img.png")
+    img_test = Image.fromPng("tests/data/test_img.png")
+    assert np.alltrue(img_test == img)
 
 
 def test_conversion_png_txt():
-    img = Image.fromPng("tests/test_img.png")
-    img.exportAsTxt("tests/test_img2.txt")
-    img_test = Image.fromTxt("tests/test_img2.txt", (3, 3))
-    assert np.alltrue(img_test._data == img._data)
+    img = Image.fromPng("tests/data/test_img.png")
+    img.exportAsTxt("tests/data/test_img2.txt")
+    img_test = Image.fromTxt("tests/data/test_img2.txt", (3, 3))
+    assert np.alltrue(img_test == img)
 
 
 def test_conversion_final():
-    a = np.loadtxt("tests/test_img.txt")
-    b = np.loadtxt("tests/test_img2.txt")
+    a = np.loadtxt("tests/data/test_img.txt")
+    b = np.loadtxt("tests/data/test_img2.txt")
     return np.alltrue(a == b)
+
+
+def test_import_gslb2var():
+    img = Image.fromGslib("tests/data/2var.gslib")
+    var1 = img.asArray("V0").reshape((3, 3))
+    var2 = img.asArray("V1").reshape((3, 3))
+    expected1 = np.array([[1, 1, 1], [1, 1, 1], [0, 0, 0]])
+    expected2 = np.array([[1, 0, 1], [0, 1, 0], [1, 0, 1]])
+    assert np.alltrue(var1 == expected1)
+    assert np.alltrue(var2 == expected2)
+
+
+def test_gslib_io():
+    img = Image.fromGslib("tests/data/test_color_simple.gslib")
+    img.exportAsGslib("tests/data/test_color_simple2.gslib")
+    img = Image.fromGslib("tests/data/test_color_simple.gslib")
+    img2 = Image.fromGslib("tests/data/test_color_simple2.gslib")
+    assert(img == img2)
+
+
+def test_conversion_color():
+    img = Image.fromGslib("tests/data/test_color_simple.gslib")
+    img.exportAsPng("tests/data/test_color_simple.png", colored=True)
+    img = Image.fromGslib("tests/data/test_color_simple.gslib")
+    img.exportAsPpm("tests/data/test_color_simple.ppm")
+    img2 = Image.fromPng("tests/data/test_color_simple.png")
+    img3 = Image.fromPpm("tests/data/test_color_simple.ppm")
+    assert np.alltrue((img.asArray()-img2.asArray()) < 1e8)
+    assert img == img3
+
+
+def test_conversion_color2():
+    img = Image.fromGslib("tests/data/test_color.gslib")
+    img.exportAsPng("tests/data/test_color.png", colored=True)
+    img = Image.fromGslib("tests/data/test_color.gslib")
+    img.exportAsPpm("tests/data/test_color.ppm")
+    img2 = Image.fromPng("tests/data/test_color.png")
+    img3 = Image.fromPpm("tests/data/test_color.ppm")
+    assert np.alltrue((img.asArray()-img2.asArray()) < 1e8)
+    assert img == img3
 
 
 def test_categorize1():
@@ -134,5 +182,75 @@ def test_categorize2():
                   [100, 0, 255],
                   [255, 100, 0]]))
     img.categorize(3, initial_clusters=[2, 99, 254])
-    print(img._data)
     assert img == expected
+
+
+def test_setters():
+    img = example_image()
+    img.set_dimension((1, 1, 1))
+    assert img.shape == (1, 1, 1)
+
+
+def test_dimension():
+    img = example_image()
+    assert img.nxyz() == 9
+    assert img.nxy() == 9
+    assert img.nxz() == 3
+    assert img.nyz() == 3
+    assert img.xmin() == 0
+    assert img.xmax() == 3
+    assert img.ymin() == 0
+    assert img.ymax() == 3
+    assert img.zmin() == 0
+    assert img.zmax() == 1
+    coords = np.array([0.5, 1.5, 2.5])
+    assert np.alltrue(img.x() == coords)
+    assert np.alltrue(img.y() == coords)
+    assert np.alltrue(img.z() == np.array([0.5]))
+    assert img.vmin() == 0
+    assert img.vmax() == 255
+    assert img.get_variables() == ["V0"]
+
+
+def test_variable():
+    img = example_image()
+    data = np.array([[200, 255, 60],
+                     [100, 10, 255],
+                     [250, 100, 0]])
+    img.add_variable("test", data)
+    assert set(img.get_variables()) == {"V0", "test"}
+    assert np.alltrue(img._data["test"] == data)
+    data = np.zeros(img.shape)
+    img.set_variable("test", data)
+    assert np.alltrue(img._data["test"] == data)
+    img.rename_variable("test", "toto")
+    assert np.alltrue(img._data["toto"] == data)
+    img.remove_variable("toto")
+    assert img.get_variables() == ["V0"]
+
+
+def test_extract():
+    img = example_image()
+    img2 = img.extract_variable(["V0"], copy=False)
+    assert img2 == example_image()
+    assert len(img.get_variables()) == 0
+
+
+def test_flip():
+    img = example_image()
+    img.flipx()
+    img.flipy()
+    img.flipz()
+    img.flipx()
+    img.flipy()
+    img.flipz()
+    assert img == example_image()
+
+
+def test_perm():
+    img = example_image()
+    img.permxy()
+    img.permyz()
+    img.permxz()
+    img.permyz()
+    assert img == example_image()

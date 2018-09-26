@@ -4,6 +4,32 @@ import numpy as np
 from mpstool.img import Image
 
 
+def get_categories(image):
+    """
+    Find all values in a numpy array
+
+    Return a sorted list of categories found in image 2D arrays.
+
+    Parameters
+    ----------
+    image : ndarray | Image
+        non-empty numpy array
+
+    Returns
+    -------
+    list
+        sorted list of all categories (from smallest to greatest)
+    """
+    if isinstance(image, Image):
+        image = image.asArray()
+    return np.unique(image)
+
+
+def compute_stats(image):
+    if isinstance(image, Image):
+        image = image.asArray()
+
+
 def histogram(image):
     """
     Generates histogram of categorical vairables
@@ -44,5 +70,5 @@ def variogram(image, axis):
             variogram[category][x] = np.sum(
                 indicator_image.take(indices=range(x, n), axis=axis) !=
                 indicator_image.take(indices=range(n-x), axis=axis)
-                ) / (area*(n-x))
+            ) / (area*(n-x))
     return variogram

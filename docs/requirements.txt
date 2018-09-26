@@ -1,3 +1,5 @@
 numpy
 scikit-image
 numpydoc
+pillow
+py-vox-io
