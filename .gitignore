@@ -1,6 +1,7 @@
 .cache/
 .pytest_cache/
 __pycache__/
+mpstool.egg-info/
 *.py[cod]
 
 tests/test_img.vox
