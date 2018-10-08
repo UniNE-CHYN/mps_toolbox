@@ -1,0 +1,8 @@
+name: brahms
+file: ti_brahms.gslib
+geology: braided river
+image: ti_brahms.png
+type: categorical
+dimensionality: 2D
+source: laloy2018
+bibtexkey: laloy2018
