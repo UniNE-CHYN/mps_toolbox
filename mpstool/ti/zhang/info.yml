@@ -2,7 +2,7 @@ name: zhang
 file: ti_channels_zhang.gslib
 image: ti_channels_zhang.gif
 type: categorical
-    legend: {0: "matrix", 1:"channel", 2;"lenses"}
+    legend: {0: "matrix", 1:"channel", 2:"lenses"}
 dimensionality: 2D
 source: Zhang et al, 2008
 bibtex: @inproceedings{zhang2008, title={Patched path and recursive servo system in multiple-point geostatistics simulation}, author={Zhang, T, and Pedersen, S.I. and McCormick, D.}, booktitle={Proceedings of the Eighth International Geostatistics Congress. Santiago, Chile}, year={2008}}
