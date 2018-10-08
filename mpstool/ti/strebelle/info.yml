@@ -2,7 +2,8 @@ name: strebelle
 file: ti_strebelle.gslib
 image: ti_strebelle.gif
 type: categorical
-    legend: {0: "matrix", 1:"channel"}
+legend: " {0: matrix, 1:channel}"
+dimensionality: 2D
 dimensionality: 2D
 source: Strebelle, 2003
-bibtex: @inproceedings{strebelle2003, title={New multiple-point statistics simulation implementation to reduce memory and cpu-time demand}, author={Strebelle, S}, booktitle={Conference of the international association for mathematical geology. Portsmouth, UK, September}, volume={7}, pages={12}, year={2003}}
+bibtex: "@inproceedings{strebelle2003, title={New multiple-point statistics simulation implementation to reduce memory and cpu-time demand}, author={Strebelle, S}, booktitle={Conference of the international association for mathematical geology. Portsmouth, UK, September}, volume={7}, pages={12}, year={2003}}"
