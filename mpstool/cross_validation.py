@@ -73,19 +73,25 @@ def plot(conditioning_data):
     plt.scatter(X, Y, c=conditioning_data.values)
     plt.show()
 
-def cross_validation(ti_filename, data_filename, n):
+def orthonormal_residuals(ti_filename, data_filename, n):
     data = read_from_gslib(data_filename)
 
     temp_filename = 'temp.gslib'
-    print(data.number_of_points)
+
     # order randomly data points
     permutation = np.asarray(np.random.permutation(data.number_of_points), dtype=int)
-    print(type(permutation))
     conditioning_data = ConditioningData([data.pixels[i] for i in permutation], [data.values[i] for i in permutation])
 
+    simulation_values = []
+    real_values = []
     for i in range(1, conditioning_data.number_of_points-1):
+        pixel_to_simulate = conditioning_data.pixels[i]
+        real_values.append(conditioning_data.values[i])
+
         available_data = ConditioningData(conditioning_data.pixels[:i], conditioning_data.values[:i])
         save_to_gslib(temp_filename, available_data)
-        simulation_process = subprocess.Popen([name] + arguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        arguments = ['-x', str(pixel_to_simulate[0]), '-y', str(pixel_to_simulate[1]) , '-n', '100', '-f', '1.0', '-s', '8', '-c', temp_filename, '-i', 'strebelle_250x250.gslib', '-r', '100']
+        simulation_process = subprocess.Popen(['single_point_ds_bc'] + arguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = simulation_process.communicate()
-
+        simulation_values.append([int(i) for i in output.decode('ascii').splitlines()])
+    return simulation_values, real_values

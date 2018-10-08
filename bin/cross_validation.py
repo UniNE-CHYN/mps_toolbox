@@ -48,4 +48,4 @@ if __name__ == '__main__':
     number_of_simulations = args.nsim
     data_filename = args.cdata
     
-    mpstool.cross_validation.cross_validation(ti_filename, data_filename, number_of_simulations)
+    mpstool.cross_validation.orthonormal_residuals(ti_filename, data_filename, number_of_simulations)
