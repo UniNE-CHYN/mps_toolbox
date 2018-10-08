@@ -1,0 +1,233 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Image module &#8212; Multiple-Point statistics Toolbox 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API documentation" href="api.html" />
+    <link rel="prev" title="Statistics module" href="stats.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="API documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="stats.html" title="Statistics module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Multiple-Point statistics Toolbox 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="image-module">
+<h1>Image module<a class="headerlink" href="#image-module" title="Permalink to this headline">¶</a></h1>
+<p>The image module implements the Image class.
+Image class provides conversion primitives and transformation functions to
+work on your data.</p>
+<div class="section" id="conversion">
+<h2>Conversion<a class="headerlink" href="#conversion" title="Permalink to this headline">¶</a></h2>
+<p>Let us create an empty image and export it</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">mpstool.img</span> <span class="k">as</span> <span class="nn">mpsimg</span>
+
+<span class="c1"># creates an image from a numpy array</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">mpsimg</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)))</span>
+
+<span class="c1"># creates an image from a txt dump of numpy</span>
+<span class="c1"># The shape of the input should be provided here</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">mpsimg</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromTxt</span><span class="p">(</span><span class="s2">&quot;2D.txt&quot;</span><span class="p">,(</span><span class="mi">550</span><span class="p">,</span><span class="mi">500</span><span class="p">))</span>
+
+<span class="c1"># creates an image from a gslib file</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">mpsimg</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromGslib</span><span class="p">(</span><span class="s2">&quot;2D.gslib&quot;</span><span class="p">)</span>
+
+<span class="c1"># creates an image from a vox file</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">mpsimg</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromVox</span><span class="p">(</span><span class="s2">&quot;2D.vox&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can export it to various file formats:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span><span class="o">.</span><span class="n">exportAsPng</span><span class="p">(</span><span class="s2">&quot;black.png&quot;</span><span class="p">)</span>
+<span class="n">image</span><span class="o">.</span><span class="n">exportAsGslib</span><span class="p">(</span><span class="s2">&quot;black.gslib&quot;</span><span class="p">)</span>
+<span class="n">image</span><span class="o">.</span><span class="n">exportAsVox</span><span class="p">(</span><span class="s2">&quot;black.vox&quot;</span><span class="p">)</span>
+<span class="n">image</span><span class="o">.</span><span class="n">exportAsTxt</span><span class="p">(</span><span class="s2">&quot;black.txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The 3D example is analogous. Be careful however, that some file formats like png
+and txt will not work:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span> <span class="o">=</span> <span class="n">mpsimg</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)))</span>
+<span class="n">image</span><span class="o">.</span><span class="n">exportAsGslib</span><span class="p">(</span><span class="s2">&quot;black.gslib&quot;</span><span class="p">)</span>
+<span class="n">image</span><span class="o">.</span><span class="n">exportAsVox</span><span class="p">(</span><span class="s2">&quot;black.vox&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="normalizing">
+<h2>Normalizing<a class="headerlink" href="#normalizing" title="Permalink to this headline">¶</a></h2>
+<p>Images contain either integer values from 0 to 255 (denormalized) or float numbers
+between -1 and 1 (normalized). Methods <cite>.normalize()</cite> and <cite>.unnormalize()</cite> allow you
+to switch between the two.</p>
+<p>The normalize parameter is set to False by default in the importation functions.</p>
+</div>
+<div class="section" id="transformation-functions">
+<h2>Transformation functions<a class="headerlink" href="#transformation-functions" title="Permalink to this headline">¶</a></h2>
+<p>Categorize:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span><span class="o">.</span><span class="n">categorize</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="c1"># will discretize the image to have only 3 different values</span>
+<span class="c1"># The discretization algorithm is a k-means where k is the number of categories</span>
+<span class="c1"># Each category will then take the color of the majority of pixels within it</span>
+</pre></div>
+</div>
+<p>Threshold:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">thresholds</span><span class="o">=</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">150</span><span class="p">])</span>
+<span class="c1"># this will transform the image the following way:</span>
+<span class="c1"># values &lt; 100 will be sent to 10</span>
+<span class="c1"># values &gt;=100 but &lt;200 will be sent to 50</span>
+<span class="c1"># values &gt;=200 will be sent to 150</span>
+</pre></div>
+</div>
+<p>Saturation of the white:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span><span class="o">.</span><span class="n">saturate</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># Values below t will be sent to 0</span>
+</pre></div>
+</div>
+<p>You can also apply your custom transformation on the values of the pixels:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">15</span><span class="p">)</span><span class="o">%</span><span class="mi">255</span>
+<span class="n">image</span><span class="o">.</span><span class="n">apply_fun</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sampling-cutting-tilling">
+<h2>Sampling, cutting, tilling<a class="headerlink" href="#sampling-cutting-tilling" title="Permalink to this headline">¶</a></h2>
+<p>The library also provides functions to extract samples from an image:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span> <span class="o">=</span> <span class="n">mpsimg</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromPng</span><span class="p">(</span><span class="s2">&quot;2D.png&quot;</span><span class="p">)</span>
+<span class="n">sample_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get_sample</span><span class="p">(</span><span class="n">sample_shape</span><span class="p">)</span>
+<span class="n">sample</span><span class="o">.</span><span class="n">exportAsPng</span><span class="p">(</span><span class="s2">&quot;sample.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The cutting function is useful on 3D images. It outputs every cuts of the data along
+a given axis. The n parameters tells how many random cuts should be taken. If n equals -1,
+all cuts are taken</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span> <span class="o">=</span> <span class="n">mpsimg</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromTxt</span><span class="p">(</span><span class="s2">&quot;3D.txt&quot;</span><span class="p">,(</span><span class="mi">100</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">80</span><span class="p">))</span>
+<span class="n">image</span><span class="o">.</span><span class="n">exportCuts</span><span class="p">(</span><span class="s2">&quot;cuts_folder&quot;</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># axis = 0 &lt;-&gt; x ;  1 &lt;-&gt; y ; 2 &lt;-&gt; z</span>
+</pre></div>
+</div>
+<p>The tilling function takes a list of images and tile them together into a single one:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image1</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromGslib</span><span class="p">(</span><span class="s2">&quot;2D.gslib&quot;</span><span class="p">)</span>
+<span class="n">image2</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromGslib</span><span class="p">(</span><span class="s2">&quot;2D.gslib&quot;</span><span class="p">)</span>
+<span class="n">image3</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromGslib</span><span class="p">(</span><span class="s2">&quot;2D.gslib&quot;</span><span class="p">)</span>
+<span class="n">image4</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromGslib</span><span class="p">(</span><span class="s2">&quot;2D.gslib&quot;</span><span class="p">)</span>
+<span class="n">image_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">,</span> <span class="n">image3</span><span class="p">,</span> <span class="n">image4</span><span class="p">]</span>
+<span class="n">tiled_horizontal</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">tile_images</span><span class="p">(</span><span class="n">image_list</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">)</span>
+<span class="n">tiled_vertical</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">tile_images</span><span class="p">(</span><span class="n">image_list</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span>
+<span class="n">tiled_square</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">tile_images</span><span class="p">(</span><span class="n">image_list</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connectivity.html">Connectivity module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">Statistics module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Image module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#conversion">Conversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#normalizing">Normalizing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transformation-functions">Transformation functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sampling-cutting-tilling">Sampling, cutting, tilling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ti.html">Training Image database</a></li>
+</ul>
+
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Image module</a><ul>
+<li><a class="reference internal" href="#conversion">Conversion</a></li>
+<li><a class="reference internal" href="#normalizing">Normalizing</a></li>
+<li><a class="reference internal" href="#transformation-functions">Transformation functions</a></li>
+<li><a class="reference internal" href="#sampling-cutting-tilling">Sampling, cutting, tilling</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="stats.html"
+                        title="previous chapter">Statistics module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="next chapter">API documentation</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="API documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="stats.html" title="Statistics module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Multiple-Point statistics Toolbox 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, CHYN, Université de Neuchâtel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

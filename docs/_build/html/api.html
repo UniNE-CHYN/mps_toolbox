@@ -1,0 +1,862 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>API documentation &#8212; Multiple-Point statistics Toolbox 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Image module" href="image.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="image.html" title="Image module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Multiple-Point statistics Toolbox 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api-documentation">
+<h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<p>This is API documentation.</p>
+<span class="target" id="module-connectivity"></span><dl class="function">
+<dt id="connectivity.get_categories">
+<code class="descclassname">connectivity.</code><code class="descname">get_categories</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#connectivity.get_categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all values in a numpy array</p>
+<p>Return a sorted list of categories found in image 2D arrays.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray | Image</span></dt>
+<dd><p class="first last">non-empty numpy array</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>list</strong></dt>
+<dd><p class="first last">sorted list of all categories (from smallest to greatest)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="connectivity.get_components">
+<code class="descclassname">connectivity.</code><code class="descname">get_components</code><span class="sig-paren">(</span><em>image</em>, <em>background=None</em><span class="sig-paren">)</span><a class="headerlink" href="#connectivity.get_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes connected components array of an input image</p>
+<p>Returns array of the same size as the input array.
+The returned array contains integer labels, pixels belonging
+to the same components have the same label.</p>
+<p><a class="reference external" href="http://scikit-image.org/docs/stable/api/skimage.measure.html#label">http://scikit-image.org/docs/stable/api/skimage.measure.html#label</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray | Image</span></dt>
+<dd><p class="first last">non-empty numpy array</p>
+</dd>
+<dt><strong>background</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">optional argument for background category;
+background pixels will belong to the same connected component
+If no background specified, no background is used at all</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>ndarray</strong></dt>
+<dd><p class="first last">numpy array of the same size as input</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="connectivity.get_function">
+<code class="descclassname">connectivity.</code><code class="descname">get_function</code><span class="sig-paren">(</span><em>image</em>, <em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#connectivity.get_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes connectivity function along given axis for all categories in image</p>
+<p>Returns a dictionary of connectivity functions.
+Keys of the dictionary are the categories given by get_categories.
+Each entry is a numpy array of connectivity values
+for all pixels in axis  direction for all categories</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray | Image</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>dict</strong></dt>
+<dd><p class="first last">dictionary of connectivity functions,
+each being a numpy array of length n = image.shape[axis]</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="connectivity.get_map">
+<code class="descclassname">connectivity.</code><code class="descname">get_map</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#connectivity.get_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes connectivity map for all categories in image.</p>
+<p>Returns a dictionary of connectivity maps.
+Keys of the dictionary are the categories given by get_categories.
+Each entry is a numpy 2D array of connectivity values for given shifts</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray | Image</span></dt>
+<dd><p class="first last">non-empty numpy array</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>ndarray</strong></dt>
+<dd><p class="first last">2D numpy array of size nx-1, ny-1</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-img"></span><dl class="class">
+<dt id="img.Image">
+<em class="property">class </em><code class="descclassname">img.</code><code class="descname">Image</code><span class="sig-paren">(</span><em>data</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>A data container.
+The underlying data structure is a numpy ndarray.
+Implements transformations on images, as well as type conversion
+from the following data types :</p>
+<p>png
+The classical image extension</p>
+<p>gslib
+The .gslib format is a text format with the following structure :</p>
+<div class="line-block">
+<div class="line">nx  ny  nz  x_orig  y_orig  z_orig x_padding y_padding z_padding</div>
+<div class="line">number_of_variables (should be 1 for our use)</div>
+<div class="line">name_of_variable_1</div>
+<div class="line">…</div>
+<div class="line">name_of_variable_n</div>
+</div>
+<p>then, on each line, the value of a coordinate (x,y,z), in the order of the
+nested loop :</p>
+<dl class="docutils">
+<dt>for x = 1 to nx</dt>
+<dd><dl class="first last docutils">
+<dt>for y = 1 to ny:</dt>
+<dd>for z = 1 to nz:</dd>
+</dl>
+</dd>
+</dl>
+<p>vox
+A binary file used in MagicaVoxel and in other voxel editors.
+<a class="reference external" href="https://ephtracy.github.io/index.html?page=mv_main">https://ephtracy.github.io/index.html?page=mv_main</a></p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.apply_fun" title="img.Image.apply_fun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_fun</span></code></a>(fun)</td>
+<td>Transformation method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.asArray" title="img.Image.asArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asArray</span></code></a>()</td>
+<td>Return the raw data as a numpy array</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.categorize" title="img.Image.categorize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">categorize</span></code></a>(nb_categories[,&nbsp;…])</td>
+<td>Transformation method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.exportAsGslib" title="img.Image.exportAsGslib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exportAsGslib</span></code></a>(output_name[,&nbsp;verbose])</td>
+<td>Export the Image object data as a gslib file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.exportAsPng" title="img.Image.exportAsPng"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exportAsPng</span></code></a>(output_name[,&nbsp;verbose])</td>
+<td>Export the Image object data as a png file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.exportAsTxt" title="img.Image.exportAsTxt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exportAsTxt</span></code></a>(output_name[,&nbsp;verbose])</td>
+<td>Export the Image object data as a txt file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.exportAsVox" title="img.Image.exportAsVox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exportAsVox</span></code></a>(output_name[,&nbsp;verbose])</td>
+<td>Export the Image object data as a vox file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.exportCuts" title="img.Image.exportCuts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exportCuts</span></code></a>([output_folder,&nbsp;axis,&nbsp;n,&nbsp;invert])</td>
+<td>Export the Image object data as cuts along an axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.fromArray" title="img.Image.fromArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromArray</span></code></a>(ar[,&nbsp;normalize])</td>
+<td>Image staticmethod.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.fromGslib" title="img.Image.fromGslib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromGslib</span></code></a>(file_name[,&nbsp;normalize])</td>
+<td>Image staticmethod.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.fromPng" title="img.Image.fromPng"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromPng</span></code></a>(file_name[,&nbsp;normalize])</td>
+<td>Image staticmethod.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.fromTxt" title="img.Image.fromTxt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromTxt</span></code></a>(file_name,&nbsp;shape[,&nbsp;normalize])</td>
+<td>Image staticmethod.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.fromVox" title="img.Image.fromVox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromVox</span></code></a>(file_name)</td>
+<td>Image staticmethod.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.get_sample" title="img.Image.get_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sample</span></code></a>(output_dim[,&nbsp;normalize])</td>
+<td>Extract a random submatrix of a given size from the data container.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.normalize" title="img.Image.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a>()</td>
+<td>Transformation method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.plot" title="img.Image.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>()</td>
+<td>Displays the image using matplotlib.pyplot</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.saturate" title="img.Image.saturate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">saturate</span></code></a>([t])</td>
+<td>Transformation method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.threshold" title="img.Image.threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold</span></code></a>([thresholds,&nbsp;values])</td>
+<td>Returns a categorized image according to thresholds specified.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#img.Image.tile_images" title="img.Image.tile_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tile_images</span></code></a>(image_stack,&nbsp;mode)</td>
+<td>Given a list of Images, reshapes them into a tiling for display.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#img.Image.unnormalize" title="img.Image.unnormalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unnormalize</span></code></a>([output_type])</td>
+<td>Transformation method.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="img.Image.apply_fun">
+<code class="descname">apply_fun</code><span class="sig-paren">(</span><em>fun</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.apply_fun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transformation method. Applies a function to every element of the
+data container.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘fun’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">a python function returning an number</span></dt>
+<dd><p class="first last">the function to be called</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.asArray">
+<code class="descname">asArray</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.asArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the raw data as a numpy array</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.categorize">
+<code class="descname">categorize</code><span class="sig-paren">(</span><em>nb_categories: int</em>, <em>initial_clusters=None</em>, <em>norm='l1'</em>, <em>max_iter=10</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.categorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transformation method. Applies a clustering algorithm to categorize the
+image. k clusters will be created, with the color value of their
+barycenter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘nb_categories’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The number of categories</p>
+</dd>
+<dt><strong>‘initial_clusters’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">Values of the initial centroids for the cluster. If not provided,
+those values will be taken at random</p>
+</dd>
+<dt><strong>‘norm’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The distance to be used. Supported distance are l1 and l2.
+Only relevant when dealing with colored (multi channel) images.</p>
+</dd>
+<dt><strong>‘max_iter’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Maximal number of cluster updates allowed</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.exportAsGslib">
+<code class="descname">exportAsGslib</code><span class="sig-paren">(</span><em>output_name: str</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.exportAsGslib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export the Image object data as a gslib file.
+Requires the image to be a black and white one (only one channel)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘output_name’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">relative path to the gslib file to be output</p>
+</dd>
+<dt><strong>‘verbose’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd><p class="first last">enables verbose mode. Set to False by default</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.exportAsPng">
+<code class="descname">exportAsPng</code><span class="sig-paren">(</span><em>output_name: str</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.exportAsPng" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export the Image object data as a png file.
+Requires the data to be two dimensionnal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘output_name’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">relative path to the png file to be output</p>
+</dd>
+<dt><strong>‘verbose’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd><p class="first last">enables verbose mode. Set to False by default</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.exportAsTxt">
+<code class="descname">exportAsTxt</code><span class="sig-paren">(</span><em>output_name: str</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.exportAsTxt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export the Image object data as a txt file.
+Requires the data to be two dimensionnal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘output_name’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">relative path to the txt file to be output</p>
+</dd>
+<dt><strong>‘verbose’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd><p class="first last">enables verbose mode. Set to False by default</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.exportAsVox">
+<code class="descname">exportAsVox</code><span class="sig-paren">(</span><em>output_name: str</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.exportAsVox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export the Image object data as a vox file.
+Requires the image to be a black and white one (only one channel).
+Requires py-vox-io to function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘output_name’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">relative path to the vox file to be output</p>
+</dd>
+<dt><strong>‘verbose’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd><p class="first last">enables verbose mode.
+default=False</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.exportCuts">
+<code class="descname">exportCuts</code><span class="sig-paren">(</span><em>output_folder='cut_output'</em>, <em>axis=-1</em>, <em>n=-1</em>, <em>invert=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.exportCuts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export the Image object data as cuts along an axis.
+Requires the image to be a black and white one (only one channel).
+The exported cuts are saved as png files.
+If the image is two dimensionnal, performs as exportAsPng.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘output_folder’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">relative path to the folder file in which the cuts will be saved</p>
+</dd>
+<dt><strong>‘axis’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">intI</span></dt>
+<dd><p class="first last">The axis along the cuts are made.
+If set to -1, will perform cuts along all axis.
+default=-1</p>
+</dd>
+<dt><strong>‘n’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The number of cuts performed in the given direction.
+If set to -1, will perform every possible cuts.
+Otherwise, takes n cuts at random.
+Default=-1</p>
+</dd>
+<dt><strong>‘invert’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd><p class="first last">if set to true, will invert the colors of the image (x -&gt; 255-x)
+default=False</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="img.Image.fromArray">
+<em class="property">static </em><code class="descname">fromArray</code><span class="sig-paren">(</span><em>ar</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.fromArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image staticmethod. Used as an initializer.
+Builds the container from a numpy array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>‘ar’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray | list of ndarray</span></dt>
+<dd><p class="first last">The numpy array around which the Image object is built
+A list of 2D ndarray can be given in order to build a 3D image</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>A new Image object</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="img.Image.fromGslib">
+<em class="property">static </em><code class="descname">fromGslib</code><span class="sig-paren">(</span><em>file_name: str</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.fromGslib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image staticmethod. Used as an initializer.
+Builds the container from a .gslib file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>‘file_name’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">relative path to the gslib file</p>
+</dd>
+<dt><strong>‘normalize’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd><p class="first last">if set to true, the values will be stretched to fit in [-1;1]</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>A new Image object</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="img.Image.fromPng">
+<em class="property">static </em><code class="descname">fromPng</code><span class="sig-paren">(</span><em>file_name: str</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.fromPng" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image staticmethod. Used as an initializer.
+Builds the container from a .png file.
+Makes calls to the Pillow library</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>‘file_name’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">relative path to the png file</p>
+</dd>
+<dt><strong>‘normalize’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd><p class="first last">if set to true, the values will be stretched to fit in [-1;1]</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>A new Image object</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="img.Image.fromTxt">
+<em class="property">static </em><code class="descname">fromTxt</code><span class="sig-paren">(</span><em>file_name: str</em>, <em>shape</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.fromTxt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image staticmethod. Used as an initializer.
+Builds the container from a raw txt file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>‘file_name’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">the relative path to the txt file to read</p>
+</dd>
+<dt><strong>‘shape’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple of int</span></dt>
+<dd><p class="first last">the shape of the data (shape is not contained in the raw txt file,
+thus this parameter is necessary)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>A new Image object</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="img.Image.fromVox">
+<em class="property">static </em><code class="descname">fromVox</code><span class="sig-paren">(</span><em>file_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.fromVox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image staticmethod. Used as an initializer.
+Builds the container from a .vox file.
+Requires py-vox-io to function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>‘file_name’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">relative path to the gslib file</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>A new Image object</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.get_sample">
+<code class="descname">get_sample</code><span class="sig-paren">(</span><em>output_dim</em>, <em>normalize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.get_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract a random submatrix of a given size from the data container.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>‘output_dim’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd><p class="first last">The size of the sample. All coordinates should lay between 0 and
+the corresponding coordinate of self._data</p>
+</dd>
+<dt><strong>‘normalize’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean</span></dt>
+<dd><p class="first last">if set to true, apply the normalize method to the output sample to
+get values in [-1;1]</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>A new Image object of size ‘output_dim’</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.normalize">
+<code class="descname">normalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transformation method. Applies a linear transformation
+to get all data in range [-1,1]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the image using matplotlib.pyplot</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.saturate">
+<code class="descname">saturate</code><span class="sig-paren">(</span><em>t=5</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.saturate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transformation method. Applies a saturation of height t on the image,
+that is to say : sends elements with values&lt;t to 255 and does not
+change other values.</p>
+<p>This is usefull for the .vox format, where 0 values are being rendered
+as transparent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘t’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">the height of the saturation.
+default = 5</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.threshold">
+<code class="descname">threshold</code><span class="sig-paren">(</span><em>thresholds=[127], values=None</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a categorized image according to thresholds specified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘thresholds’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray | list</span></dt>
+<dd><p class="first last">must be non-empty and all image values must lie between
+first and last element of threshold</p>
+</dd>
+<dt><strong>‘values’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray | list</span></dt>
+<dd><p class="first last">a list of size len(thresholds)+1. If this argument is not None,
+the categories will take the given. Otherwise, the categores will
+have their mean value as a category value.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="img.Image.tile_images">
+<em class="property">static </em><code class="descname">tile_images</code><span class="sig-paren">(</span><em>image_stack</em>, <em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.tile_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of Images, reshapes them into a tiling for display.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>‘image_stack’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list of Images</span></dt>
+<dd><p class="first last">the images that will be concatenated</p>
+</dd>
+<dt><strong>‘mode’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string | tuple</span></dt>
+<dd><dl class="first docutils">
+<dt>The mode of tiling. Three predefined modes are available :</dt>
+<dd><p class="first last">horizontal -&gt; ‘h’ option
+vertical   -&gt; ‘v’ option
+square     -&gt; ‘s’ option</p>
+</dd>
+</dl>
+<p class="last">You can also provide a tuple (nb_lines,nb_columns) for any
+rectangular tiling. If your number of images is not
+nb_lines*nb_columns, the function will complete with black images</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>A new Image instance</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="img.Image.unnormalize">
+<code class="descname">unnormalize</code><span class="sig-paren">(</span><em>output_type=&lt;class 'numpy.uint8'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#img.Image.unnormalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transformation method. Applies a linear transformation
+to get all data in range [0,255]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>‘output_type’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.dtype</span></dt>
+<dd><p class="first last">The type the data will be casted to.
+default = np.uint8 (integers in range [0;255])</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="img.gslib_to_png">
+<code class="descclassname">img.</code><code class="descname">gslib_to_png</code><span class="sig-paren">(</span><em>gslib_file: str</em>, <em>output_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#img.gslib_to_png" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conversion function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="img.gslib_to_vox">
+<code class="descclassname">img.</code><code class="descname">gslib_to_vox</code><span class="sig-paren">(</span><em>in_file: str</em>, <em>out_file: str</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#img.gslib_to_vox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conversion function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="img.labelize">
+<code class="descclassname">img.</code><code class="descname">labelize</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#img.labelize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Label the data to get integers from 0 to the number of facies</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>image</strong> <span class="classifier-delimiter">:</span> <span class="classifier">ndarray | Image</span></dt>
+<dd><p class="first last">non-empty numpy array or Image class object</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>ndarray</strong></dt>
+<dd><p class="first last">array of the same shape of image containing the categories</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="img.png_to_gslib">
+<code class="descclassname">img.</code><code class="descname">png_to_gslib</code><span class="sig-paren">(</span><em>png_file: str</em>, <em>output_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#img.png_to_gslib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conversion function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="img.vox_to_gslib">
+<code class="descclassname">img.</code><code class="descname">vox_to_gslib</code><span class="sig-paren">(</span><em>in_file: str</em>, <em>out_file: str</em><span class="sig-paren">)</span><a class="headerlink" href="#img.vox_to_gslib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conversion function</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connectivity.html">Connectivity module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">Statistics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API documentation</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ti.html">Training Image database</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="image.html"
+                        title="previous chapter">Image module</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="image.html" title="Image module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Multiple-Point statistics Toolbox 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, CHYN, Université de Neuchâtel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>
