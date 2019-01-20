@@ -350,7 +350,7 @@ class Image:
             extract only one variable.
             Default is RGB
 
-        Returnsey
+        Returns
         ----------
         A new Image object
         """
@@ -1362,7 +1362,7 @@ class Image:
                 self._data[key] = self._data[key] / m
             self._data[key] = 2*self._data[key] - 1
 
-    def unnormalize(self, var_names=[], output_type=np.uint8):
+    def unnormalize(self, var_name: list = None, output_type=np.uint8):
         """
         Transformation method. Applies a linear transformation
         to get all data in range [0,255]
@@ -1379,7 +1379,7 @@ class Image:
             normalized
         """
         self.normalize()
-        keys = self._data.keys() if not var_names else var_names
+        keys = self._data.keys() if var_name is None else var_name
         for key in keys:
             self._data[key] = (self._data[key]+1)*127.5
             self._data[key] = self._data[key].astype(output_type)
@@ -1421,7 +1421,9 @@ class Image:
         """Permutes y and z directions."""
         self._perm(1, 2)
 
-    def get_sample(self, output_dim, var_name: list = None, normalize=False):
+    def get_sample(self, output_dim,
+                   var_name: list = None,
+                   normalize: bool = False):
         """
         Extract a random submatrix of a given size from the data container.
 
