@@ -345,8 +345,9 @@ class Image:
             if set to true, the values will be stretched to fit in [-1;1]
 
         'channel_mode' : string
-            if set to RGB, will extract three variables R,G and B from the image
-            if set to Gray, will perform a grayscale transformation and extract only one variable
+            if set to RGB, will extract three variables R,G and B
+            if set to Gray, will perform a grayscale transformation and
+            extract only one variable.
             Default is RGB
 
         Returnsey
@@ -368,16 +369,17 @@ class Image:
             data = {"V0": ar}
             params = {"is3D": False, "nVariables": 1}
         else:
-            if channel_mode=="RGB":
+            if channel_mode == "RGB":
                 data = {"R": ar[:, :, 0],
                         "G": ar[:, :, 1],
                         "B": ar[:, :, 2]}
                 # Ignore the eventual alpha canal
                 params = {"is3D": False, "nVariables": 3}
-            elif channel_mode=="Gray":
-                gray_ar = 0.29*ar[:,:,0] + 0.58*ar[:,:,1] + 0.13*ar[:,:,2]
-                data = {"V0" : gray_ar}
-                params = {"is3D" : False, "nVariables": 1}
+            elif channel_mode == "Gray":
+                gray_ar = 0.29*ar[:, :, 0] + 0.58 * \
+                    ar[:, :, 1] + 0.13*ar[:, :, 2]
+                data = {"V0": gray_ar}
+                params = {"is3D": False, "nVariables": 1}
         img = Image(data, params)
         if normalize:
             img.normalize()
