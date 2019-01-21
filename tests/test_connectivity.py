@@ -77,7 +77,7 @@ def test_categories(cube, cube_image):
     assert all(mpstool.connectivity.get_categories(cube_image) == [0, 1])
 
 
-def test_get_map(array,image):
+def test_get_map(array, image):
     expected_map = {0: np.array([[1., 0.], [0., 0.]]),
                     1: np.array([[0., 0.], [0., 0.]])}
     for ar in [array, image]:
@@ -87,7 +87,7 @@ def test_get_map(array,image):
             assert np.alltrue(real_map[k] == expected_map[k])
 
 
-def test_function_2D(array,image):
+def test_function_2D(array, image):
     for ar in [array, image]:
         axis0_connectivity = {0: np.array([1., 0.]), 1: np.array([0., 0.])}
         axis1_connectivity = {0: np.array([1., 1.]), 1: np.array([1., 0.5])}

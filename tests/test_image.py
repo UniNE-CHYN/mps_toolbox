@@ -7,6 +7,7 @@ from mpstool.img import *
 from copy import copy, deepcopy
 import pytest
 
+
 @pytest.fixture
 def img():
     data = np.array([[200, 255, 60],
@@ -114,7 +115,7 @@ def test_conversion_png_txt():
 
 
 def test_conversion_final():
-    a = np.loadtxt("tests/data/test_img.txt").reshape((3,3))
+    a = np.loadtxt("tests/data/test_img.txt").reshape((3, 3))
     b = np.loadtxt("tests/data/test_img2.txt")
     return np.alltrue(a == b)
 
@@ -225,8 +226,9 @@ def test_extract(img):
     assert len(img2.get_variables()) == 1
     assert img2 == img
 
+
 def test_flip(img):
-    img2= img
+    img2 = img
     img2.flipx()
     img2.flipy()
     img2.flipz()
