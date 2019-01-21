@@ -102,6 +102,8 @@ class Image:
         if self._data.keys() != other._data.keys():
             return False
         for k in self._data.keys():
+            if self._data[k].shape != other._data[k].shape:
+                return False
             if not np.alltrue(self._data[k] == other._data[k]):
                 return False
         return True
