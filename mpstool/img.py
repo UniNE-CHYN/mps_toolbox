@@ -102,6 +102,8 @@ class Image:
         if self._data.keys() != other._data.keys():
             return False
         for k in self._data.keys():
+            if self._data[k].shape != other._data[k].shape:
+                return False
             if not np.alltrue(self._data[k] == other._data[k]):
                 return False
         return True
@@ -327,7 +329,7 @@ class Image:
     # ------ Png ------
 
     @staticmethod
-    def fromPng(file_name: str, normalize=False):
+    def fromPng(file_name: str, normalize=False, channel_mode="RGB"):
         """
         Image staticmethod. Used as an initializer.
         Builds the container from a .png file.
@@ -343,6 +345,12 @@ class Image:
 
         'normalize' : boolean
             if set to true, the values will be stretched to fit in [-1;1]
+
+        'channel_mode' : string
+            if set to RGB, will extract three variables R,G and B
+            if set to Gray, will perform a grayscale transformation and
+            extract only one variable.
+            Default is RGB
 
         Returns
         ----------
@@ -363,10 +371,17 @@ class Image:
             data = {"V0": ar}
             params = {"is3D": False, "nVariables": 1}
         else:
-            data = {"R": ar[:, :, 0],
-                    "G": ar[:, :, 1],
-                    "B": ar[:, :, 2]}
-            params = {"is3D": False, "nVariables": 3}
+            if channel_mode == "RGB":
+                data = {"R": ar[:, :, 0],
+                        "G": ar[:, :, 1],
+                        "B": ar[:, :, 2]}
+                # Ignore the eventual alpha canal
+                params = {"is3D": False, "nVariables": 3}
+            elif channel_mode == "Gray":
+                gray_ar = 0.29*ar[:, :, 0] + 0.58 * \
+                    ar[:, :, 1] + 0.13*ar[:, :, 2]
+                data = {"V0": gray_ar}
+                params = {"is3D": False, "nVariables": 1}
         img = Image(data, params)
         if normalize:
             img.normalize()
@@ -1349,7 +1364,7 @@ class Image:
                 self._data[key] = self._data[key] / m
             self._data[key] = 2*self._data[key] - 1
 
-    def unnormalize(self, var_names=[], output_type=np.uint8):
+    def unnormalize(self, var_name: list = None, output_type=np.uint8):
         """
         Transformation method. Applies a linear transformation
         to get all data in range [0,255]
@@ -1366,7 +1381,7 @@ class Image:
             normalized
         """
         self.normalize()
-        keys = self._data.keys() if not var_names else var_names
+        keys = self._data.keys() if var_name is None else var_name
         for key in keys:
             self._data[key] = (self._data[key]+1)*127.5
             self._data[key] = self._data[key].astype(output_type)
@@ -1408,7 +1423,9 @@ class Image:
         """Permutes y and z directions."""
         self._perm(1, 2)
 
-    def get_sample(self, output_dim, var_name: str = None, normalize=False):
+    def get_sample(self, output_dim,
+                   var_name: list = None,
+                   normalize: bool = False):
         """
         Extract a random submatrix of a given size from the data container.
 
@@ -1422,34 +1439,39 @@ class Image:
             if set to true, apply the normalize method to the output sample to
             get values in [-1;1]
 
-        'var_name' : string
-            the name of the variable in which the sample is taken.
+        'var_name' : list
+            the name of the variables in which the sample is taken.
             Needs to be specified if nvariables>1
 
         Returns
         ----------
-        A new Image object of size 'output_dim'
+        A new Image object of size (output_dim * len(var_name))
         """
-        if var_name is None and self.nvariables > 1:
-            raise UndefVarExc("get_sample")
-        data = self._data[var_name] if var_name is not None else list(
-            self._data.values())[0]
+        if var_name is None:
+            if self.nvariables > 1:
+                raise UndefVarExc("get_sample")
+            var_name = list(self._data.keys())
         xd, yd, zd = output_dim
+        sample = {}
         if self.is3D:
             xs, ys, zs = self.shape
             choice_x = np.random.randint(xs-xd)
             choice_y = np.random.randint(ys-yd)
             choice_z = np.random.randint(zs-zd)
-            sample = data[choice_x:choice_x+xd,
-                          choice_y:choice_y+yd, choice_z:choice_z+zd]
+            for name in var_name:
+                sample[name] = self._data[name][choice_x:choice_x+xd,
+                                                choice_y:choice_y+yd,
+                                                choice_z:choice_z+zd]
         else:
             xs, ys = self.shape[0], self.shape[1]
             choice_x = np.random.randint(xs-xd)
             choice_y = np.random.randint(ys-yd)
-            sample = self._data[choice_x:choice_x +
-                                xd, choice_y:choice_y+yd, 0:1]
+            for name in var_name:
+                sample[name] = self._data[name][choice_x:choice_x+xd,
+                                                choice_y:choice_y+yd,
+                                                0:1]
         params = dict([('is3D', self.is3D)])
-        sample = Image({"V0": sample}, params)
+        sample = Image(sample, params)
         if normalize:
             sample.normalize()
         return sample

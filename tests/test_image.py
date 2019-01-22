@@ -4,18 +4,19 @@ Test module for the Image class. Execute with pytest : `pytest test_image.py`
 
 import numpy as np
 from mpstool.img import *
+from copy import copy, deepcopy
 import pytest
 
 
-def example_image():
+@pytest.fixture
+def img():
     data = np.array([[200, 255, 60],
                      [100, 10, 255],
                      [250, 100, 0]])
     return Image.fromArray(data)
 
 
-def test_threshold1():
-    img = example_image()
+def test_threshold1(img):
     img.threshold(thresholds=[127], values=[0, 255])
     expected = Image.fromArray(
         np.array([[255, 255, 0],
@@ -24,8 +25,7 @@ def test_threshold1():
     assert img == expected
 
 
-def test_threshold2():
-    img = example_image()
+def test_threshold2(img):
     img.threshold(thresholds=[80, 210], values=[0, 127, 255])
     expected = Image.fromArray(
         np.array([[127, 255, 0],
@@ -34,8 +34,7 @@ def test_threshold2():
     assert img == expected
 
 
-def test_saturate():
-    img = example_image()
+def test_saturate(img):
     img.saturate(t=127)
     saturated = img.asArray()
     expected = np.array([[200, 255, 0],
@@ -45,8 +44,7 @@ def test_saturate():
     assert np.alltrue(saturated == expected)
 
 
-def test_labelize():
-    img = example_image()
+def test_labelize(img):
     expected = np.array([[4, 6, 2],
                          [3, 1, 6],
                          [5, 3, 0]])
@@ -67,12 +65,11 @@ def test_from_list():
 
 # ------ Test of conversion functions ------
 
-def test_from_txt():
-    img = Image.fromTxt("tests/data/test_img.txt", (3, 3))
+def test_from_txt(img):
+    img1 = Image.fromTxt("tests/data/test_img.txt", (3, 3))
     img2 = Image.fromTxt("tests/data/test_img.txt", (3, 3, 1))
-    expected = example_image()
+    assert img == img1
     assert img == img2
-    assert img == expected
 
 
 def test_conversion_txt_gslib():
@@ -118,7 +115,7 @@ def test_conversion_png_txt():
 
 
 def test_conversion_final():
-    a = np.loadtxt("tests/data/test_img.txt")
+    a = np.loadtxt("tests/data/test_img.txt").reshape((3, 3))
     b = np.loadtxt("tests/data/test_img2.txt")
     return np.alltrue(a == b)
 
@@ -163,8 +160,7 @@ def test_conversion_color2():
     assert img == img3
 
 
-def test_categorize1():
-    img = example_image()
+def test_categorize1(img):
     expected = Image.fromArray(
         np.array([[255, 255, 100],
                   [100, 100, 255],
@@ -175,8 +171,7 @@ def test_categorize1():
     assert img == expected
 
 
-def test_categorize2():
-    img = example_image()
+def test_categorize2(img):
     expected = Image.fromArray(
         np.array([[255, 255, 100],
                   [100, 0, 255],
@@ -185,14 +180,12 @@ def test_categorize2():
     assert img == expected
 
 
-def test_setters():
-    img = example_image()
+def test_setters(img):
     img.set_dimension((1, 1, 1))
     assert img.shape == (1, 1, 1)
 
 
-def test_dimension():
-    img = example_image()
+def test_dimension(img):
     assert img.nxyz() == 9
     assert img.nxy() == 9
     assert img.nxz() == 3
@@ -212,8 +205,7 @@ def test_dimension():
     assert img.get_variables() == ["V0"]
 
 
-def test_variable():
-    img = example_image()
+def test_variable(img):
     data = np.array([[200, 255, 60],
                      [100, 10, 255],
                      [250, 100, 0]])
@@ -229,28 +221,27 @@ def test_variable():
     assert img.get_variables() == ["V0"]
 
 
-def test_extract():
-    img = example_image()
-    img2 = img.extract_variable(["V0"], copy=False)
-    assert img2 == example_image()
-    assert len(img.get_variables()) == 0
+def test_extract(img):
+    img2 = deepcopy(img).extract_variable(["V0"], copy=False)
+    assert len(img2.get_variables()) == 1
+    assert img2 == img
 
 
-def test_flip():
-    img = example_image()
-    img.flipx()
-    img.flipy()
-    img.flipz()
-    img.flipx()
-    img.flipy()
-    img.flipz()
-    assert img == example_image()
+def test_flip(img):
+    img2 = img
+    img2.flipx()
+    img2.flipy()
+    img2.flipz()
+    img2.flipx()
+    img2.flipy()
+    img2.flipz()
+    assert img2 == img
 
 
-def test_perm():
-    img = example_image()
-    img.permxy()
-    img.permyz()
-    img.permxz()
-    img.permyz()
-    assert img == example_image()
+def test_perm(img):
+    img2 = img
+    img2.permxy()
+    img2.permyz()
+    img2.permxz()
+    img2.permyz()
+    assert img == img2
