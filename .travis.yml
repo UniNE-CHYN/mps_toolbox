@@ -2,7 +2,7 @@ language: python
 python:
   - "3.6"
 before_install:
-  - pip install pytest pytest-cov
+  - pip install -U pytest pytest-cov
   - pip install coveralls
 install:
   - pip install numpy
@@ -13,6 +13,6 @@ install:
   - pip install -e .
 script:
   - pytest --cov=mpstool
-  - pycodestyle mpstool tests 
+  - pycodestyle mpstool tests
 after_success:
   - coveralls
