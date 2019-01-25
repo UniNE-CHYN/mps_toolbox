@@ -969,14 +969,12 @@ class Image:
 
     def set_default_var_name(self):
         """Sets default variable names: var_name = ('V0', 'V1',...)."""
-        self.var_name = ["V{:d}".format(i) for i in range(self.nvariables)]
-
-    def set_dimension(self, new_size, new_val=0) -> None:
-        """Resets the dimension of all variables
-           TODO
-        """
-        assert len(new_size) == 3
-        self.shape = tuple(new_size)
+        i = 0
+        keys = list(self._data.keys())
+        for old_key in keys:
+            new_key = "V{:d}".format(i)
+            i += 1
+            self._data[new_key] = self._data.pop(old_key)
 
     def nxyz(self):
         return (self.shape[0] * self.shape[1] * self.shape[2])
