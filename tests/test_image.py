@@ -180,11 +180,6 @@ def test_categorize2(img):
     assert img == expected
 
 
-def test_setters(img):
-    img.set_dimension((1, 1, 1))
-    assert img.shape == (1, 1, 1)
-
-
 def test_dimension(img):
     assert img.nxyz() == 9
     assert img.nxy() == 9
