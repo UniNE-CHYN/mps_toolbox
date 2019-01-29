@@ -887,10 +887,7 @@ class Image:
             data = list(self._data.values())[0]
         else:
             data = self._data[name_var]
-        if data.shape[-1] == 1:
-            plt.imshow(data[:, :, 0])
-        else:
-            plt.imshow(data)
+        plt.imshow(data[:, :, 0])
         plt.colorbar()
         plt.show()
 
