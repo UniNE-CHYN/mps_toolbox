@@ -905,13 +905,13 @@ class Image:
 
         if self.is3D :
             plt.subplot(131)
-            plt.title('IJ section, '+'K='+str(cut_position))
+            plt.title('0,1 section, '+'axis 2 at='+str(cut_position))
             plt.imshow( data[:,:,cut_position] )
             plt.subplot(132)
-            plt.title('IK section, '+'J='+str(cut_position))
+            plt.title('0,2 section, '+'axis 1 at='+str(cut_position))
             plt.imshow( data[:,cut_position,:] )
             plt.subplot(133)
-            plt.title('JK section, '+'I='+str(cut_position))
+            plt.title('1,2 section, '+'axis 0 at='+str(cut_position))
             plt.imshow( data[cut_position,:,:] )
             plt.show()
         else:
