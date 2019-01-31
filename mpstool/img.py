@@ -891,6 +891,35 @@ class Image:
         plt.colorbar()
         plt.show()
 
+    def cutplot(self, name_var=None, cut_position=0):
+        """
+        Displays 3 perpendicular cuts through image using matplotlib.pyplot
+        """
+        import matplotlib.pyplot as plt
+        if self.nvariables > 1 and name_var is None:
+            raise UndefVarExc("plot")
+        if self.nvariables == 1:
+            data = list(self._data.values())[0]
+        else:
+            data = self._data[name_var]
+
+        if self.is3D :
+            plt.figure(figsize=(10,6))
+            plt.subplot(131)
+            plt.title('IJ section, '+'K='+str(cut_position))
+            plt.imshow( data[:,:,cut_position] )
+            plt.subplot(132)
+            plt.title('IK section, '+'J='+str(cut_position))
+            plt.imshow( data[:,cut_position,:] )
+            plt.subplot(133)
+            plt.title('JK section, '+'I='+str(cut_position))
+            plt.imshow( data[cut_position,:,:] )
+            plt.show()
+        else:
+            self.plot()
+
+
+
     def exportCuts(self,
                    output_folder="cut_output",
                    var_name: str = None,

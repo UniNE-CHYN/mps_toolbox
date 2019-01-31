@@ -6,7 +6,7 @@ from mpstool.img import Image
 from mpstool.stats import *
 
 
-def get_function(image, axis):
+def get_function(image, axis, nx=0):
     """
     Computes connectivity function along given axis for all categories in image
 
@@ -18,6 +18,8 @@ def get_function(image, axis):
     Parameters
     ----------
     image : ndarray | Image
+    axis : int | axis indicating the direction of the connectivity function
+    nx=0 : int | maximum lag distance in pixels, if nx=0  nx=image size
 
     Returns
     -------
@@ -31,7 +33,11 @@ def get_function(image, axis):
     # Compute connected components and size
     categories = get_categories(image)
     connected_components = get_components(image)
-    nx = image.shape[axis]
+
+    if( nx==0 ):
+        nx = image.shape[axis]
+    else:
+        nx = min(image.shape[axis], nx)
 
     # Compute same categories and same components
     connectivity = {}
