@@ -903,21 +903,19 @@ class Image:
         else:
             data = self._data[name_var]
 
-        if self.is3D :
+        if self.is3D:
             plt.subplot(131)
             plt.title('0,1 section, '+'axis 2 at='+str(cut_position))
-            plt.imshow( data[:,:,cut_position] )
+            plt.imshow(data[:, :, cut_position])
             plt.subplot(132)
             plt.title('0,2 section, '+'axis 1 at='+str(cut_position))
-            plt.imshow( data[:,cut_position,:] )
+            plt.imshow(data[:, cut_position, :])
             plt.subplot(133)
             plt.title('1,2 section, '+'axis 0 at='+str(cut_position))
-            plt.imshow( data[cut_position,:,:] )
+            plt.imshow(data[cut_position, :, :])
             plt.show()
         else:
             self.plot()
-
-
 
     def exportCuts(self,
                    output_folder="cut_output",
