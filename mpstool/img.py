@@ -904,7 +904,6 @@ class Image:
             data = self._data[name_var]
 
         if self.is3D :
-            plt.figure(figsize=(10,6))
             plt.subplot(131)
             plt.title('IJ section, '+'K='+str(cut_position))
             plt.imshow( data[:,:,cut_position] )
