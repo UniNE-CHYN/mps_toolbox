@@ -216,12 +216,13 @@ def test_variable(img):
     assert img.get_variables() == ["V0"]
 
 
-def test_default_variable_name(img):
+def test_reset_default_variable_name(img):
     data = np.array([[200, 255, 60],
                      [100, 10, 255],
                      [250, 100, 0]])
-    img.add_variable("test", data)
-    img.set_default_var_name()
+    img.add_variable("custom_var_name", data)
+    img.reset_var_names_to_default()
+    # default variable names are V0, V1... V<n_variables>
     assert img.get_variables() == ["V0", "V1"]
 
 

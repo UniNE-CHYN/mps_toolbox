@@ -967,7 +967,7 @@ class Image:
 
     # ------ Setters and getters -------
 
-    def set_default_var_name(self):
+    def reset_var_names_to_default(self):
         """Sets default variable names: var_name = ('V0', 'V1',...)."""
         i = 0
         keys = list(self._data.keys())
