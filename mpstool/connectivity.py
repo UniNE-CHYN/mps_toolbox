@@ -39,7 +39,7 @@ def get_function(image, axis, max_lag=None):
         nx = image.shape[axis]
     else:
         # quietly use maximum possible value if user input too much
-        nx = min(image.shape[axis], nx)
+        nx = min(image.shape[axis], max_lag)
 
     # Compute same categories and same components
     connectivity = {}
