@@ -2,6 +2,7 @@
 import mpstool.img as mpsimg
 import numpy as np
 
+
 def distmap(shape):
     """
     Computes the distance matrix in number of cells. This is used
@@ -9,11 +10,12 @@ def distmap(shape):
     """
     nl = shape[0]
     nc = shape[1]
-    xx, yy = np.meshgrid(np.arange(0,nl),np.arange(0,nc))
+    xx, yy = np.meshgrid(np.arange(0, nl), np.arange(0, nc))
     xx = xx - nl / 2
     yy = yy - nc / 2
-    dd = np.sqrt( xx**2 + yy**2 )
+    dd = np.sqrt(xx**2 + yy**2)
     return dd
+
 
 def buildindicator_(z):
     """
@@ -29,9 +31,10 @@ def buildindicator_(z):
     indic = np.ones(z.shape)
     # Locates the missing values (NaN)
     znan = np.isnan(z)
-    indic[znan] = 0 #  replace NaN by zero
-    z[znan] = 0 # replace NaN by zero in original data
-    return indic,z
+    indic[znan] = 0  # replace NaN by zero
+    z[znan] = 0  # replace NaN by zero in original data
+    return indic, z
+
 
 def reduce_matrix_(m, nr, nc, nr2, nc2, nr8, nc8):
     """
@@ -46,6 +49,7 @@ def reduce_matrix_(m, nr, nc, nr2, nc2, nr8, nc8):
     g[nr:nr2, nc:nc2] = m[nr8-nr+1:nr8+1, nc8-nc+1:nc8+1]
     g = np.fft.fftshift(g)
     return g
+
 
 def fftvariogram(input_image):
     """
@@ -96,13 +100,13 @@ def fftvariogram(input_image):
     # Image size
     nr = z.shape[0]
     nc = z.shape[1]
-    if len( z.shape ) > 2:
+    if len(z.shape) > 2:
         tmp = z.shape[2]
         if tmp > 1:
             raise ValueError('the input image must be 2D')
 
     # Ensure proper size before running FFT
-    z.shape = (nr,nc,)
+    z.shape = (nr, nc,)
 
     # Variogram map size
     nr2 = 2*nr-1
@@ -122,11 +126,12 @@ def fftvariogram(input_image):
 
     # Number of pairs
     npairs = np.round(np.real(np.fft.ifft2(m1f.conjugate() * m1f)))
-    npairs = np.maximum(npairs, 1) # To avoid division by zero
+    npairs = np.maximum(npairs, 1)  # To avoid division by zero
 
     # Assemble the variogram computation
-    tmp = m1f.conjugate() * z2f + z2f.conjugate() * m1f - 2 * zf.conjugate() * zf
-    gmap =  0.5 * np.real( np.fft.ifft2( tmp ) ) /  npairs
+    tmp = m1f.conjugate() * z2f + z2f.conjugate() * m1f
+    tmp -= 2 * zf.conjugate() * zf
+    gmap = 0.5 * np.real(np.fft.ifft2(tmp)) / npairs
 
     # Shift the matrices for readability
     npairs = reduce_matrix_(npairs, nr, nc, nr2, nc2, nr8, nc8)
@@ -168,11 +173,10 @@ def vario_error(g1, g2, d, npairs):
 
     """
 
-    weight = npairs /  d**2
+    weight = npairs / d**2
     weight /= np.sum(weight)
     error = np.abs(g1 - g2) * weight
     return np.sum(error)
-
 
 
 def fftcrossvariogram(input_image1, input_image2):
@@ -248,14 +252,14 @@ def fftcrossvariogram(input_image1, input_image2):
     nr = z.shape[0]
     nc = z.shape[1]
 
-    if len( z.shape ) > 2:
+    if len(z.shape) > 2:
         tmp = z.shape[2]
         if tmp > 1:
             raise ValueError('the input image must be 2D')
 
     # Ensure proper size before running FFT
-    z.shape = (nr,nc,)
-    y.shape = (nr,nc,)
+    z.shape = (nr, nc,)
+    y.shape = (nr, nc,)
 
     # Variogram map size
     nr2 = 2*nr-1
@@ -280,30 +284,32 @@ def fftcrossvariogram(input_image1, input_image2):
 
     # cross-components
     izyf = np.fft.fft2(idz * idy, (nr8, nc8))
-    t1 = np.fft.fft2(z * idy, (nr8, nc8));
-    t2 = np.fft.fft2(y * idz, (nr8, nc8));
-    t12 = np.fft.fft2(z * y, (nr8, nc8));
+    t1 = np.fft.fft2(z * idy, (nr8, nc8))
+    t2 = np.fft.fft2(y * idz, (nr8, nc8))
+    t12 = np.fft.fft2(z * y, (nr8, nc8))
 
     # Number of pairs
     npairz = np.round(np.real(np.fft.ifft2(izf.conjugate() * izf)))
-    npairz = np.maximum(npairz, 1) # To avoid division by zero
+    npairz = np.maximum(npairz, 1)  # To avoid division by zero
 
     npairy = np.round(np.real(np.fft.ifft2(iyf.conjugate() * iyf)))
     npairy = np.maximum(npairy, 1)
 
-    npairzy = np.round(np.real(np.fft.ifft2(izyf.conjugate() * izyf)));
+    npairzy = np.round(np.real(np.fft.ifft2(izyf.conjugate() * izyf)))
     npairzy = np.maximum(npairzy, 1)
 
     # Assemble the variogram computation
-    tmp = izf.conjugate() * z2f + z2f.conjugate() * izf - 2 * z1f.conjugate() * z1f
-    gz =  0.5 * np.real( np.fft.ifft2( tmp ) ) /  npairz
+    tmp = izf.conjugate() * z2f + z2f.conjugate() * izf
+    tmp -= 2 * z1f.conjugate() * z1f
+    gz = 0.5 * np.real(np.fft.ifft2(tmp)) / npairz
 
-    tmp = iyf.conjugate() * y2f + y2f.conjugate() * iyf - 2 * y1f.conjugate() * y1f
-    gy =  0.5 * np.real( np.fft.ifft2( tmp ) ) /  npairy
+    tmp = iyf.conjugate() * y2f + y2f.conjugate() * iyf
+    tmp -= 2 * y1f.conjugate() * y1f
+    gy = 0.5 * np.real(np.fft.ifft2(tmp)) / npairy
 
     tmp = izyf.conjugate() * t12 + t12.conjugate() * izyf
     tmp -= t1.conjugate() * t2 + t2.conjugate() * t1
-    gzy =  0.5 * np.real( np.fft.ifft2( tmp ) ) /  npairzy
+    gzy = 0.5 * np.real(np.fft.ifft2(tmp)) / npairzy
 
     # Shift the matrices for readability
     npairz = reduce_matrix_(npairz, nr, nc, nr2, nc2, nr8, nc8)
