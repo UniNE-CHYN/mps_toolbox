@@ -878,6 +878,15 @@ class Image:
     # ------ Misc Export ------
     def plot(self, name_var=None):
         """
+        Calls appropriate plot method for 2D and 3D image
+        """
+        if self.is3D:
+            self.cutplot(name_var)
+        else:
+            self.plot_2D(name_var)
+
+    def plot_2D(self, name_var=None):
+        """
         Displays the image using matplotlib.pyplot
         """
         import matplotlib.pyplot as plt
