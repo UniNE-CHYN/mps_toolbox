@@ -101,6 +101,20 @@ def test_function_2D(array, image):
             assert np.alltrue(axis1_result[key] == axis1_connectivity[key])
 
 
+def test_truncated_function_2D(array, image):
+    for ar in [array, image]:
+        axis0_connectivity = {0: np.array([1.]), 1: np.array([0.])}
+        axis1_connectivity = {0: np.array([1.]), 1: np.array([1.])}
+
+        axis0_result = mpstool.connectivity.get_function(ar, axis=0, max_lag=1)
+        axis1_result = mpstool.connectivity.get_function(ar, axis=1, max_lag=1)
+
+        for key in axis0_connectivity:
+            assert np.alltrue(axis0_result[key] == axis0_connectivity[key])
+        for key in axis1_connectivity:
+            assert np.alltrue(axis1_result[key] == axis1_connectivity[key])
+
+
 def test_function_3D(extruded_array):
     axis0_connectivity = {0: np.array([1.]), 1: np.array([1.])}
     axis1_connectivity = {0: np.array([1., 0.]), 1: np.array([0., 0.])}

@@ -878,6 +878,15 @@ class Image:
     # ------ Misc Export ------
     def plot(self, name_var=None):
         """
+        Calls appropriate plot method for 2D and 3D image
+        """
+        if self.is3D:
+            self.cutplot(name_var)
+        else:
+            self.plot_2D(name_var)
+
+    def plot_2D(self, name_var=None):
+        """
         Displays the image using matplotlib.pyplot
         """
         import matplotlib.pyplot as plt
@@ -887,12 +896,35 @@ class Image:
             data = list(self._data.values())[0]
         else:
             data = self._data[name_var]
-        if data.shape[-1] == 1:
-            plt.imshow(data[:, :, 0])
-        else:
-            plt.imshow(data)
+        plt.imshow(data[:, :, 0])
         plt.colorbar()
         plt.show()
+
+    def cutplot(self, name_var=None, cut_position=0):
+        """
+        Displays 3 perpendicular cuts through image using matplotlib.pyplot
+        """
+        import matplotlib.pyplot as plt
+        if self.nvariables > 1 and name_var is None:
+            raise UndefVarExc("plot")
+        if self.nvariables == 1:
+            data = list(self._data.values())[0]
+        else:
+            data = self._data[name_var]
+
+        if self.is3D:
+            plt.subplot(131)
+            plt.title('0,1 section, '+'axis 2 at='+str(cut_position))
+            plt.imshow(data[:, :, cut_position])
+            plt.subplot(132)
+            plt.title('0,2 section, '+'axis 1 at='+str(cut_position))
+            plt.imshow(data[:, cut_position, :])
+            plt.subplot(133)
+            plt.title('1,2 section, '+'axis 0 at='+str(cut_position))
+            plt.imshow(data[cut_position, :, :])
+            plt.show()
+        else:
+            self.plot()
 
     def exportCuts(self,
                    output_folder="cut_output",
