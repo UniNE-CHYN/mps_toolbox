@@ -1,6 +1,9 @@
 install:
+	pip3 install -U .
+
+uninstall:
 	pip3 uninstall -y mpstool
-	pip3 install .
+
 
 pep8:
 	autopep8 --in-place mpstool/*.py
