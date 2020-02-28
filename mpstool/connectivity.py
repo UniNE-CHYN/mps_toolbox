@@ -53,8 +53,8 @@ def get_function(image, axis, max_lag=None):
                     indices=range(nx-x), axis=axis),
                 mask.take(indices=range(x, nx), axis=axis)))
             same_component_count[x-1] = np.sum(np.logical_and(
-                connected_components.take(indices=range(x, nx), axis=axis)
-                == connected_components.take(indices=range(nx-x), axis=axis),
+                connected_components.take(indices=range(x, nx), axis=axis) ==
+                connected_components.take(indices=range(nx-x), axis=axis),
                 mask.take(indices=range(x, nx), axis=axis)))
 
         # Divide components by categories
@@ -106,8 +106,8 @@ def get_map(image):
                 same_category_count[x-1, y-1] = np.sum(np.logical_and(
                     image[x:, y:] == image[:-x, :-y], mask[x:, y:]))
                 same_component_count[x-1, y-1] = np.sum(np.logical_and(
-                    connected_components[x:, y:]
-                    == connected_components[:-x, :-y], mask[x:, y:]))
+                    connected_components[x:, y:] ==
+                    connected_components[:-x, :-y], mask[x:, y:]))
         # Divide components by categories
         connectivity[category] = np.divide(same_component_count,
                                            same_category_count,

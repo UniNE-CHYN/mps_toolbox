@@ -2,17 +2,16 @@ language: python
 python:
   - "3.6"
 before_install:
-  - pip install -U pytest pytest-cov
+  - pip install -U pytest pytest-cov pytest-pep8
   - pip install coveralls
 install:
   - pip install numpy
   - pip install scikit-image
   - pip install py-vox-io
   - pip install pillow
-  - pip install pycodestyle
   - pip install -e .
 script:
+  - pytest --pep8
   - pytest --cov=mpstool
-  - pycodestyle mpstool tests
 after_success:
   - coveralls
