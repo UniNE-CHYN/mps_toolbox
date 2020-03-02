@@ -9,9 +9,11 @@ import pandas as pd
 
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.dummy import DummyClassifier
-from mpstool.cv_metrics import brier_score, zero_one_score, balanced_linear_score, SkillScore
+from mpstool.cv_metrics import brier_score, zero_one_score
+from mpstool.cv_metrics import balanced_linear_score, SkillScore
 from geone.deesseinterface import DeesseClassifier
 from geone.img import readImageGslib, readPointSetGslib
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -20,23 +22,26 @@ def main():
     args = parser.parse_args()
     run_cv(args.input)
 
+
 def run_cv(input_filename):
     with open(input_filename, 'r') as input_file:
         parameters = json.load(input_file)
 
     observations = parameters['observations']
 
-    observations_df = pd.DataFrame(readPointSetGslib(observations['file']).to_dict())
+    observations_df = pd.DataFrame(
+        readPointSetGslib(
+            observations['file']).to_dict())
 
     cross_validator = CrossValidator(
-            results_path=parameters['results_path'],
-            estimator_parameters=parameters['estimator'],
-            scoring = parameters['scoring'],
-            cv_splitter_parameters=parameters['cv_splitter'],
-            model_selector_parameters=parameters['model_selector'],
-            )
+        results_path=parameters['results_path'],
+        estimator_parameters=parameters['estimator'],
+        scoring=parameters['scoring'],
+        cv_splitter_parameters=parameters['cv_splitter'],
+        model_selector_parameters=parameters['model_selector'],
+    )
 
-    X =observations_df[observations['coordinates']]
+    X = observations_df[observations['coordinates']]
     y = observations_df[observations['variable']]
     cross_validator.fit(X=X, y=y)
     cross_validator.write_pandas_results()
@@ -44,16 +49,17 @@ def run_cv(input_filename):
 
 class CrossValidator():
     def __init__(self,
-            results_path,
-            estimator_parameters,
-            scoring,
-            cv_splitter_parameters,
-            model_selector_parameters,
-            ):
+                 results_path,
+                 estimator_parameters,
+                 scoring,
+                 cv_splitter_parameters,
+                 model_selector_parameters,
+                 ):
 
         # Preprocess scoring dictionary (recognize geone functions)
         for key, scoring_method in scoring.items():
-            # potentially dangerous implementation but it's not a critical script
+            # potentially dangerous implementation but it's not a critical
+            # script
             try:
                 scoring[key] = eval(scoring_method)
             except NameError:
@@ -72,30 +78,31 @@ class CrossValidator():
             if key == 'TI':
                 # it's a list
                 model_selector_parameters["param_grid"]["TI"] = [
-                        readImageGslib(x) for x in parameter]
-
+                    readImageGslib(x) for x in parameter]
 
         # Set estimator and scikit learn's engine
         self.estimator = DeesseClassifier(**estimator_parameters)
         self.cv_splitter = StratifiedKFold(**cv_splitter_parameters)
         self.model_selector = GridSearchCV(estimator=self.estimator,
-                scoring=self.scoring,
-                cv=self.cv_splitter,
-                **model_selector_parameters)
+                                           scoring=self.scoring,
+                                           cv=self.cv_splitter,
+                                           **model_selector_parameters)
 
         # Prepare the results directory
         try:
             os.makedirs(results_path)
         except FileExistsError:
             sys.exit("Directory {} exists. "
-                    "Remove it or specify another results_path in your input".format(results_path))
+                     "Remove it or specify another results_path "
+                     "in the input".format(results_path))
         self.results_path = results_path + '/cv_results.csv'
 
     def fit(self, X, y):
-        self.model_selector.fit(X,y)
+        self.model_selector.fit(X, y)
 
     def write_pandas_results(self):
         pd.DataFrame(self.model_selector.cv_results_).to_csv(self.results_path)
-        
-if __name__=='__main__':
+
+
+if __name__ == '__main__':
     main()

@@ -1,10 +1,11 @@
 #! /bin/env python3
 
+import geone_cv
+import shutil
 import pandas as pd
 import sys
 sys.path.append('../tools/')
-import shutil
-import geone_cv
+
 
 def main():
     # run cv as from command line
@@ -19,13 +20,15 @@ def main():
     # compare relevant features
     features = ['param_TI', 'param_nneighboringNode',
                 'mean_test_brier', 'mean_test_zero_one',
-                'mean_test_linear', 'mean_test_skill_brier', 'mean_test_skill_zero_one']
+                'mean_test_linear', 'mean_test_skill_brier',
+                'mean_test_skill_zero_one']
     assert(results[features].equals(results_ref[features]))
 
     # print message if successful
     print("geone_cv regression test passed")
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     try:
         main()
     except AssertionError:
