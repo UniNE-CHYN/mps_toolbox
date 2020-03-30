@@ -501,18 +501,19 @@ class Image:
                   Please install py-vox-io with `pip install py-vox-io`")
             return
         self.unnormalize()
+        output_name = output_name.split(".")[0] #remove extension
 
         # Crop to 255, otherwise conversion fails because input is too big
         # (Dimension has to fit in uint8 data type)
         if ((np.array(self.shape) > 255).any()):
-            print("[WARNING] the image shape {} is to big to be converted \
-                  into vox.\n It will be cropped at 255.")
+            print("[WARNING] the image shape {} is to big to be converted " + \
+                "into vox.\n It will be cropped at 255.")
         for key in self._data:
             a = self._data[key].copy()
             a = a[:255, :255, :255]
             vox = Vox.from_dense(a)
-            final_output_name = output_name+"_"+key if key != "V0" \
-                else output_name
+            final_output_name = output_name+"_"+key+".vox" if key != "V0" \
+                else output_name+".vox"
             VoxWriter(final_output_name, vox).write()
         if verbose:
             print("Generated .vox file as {}".format(output_name))
