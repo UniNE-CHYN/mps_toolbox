@@ -10,6 +10,7 @@ Currently the module provides :
 -
 [![Build Status](https://travis-ci.org/UniNE-CHYN/mps_toolbox.svg?branch=master)](https://travis-ci.org/UniNE-CHYN/mps_toolbox)
 [![Coverage Status](https://coveralls.io/repos/github/UniNE-CHYN/mps_toolbox/badge.svg)](https://coveralls.io/github/UniNE-CHYN/mps_toolbox)
+[![Build status](https://ci.appveyor.com/api/projects/status/8guvjt3q2a8xcfde?svg=true)](https://ci.appveyor.com/project/pjuda/mps-toolbox)
 
 # Installation
 Install the mpstool from source (from project main directory):
