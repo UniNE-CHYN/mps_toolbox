@@ -11,8 +11,9 @@ setuptools.setup(
     author="randlab",
     description="Multiple-point statistics toolbox",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/UniNE-CHYN/mps_toolbox",
-    licence="MIT",
+    license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
