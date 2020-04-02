@@ -3,7 +3,8 @@ Test module for connectivity. Execute with pytest.
 """
 
 import numpy as np
-import mpstool
+from mpstool.img import Image
+import mpstool.connectivity
 import pytest
 
 
@@ -16,7 +17,7 @@ def array():
 
 @pytest.fixture
 def image(array):
-    return mpstool.img.Image.fromArray(array)
+    return Image.fromArray(array)
 
 
 @pytest.fixture
@@ -39,11 +40,11 @@ def cube():
 
 @pytest.fixture
 def cube_image(cube):
-    return mpstool.img.Image.fromArray(cube)
+    return Image.fromArray(cube)
 
 
 def test_threshold():
-    image = mpstool.img.Image.fromArray(
+    image = Image.fromArray(
         np.array([[0.3, 3.0],
                   [1.2, 2.4],
                   [2.1, 1.1]]))

@@ -13,6 +13,8 @@ setuptools.setup(
     install_requires=[
         'numpy',
         'scikit-image',
+        'py-vox-io',
+        'properscoring',
         'Pillow',
     ]
 )
