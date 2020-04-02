@@ -1,3 +1,5 @@
+"""Setup script for mpstool"""
+
 import setuptools
 
 with open("README.md", "r") as file_handle:
@@ -5,11 +7,19 @@ with open("README.md", "r") as file_handle:
 
 setuptools.setup(
     name='mpstool',
-    version='0.1.0',
-    author="Przemyslaw Juda & Guillaume Coiffier",
+    version='1.0.0',
+    author="randlab",
     description="Multiple-point statistics toolbox",
     long_description=long_description,
-    packages=setuptools.find_packages(),
+    url="https://github.com/UniNE-CHYN/mps_toolbox",
+    licence="MIT",
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+    ],
+    packages=["mpstool"],
+    include_package_data=True,
     install_requires=[
         'numpy',
         'scikit-image',
