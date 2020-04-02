@@ -19,7 +19,6 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
     ],
     packages=["mpstool"],
-    include_package_data=True,
     install_requires=[
         'numpy',
         'scikit-image',
