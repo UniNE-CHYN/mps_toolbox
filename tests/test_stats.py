@@ -3,7 +3,8 @@ Test module for stats. Execute with pytest
 """
 
 import numpy as np
-import mpstool
+import mpstool.stats
+from mpstool.img import Image
 import pytest
 
 
@@ -14,7 +15,7 @@ def array():
 
 
 def image():
-    return mpstool.img.Image.fromArray(array())
+    return Image.fromArray(array())
 
 
 def test_histo():
