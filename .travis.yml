@@ -5,10 +5,6 @@ before_install:
   - pip install -U pytest pytest-cov pytest-pep8
   - pip install coveralls
 install:
-  - pip install numpy
-  - pip install scikit-image
-  - pip install py-vox-io
-  - pip install pillow
   - pip install -e .
 script:
   - pytest --pep8
