@@ -48,7 +48,7 @@ prometheus-client==0.7.1
 prompt-toolkit==3.0.3
 properscoring==0.1
 ptyprocess==0.6.0
-py==1.8.1
+py==1.10.0
 py-vox-io==0.1
 pycodestyle==2.5.0
 Pygments==2.5.2
