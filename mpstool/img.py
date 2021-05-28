@@ -358,10 +358,10 @@ class Image:
         """
         try:
             from PIL import Image as PIL_Img
-        except ImportError:
-            print("Cannot read from png. Is the pillow library installed ?\n\
-                   To install it, run `pip install pillow`")
-            return
+        except ImportError as e:
+            raise Exception("Cannot read from png. Is the pillow library installed ?\n\
+                   To install it, run `pip install pillow`") from e
+
         ar = PIL_Img.open(file_name)
         if ar.mode == 'P':
             ar = ar.convert('RGB')
@@ -468,10 +468,9 @@ class Image:
         """
         try:
             from pyvox.parser import VoxParser
-        except ImportError:
-            print("py-vox-io is not installed. Cannot import a vox file.\n\
-                  Please install py-vox-io with `pip install py-vox-io`")
-            return
+        except ImportError as e:
+            raise Exception("py-vox-io is not installed. Cannot import a vox file.\n\
+                    Please install py-vox-io: `pip install py-vox-io`") from e
         ar = VoxParser(file_name).parse().to_dense()
         data = {"V0": ar}
         params = dict([("is3D", ar.shape[2] > 1)])
@@ -494,10 +493,9 @@ class Image:
         try:
             from pyvox.models import Vox
             from pyvox.writer import VoxWriter
-        except ImportError:
-            print("py-vox-io is not installed. Cannot export as vox file.\n\
-                  Please install py-vox-io with `pip install py-vox-io`")
-            return
+        except ImportError as e:
+            raise Exception("py-vox-io is not installed. Cannot export as vox file.\n\
+                    Please install py-vox-io: `pip install py-vox-io`") from e
         self.unnormalize()
         output_name = output_name.split(".")[0]  # remove extension
 
