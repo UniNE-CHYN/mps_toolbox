@@ -7,9 +7,8 @@ Currently the module provides :
 - An Image class, with various import/export/conversion methods to different data types
 - Functions for evaluating connectivity, histograms and variograms of 2D and 3D categorical images.
 
-[![Build Status](https://travis-ci.org/UniNE-CHYN/mps_toolbox.svg?branch=master)](https://travis-ci.org/UniNE-CHYN/mps_toolbox)
-[![Coverage Status](https://coveralls.io/repos/github/UniNE-CHYN/mps_toolbox/badge.svg)](https://coveralls.io/github/UniNE-CHYN/mps_toolbox)
-[![Build status](https://ci.appveyor.com/api/projects/status/8guvjt3q2a8xcfde?svg=true)](https://ci.appveyor.com/project/pjuda/mps-toolbox)
+[![Documentation Status](https://readthedocs.org/projects/mps-toolbox/badge/?version=latest)](https://mps-toolbox.readthedocs.io/en/latest/?badge=latest)
+[![CircleCI](https://circleci.com/gh/UniNE-CHYN/mps_toolbox.svg?style=shield)](https://circleci.com/gh/UniNE-CHYN/mps_toolbox)
 
 # Installation
 Install using pip. The package is in the PyPI:
@@ -29,4 +28,3 @@ If you want to run it directly from source, clone this repository and from the r
 
 Can be found here: https://mps-toolbox.readthedocs.io/en/latest/index.html
 
-[![Documentation Status](https://readthedocs.org/projects/mps-toolbox/badge/?version=latest)](https://mps-toolbox.readthedocs.io/en/latest/?badge=latest)
