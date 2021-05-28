@@ -3,7 +3,7 @@
 import numpy as np
 import skimage.measure
 from mpstool.img import Image
-from mpstool.stats import *
+from mpstool.stats import get_categories
 
 
 def get_function(image, axis, max_lag=None):

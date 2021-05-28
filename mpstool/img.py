@@ -467,13 +467,11 @@ class Image:
         A new Image object
         """
         try:
-            from pyvox.models import Vox
             from pyvox.parser import VoxParser
         except ImportError:
             print("py-vox-io is not installed. Cannot import a vox file.\n\
                   Please install py-vox-io with `pip install py-vox-io`")
             return
-        from pyvox.writer import VoxWriter
         ar = VoxParser(file_name).parse().to_dense()
         data = {"V0": ar}
         params = dict([("is3D", ar.shape[2] > 1)])
@@ -540,7 +538,7 @@ class Image:
 
         # Check if the file exists
         if not os.path.isfile(file_name):
-            raise Exception("Error: invalid filename ({})".format(filename))
+            raise Exception("Error: invalid filename ({})".format(file_name))
 
         # Open the file in read mode
         with open(file_name, 'r') as ff:
@@ -671,7 +669,7 @@ class Image:
 
         # Check if the file exists
         if not os.path.isfile(file_name):
-            raise Exception("Error: invalid filename ({})".format(filename))
+            raise Exception("Error: invalid filename ({})".format(file_name))
 
         # Open the file in read mode
         with open(file_name, 'r') as ff:
@@ -786,7 +784,7 @@ class Image:
 
         # Check if the file exists
         if not os.path.isfile(file_name):
-            raise Exception("Error: invalid filename ({})".format(filename))
+            raise Exception("Error: invalid filename ({})".format(file_name))
 
         # Open the file in read mode
         with open(file_name, 'r') as ff:
@@ -814,13 +812,14 @@ class Image:
             # Read the rest of the file
             vv = [x.split() for x in ff.readlines()]
 
+        # Set variable array
+        val_arr = np.array([float(x) for line in vv for x in line],
+                           dtype=float).reshape((nx, ny, 1, 3))
+
         # Replace missing_value by np.nan
         if missing_value is not None:
             np.putmask(val_arr, val_arr == missing_value, np.nan)
 
-        # Set variable array
-        val_arr = np.array([float(x) for line in vv for x in line],
-                           dtype=float).reshape((nx, ny, 1, 3))
         data = dict([(var_name[i], val_arr[:, :, :, i]) for i in range(3)])
         params = {"is3D": False, "nVariables": 3}
         return Image(data, params)
@@ -980,15 +979,18 @@ class Image:
         if axis == 1:
             for i in iter:
                 img = array[:, i, :]
-                self.exportAsPng(pj(output_folder, "cut_y_{}.png".format(i)))
+                Image.fromArray(img).exportAsPng(
+                    pj(output_folder, "cut_y_{}.png".format(i)))
         elif axis == 2:
             for i in iter:
                 img = Image.fromArray(array[:, :, i])
-                self.exportAsPng(pj(output_folder, "cut_z_{}.png".format(i)))
+                Image.fromArray(img).exportAsPng(
+                    pj(output_folder, "cut_z_{}.png".format(i)))
         elif axis == 0:
             for i in iter:
                 img = Image.fromArray(array[i, :, :])
-                self.exportAsPng(pj(output_folder, "cut_x_{}.png".format(i)))
+                Image.fromArray(img).exportAsPng(
+                    pj(output_folder, "cut_x_{}.png".format(i)))
         else:
             for i in iter:
                 Image.fromArray(array[i, :, :]).exportAsPng(
@@ -1338,7 +1340,6 @@ class Image:
 
         # Initialize categories : assign value to closest centroid
         categories, counts = np.unique(ar, return_counts=True)
-        total = np.sum(counts)
         mapsto = np.zeros(categories.shape).astype(np.int16)
         for ind, val in np.ndenumerate(categories):
             mapsto[ind] = np.argmin([abs(x-val) for x in centroids])

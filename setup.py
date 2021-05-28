@@ -7,11 +7,11 @@ with open("README.md", "r") as file_handle:
 
 setuptools.setup(
     name='mpstool',
-    version='1.0.0',
+    version='1.1.0',
     author="randlab",
     description="Multiple-point statistics toolbox",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type='text/markdown',
     url="https://github.com/UniNE-CHYN/mps_toolbox",
     license="MIT",
     classifiers=[
