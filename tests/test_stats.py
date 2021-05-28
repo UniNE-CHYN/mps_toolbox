@@ -5,7 +5,6 @@ Test module for stats. Execute with pytest
 import numpy as np
 import mpstool.stats
 from mpstool.img import Image
-import pytest
 
 
 def array():

@@ -3,8 +3,8 @@ Test module for the Image class. Execute with pytest : `pytest test_image.py`
 """
 
 import numpy as np
-from mpstool.img import *
-from copy import copy, deepcopy
+from mpstool.img import Image, labelize
+from copy import deepcopy
 import pytest
 
 
