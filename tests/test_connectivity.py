@@ -129,3 +129,39 @@ def test_function_3D(extruded_array):
         assert np.alltrue(axis0_result[key] == axis0_connectivity[key])
         assert np.alltrue(axis1_result[key] == axis1_connectivity[key])
         assert np.alltrue(axis2_result[key] == axis2_connectivity[key])
+
+@pytest.fixture
+def c_image():
+    return np.array([
+        [0.1, 0, 0, 0],
+        [0,    0, 0, 0],
+        [0,    0, 0.9, 0.9],
+        [0,    0, 0.9, 0.9]])
+
+def test_apply_threshold(c_image):
+    result1 = np.array([
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [1, 1, 0, 0],
+        [1, 1, 0, 0]])
+
+    result2 = np.ones_like(c_image)
+
+    assert np.alltrue(result1 == mpstool.connectivity._apply_threshold(c_image, 0.2))
+    assert np.alltrue(result2 == mpstool.connectivity._apply_threshold(c_image, 0.95))
+
+def test_gamma(c_image):
+    assert mpstool.connectivity.gamma(c_image, 0) == 0
+    assert mpstool.connectivity.gamma(c_image, 0.2) == 1
+    assert mpstool.connectivity.gamma(c_image, 0.02) == 1
+    assert mpstool.connectivity.gamma(c_image, 0.92) == 1
+
+    assert mpstool.connectivity.gamma(c_image, 0, True) == 1
+    assert mpstool.connectivity.gamma(c_image, 0.2, True) == 1
+    assert mpstool.connectivity.gamma(c_image, 0.02, True) == 17/25
+    assert mpstool.connectivity.gamma(c_image, 0.92, True) == 0
+
+def test_gamma_function(c_image):
+    assert np.alltrue(mpstool.connectivity.gamma_function(
+        c_image, [0, 0.01, 0.92], True) == [1, 17/25, 0])
+

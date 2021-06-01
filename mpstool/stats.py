@@ -72,3 +72,28 @@ def variogram(image, axis):
                 indicator_image.take(indices=range(n-x), axis=axis)
             ) / (area*(n-x))
     return variogram
+
+
+def variogram_continuous(image, axis):
+    if isinstance(image, Image):
+        image = image.asArray()
+
+    # Analyse image
+    n = image.shape[axis]
+    variogram = np.zeros(n)
+
+    # Compute *volume*
+    volume = 1
+    for i in range(0, image.ndim):
+        volume = volume*image.shape[i]
+
+    # Compute *area*
+    area = volume / n
+
+    # Compute variogram for each category and store in dictionary
+    for x in np.arange(1, n):
+        variogram[x] = np.sum(
+            (image.take(indices=range(x, n), axis=axis) -
+             image.take(indices=range(n-x), axis=axis))**2
+            ) / (area*(n-x))
+    return variogram

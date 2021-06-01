@@ -160,3 +160,28 @@ def get_components(image, background=None):
     # even if we don't want to use any value as background.
     # In this case we set a value not present in the image
     return skimage.measure.label(image, connectivity=1, background=background)
+
+def _apply_threshold(image, t):
+    image_new = np.zeros_like(image)
+    image_new[image<t] = 1
+    return image_new
+
+def gamma(image, t, complementary=False):
+    background = 0 if complementary == False else 1
+    components = get_components(_apply_threshold(image, t), background=background)
+    values, counts = np.unique(components, return_counts=True)
+    if len(values) == 1:
+        if values[0] == 0:
+            # No components which are not a background
+            return 0
+        else:
+            # all components good
+            return 1
+    else:
+        return np.sum(counts[1:]**2) / np.sum(counts[1:])**2
+
+
+def gamma_function(image, thresholds, complementary=False):
+    G = np.array([gamma(image, t, complementary) for t in thresholds])
+    return G
+
