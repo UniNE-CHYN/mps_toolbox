@@ -11,3 +11,13 @@ pep8:
 test:
 	flake8 mpstool tests --statistics
 	PYTHONPATH=. pytest -v --cov mpstool
+
+major:
+	bumpversion major
+
+minor:
+	bumpversion minor
+
+requirements:
+	pip freeze > requirements.txt
+
