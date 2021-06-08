@@ -161,14 +161,17 @@ def get_components(image, background=None):
     # In this case we set a value not present in the image
     return skimage.measure.label(image, connectivity=1, background=background)
 
+
 def _apply_threshold(image, t):
     image_new = np.zeros_like(image)
-    image_new[image<t] = 1
+    image_new[image < t] = 1
     return image_new
 
+
 def gamma(image, t, complementary=False):
-    background = 0 if complementary == False else 1
-    components = get_components(_apply_threshold(image, t), background=background)
+    background = 0 if complementary is False else 1
+    components = get_components(
+        _apply_threshold(image, t), background=background)
     values, counts = np.unique(components, return_counts=True)
     if len(values) == 1:
         if values[0] == 0:
@@ -184,4 +187,3 @@ def gamma(image, t, complementary=False):
 def gamma_function(image, thresholds, complementary=False):
     G = np.array([gamma(image, t, complementary) for t in thresholds])
     return G
-

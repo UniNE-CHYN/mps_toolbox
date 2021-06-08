@@ -95,5 +95,5 @@ def variogram_continuous(image, axis):
         variogram[x] = np.sum(
             (image.take(indices=range(x, n), axis=axis) -
              image.take(indices=range(n-x), axis=axis))**2
-            ) / (area*(n-x))
+        ) / (area*(n-x))
     return variogram
