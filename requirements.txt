@@ -34,7 +34,7 @@ py-vox-io==0.1
 pycodestyle==2.7.0
 pycparser==2.20
 pyflakes==2.3.1
-Pygments==2.6.1
+Pygments==2.7.4
 pyparsing==2.4.7
 pytest==5.4.1
 pytest-cov==2.12.0
