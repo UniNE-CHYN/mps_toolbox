@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+name: Workflow for Codecov
 
 on:
   push:
@@ -23,15 +23,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m venv venv
-        . venv/bin/activate
         pip install -r requirements.txt
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        . venv/bin/activate
         flake8 mpstool tests --statistics 
     - name: Test with pytest
       run: |
-        . venv/bin/activate
         PYTHONPATH=. pytest -v --cov mpstool
+        coverage xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
