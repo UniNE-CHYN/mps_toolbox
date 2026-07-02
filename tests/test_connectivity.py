@@ -56,7 +56,7 @@ def test_threshold():
     thresholds = np.array([1.0, 2.0])
     image.threshold(thresholds)
     labels = mpstool.img.labelize(image)
-    assert np.alltrue(labels == categorical_ref)
+    assert np.all(labels == categorical_ref)
 
 
 def test_connected_component(cube):
@@ -69,7 +69,7 @@ def test_connected_component(cube):
                                         [[0, 2, 2],
                                          [0, 2, 2],
                                          [0, 0, 0]]])
-    assert np.alltrue(mpstool.connectivity.get_components(
+    assert np.all(mpstool.connectivity.get_components(
         cube, background=0) == connectivity_array_cube)
 
 
@@ -85,7 +85,7 @@ def test_get_map(array, image):
         real_map = mpstool.connectivity.get_map(ar)
         assert real_map.keys() == expected_map.keys()
         for k in expected_map.keys():
-            assert np.alltrue(real_map[k] == expected_map[k])
+            assert np.all(real_map[k] == expected_map[k])
 
 
 def test_function_2D(array, image):
@@ -97,9 +97,9 @@ def test_function_2D(array, image):
         axis1_result = mpstool.connectivity.get_function(ar, axis=1)
 
         for key in axis0_connectivity:
-            assert np.alltrue(axis0_result[key] == axis0_connectivity[key])
+            assert np.all(axis0_result[key] == axis0_connectivity[key])
         for key in axis1_connectivity:
-            assert np.alltrue(axis1_result[key] == axis1_connectivity[key])
+            assert np.all(axis1_result[key] == axis1_connectivity[key])
 
 
 def test_truncated_function_2D(array, image):
@@ -111,9 +111,9 @@ def test_truncated_function_2D(array, image):
         axis1_result = mpstool.connectivity.get_function(ar, axis=1, max_lag=1)
 
         for key in axis0_connectivity:
-            assert np.alltrue(axis0_result[key] == axis0_connectivity[key])
+            assert np.all(axis0_result[key] == axis0_connectivity[key])
         for key in axis1_connectivity:
-            assert np.alltrue(axis1_result[key] == axis1_connectivity[key])
+            assert np.all(axis1_result[key] == axis1_connectivity[key])
 
 
 def test_function_3D(extruded_array):
@@ -126,9 +126,9 @@ def test_function_3D(extruded_array):
     axis2_result = mpstool.connectivity.get_function(extruded_array, axis=2)
 
     for key in axis0_connectivity:
-        assert np.alltrue(axis0_result[key] == axis0_connectivity[key])
-        assert np.alltrue(axis1_result[key] == axis1_connectivity[key])
-        assert np.alltrue(axis2_result[key] == axis2_connectivity[key])
+        assert np.all(axis0_result[key] == axis0_connectivity[key])
+        assert np.all(axis1_result[key] == axis1_connectivity[key])
+        assert np.all(axis2_result[key] == axis2_connectivity[key])
 
 
 @pytest.fixture
@@ -149,9 +149,9 @@ def test_apply_threshold(c_image):
 
     result2 = np.ones_like(c_image)
 
-    assert np.alltrue(
+    assert np.all(
         result1 == mpstool.connectivity._apply_threshold(c_image, 0.2))
-    assert np.alltrue(
+    assert np.all(
         result2 == mpstool.connectivity._apply_threshold(c_image, 0.95))
 
 
@@ -168,5 +168,5 @@ def test_gamma(c_image):
 
 
 def test_gamma_function(c_image):
-    assert np.alltrue(mpstool.connectivity.gamma_function(
+    assert np.all(mpstool.connectivity.gamma_function(
         c_image, [0, 0.01, 0.92], True) == [1, 17/25, 0])

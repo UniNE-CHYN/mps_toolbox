@@ -41,7 +41,7 @@ def test_saturate(img):
                          [0, 0, 255],
                          [250, 0, 0]]).reshape((3, 3, 1))
     assert saturated.shape == expected.shape
-    assert np.alltrue(saturated == expected)
+    assert np.all(saturated == expected)
 
 
 def test_labelize(img):
@@ -49,7 +49,7 @@ def test_labelize(img):
                          [3, 1, 6],
                          [5, 3, 0]])
     labels = labelize(img)
-    assert np.alltrue(labels == expected)
+    assert np.all(labels == expected)
 
 
 def test_from_list():
@@ -60,7 +60,7 @@ def test_from_list():
     input_data = [data1, data2]
     expected = np.array(input_data)
     img = Image.fromArray(input_data).asArray()
-    assert np.alltrue(img == expected)
+    assert np.all(img == expected)
 
 
 # ------ Test of conversion functions ------
@@ -76,48 +76,48 @@ def test_conversion_txt_gslib():
     img = Image.fromTxt("tests/data/test_img.txt", (3, 3))
     img.exportAsGslib("tests/data/test_img.gslib")
     img_test = Image.fromGslib("tests/data/test_img.gslib")
-    assert np.alltrue(img_test == img)
+    assert np.all(img_test == img)
 
 
 def test_gslib_to_vtk():
     img = Image.fromGslib("tests/data/test_img.gslib")
     img.exportAsVtk("tests/data/test_img.vtk")
     img2 = img.fromVtk("tests/data/test_img.vtk")
-    assert np.alltrue(img == img2)
+    assert np.all(img == img2)
 
 
 def test_vtk_pgm():
     img = Image.fromVtk("tests/data/test_img.vtk")
     img.exportAsPgm("tests/data/test_img.pgm")
     img2 = img.fromPgm("tests/data/test_img.pgm")
-    assert np.alltrue(img == img2)
+    assert np.all(img == img2)
 
 
 def test_pgm_vox():
     img = Image.fromPgm("tests/data/test_img.pgm")
     img.exportAsVox("tests/data/test_img.vox")
     img_test = Image.fromVox("tests/data/test_img.vox")
-    assert np.alltrue(img_test == img)
+    assert np.all(img_test == img)
 
 
 def test_conversion_vox_png():
     img = Image.fromVox("tests/data/test_img.vox")
     img.exportAsPng("tests/data/test_img.png")
     img_test = Image.fromPng("tests/data/test_img.png")
-    assert np.alltrue(img_test == img)
+    assert np.all(img_test == img)
 
 
 def test_conversion_png_txt():
     img = Image.fromPng("tests/data/test_img.png")
     img.exportAsTxt("tests/data/test_img2.txt")
     img_test = Image.fromTxt("tests/data/test_img2.txt", (3, 3))
-    assert np.alltrue(img_test == img)
+    assert np.all(img_test == img)
 
 
 def test_conversion_final():
     a = np.loadtxt("tests/data/test_img.txt").reshape((3, 3))
     b = np.loadtxt("tests/data/test_img2.txt")
-    return np.alltrue(a == b)
+    return np.all(a == b)
 
 
 def test_import_gslb2var():
@@ -126,8 +126,8 @@ def test_import_gslb2var():
     var2 = img.asArray("V1").reshape((3, 3))
     expected1 = np.array([[1, 1, 1], [1, 1, 1], [0, 0, 0]])
     expected2 = np.array([[1, 0, 1], [0, 1, 0], [1, 0, 1]])
-    assert np.alltrue(var1 == expected1)
-    assert np.alltrue(var2 == expected2)
+    assert np.all(var1 == expected1)
+    assert np.all(var2 == expected2)
 
 
 def test_gslib_io():
@@ -145,7 +145,7 @@ def test_conversion_color():
     img.exportAsPpm("tests/data/test_color_simple.ppm")
     img2 = Image.fromPng("tests/data/test_color_simple.png")
     img3 = Image.fromPpm("tests/data/test_color_simple.ppm")
-    assert np.alltrue((img.asArray()-img2.asArray()) < 1e8)
+    assert np.all((img.asArray()-img2.asArray()) < 1e8)
     assert img == img3
 
 
@@ -156,7 +156,7 @@ def test_conversion_color2():
     img.exportAsPpm("tests/data/test_color.ppm")
     img2 = Image.fromPng("tests/data/test_color.png")
     img3 = Image.fromPpm("tests/data/test_color.ppm")
-    assert np.alltrue((img.asArray()-img2.asArray()) < 1e8)
+    assert np.all((img.asArray()-img2.asArray()) < 1e8)
     assert img == img3
 
 
@@ -192,9 +192,9 @@ def test_dimension(img):
     assert img.zmin() == 0
     assert img.zmax() == 1
     coords = np.array([0.5, 1.5, 2.5])
-    assert np.alltrue(img.x() == coords)
-    assert np.alltrue(img.y() == coords)
-    assert np.alltrue(img.z() == np.array([0.5]))
+    assert np.all(img.x() == coords)
+    assert np.all(img.y() == coords)
+    assert np.all(img.z() == np.array([0.5]))
     assert img.vmin() == 0
     assert img.vmax() == 255
     assert img.get_variables() == ["V0"]
@@ -206,12 +206,12 @@ def test_variable(img):
                      [250, 100, 0]])
     img.add_variable("test", data)
     assert set(img.get_variables()) == {"V0", "test"}
-    assert np.alltrue(img._data["test"] == data)
+    assert np.all(img._data["test"] == data)
     data = np.zeros(img.shape)
     img.set_variable("test", data)
-    assert np.alltrue(img._data["test"] == data)
+    assert np.all(img._data["test"] == data)
     img.rename_variable("test", "toto")
-    assert np.alltrue(img._data["toto"] == data)
+    assert np.all(img._data["toto"] == data)
     img.remove_variable("toto")
     assert img.get_variables() == ["V0"]
 
